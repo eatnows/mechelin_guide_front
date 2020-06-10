@@ -1,13 +1,11 @@
 import React from "react";
 import Signup from "./components/signup/Signup";
 import Login from "./components/login/Login";
-import './allStyle.css';
+import "./allStyle.css";
 function App() {
-
   return (
     <div>
-      <Signup/>
-     
+      <Login />
     </div>
   );
 }
