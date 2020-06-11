@@ -7,6 +7,7 @@ import Login from "components/login/Login";
 import Welcome from "components/signup/Welcome";
 import Main from "components/main/Main";
 import "components/css/allStyle.css";
+import { ReviewAdd } from "pages";
 
 class App extends Component {
   render() {
@@ -16,6 +17,7 @@ class App extends Component {
           <Route exact path="/login" component={Login} />
           <Route exact path="/signup" component={SignUp} />
           <Route exact path="/welcome" component={Welcome} />
+          <Route exact path="/reviewadd" component={ReviewAdd} />
           <Route exact path="/" component={Main} />
         </Switch>
       </div>
