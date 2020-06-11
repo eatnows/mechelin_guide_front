@@ -28,7 +28,7 @@ class Welcome extends React.Component {
               color: "rgba(245,145,45)",
             }}
           >
-            미쉐린 가이드
+            내슐랭 가이드
           </span>
           에 오신 것을 환영합니다!
         </h2>

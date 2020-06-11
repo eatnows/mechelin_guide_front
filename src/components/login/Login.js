@@ -32,7 +32,7 @@ class Login extends Component {
               "가입하지 않은 이메일 주소이거나, 틀린 비밀번호를 입력하였습니다.",
           });
         } else {
-          this.props.history.push("/main");
+          this.props.history.push("/");
         }
       })
       .catch((err) => {
@@ -196,27 +196,29 @@ class Login extends Component {
                     />
                   </button>
                   &nbsp;&nbsp;
-                  <button
-                    type="button"
-                    className="btn"
-                    style={{
-                      borderRadius: "100%",
-                      border: "1px solid lightgray",
-                      width: "50px",
-                      height: "50px",
-                      backgroundColor: "white",
-                    }}
-                  >
-                    <img
-                      src={Google}
+                  <NavLink to="/signup">
+                    <button
+                      type="button"
+                      className="btn"
                       style={{
-                        textAlign: "center",
-                        width: "25px",
-                        height: "25px",
+                        borderRadius: "100%",
+                        border: "1px solid lightgray",
+                        width: "50px",
+                        height: "50px",
+                        backgroundColor: "white",
                       }}
-                      alt=""
-                    />
-                  </button>
+                    >
+                      <img
+                        src={Google}
+                        style={{
+                          textAlign: "center",
+                          width: "25px",
+                          height: "25px",
+                        }}
+                        alt=""
+                      />
+                    </button>
+                  </NavLink>
                 </td>
               </tr>
             </tbody>

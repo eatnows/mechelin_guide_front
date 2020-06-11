@@ -68,7 +68,7 @@ export default class SignUp extends Component {
   //닉네임 중복 체크
   checkNickname = (e) => {
     if (this.state.nickname !== "") {
-      const url = "http://localhost:9000/mechelin/signupcheck/nickname";
+      const url = "http://localhost:9000/mechelin/signupcheck/nick";
       Axios.post(url, { nickname: e.nickname })
         .then((res) => {
           if (res.data === "usenot") {
