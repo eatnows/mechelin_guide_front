@@ -1,15 +1,24 @@
-*{
-    /* font-family: 'Hi Melody', cursive;
+* {
+  /* font-family: 'Hi Melody', cursive;
     font-family: 'Nanum Myeongjo', serif; */
-    font-family: 'Nanum Gothic Coding', monospace;
-    font-weight: 700;
+  font-family: "Nanum Gothic Coding", monospace;
+  font-weight: 700;
 }
-a{
-    cursor: pointer;
-    color: black;
-    text-decoration: none;
-
+a {
+  cursor: pointer;
+  color: black;
+  text-decoration: none;
 }
-li{
-    list-style: none;
+li {
+  list-style: none;
+}
+@font-face {
+  src: url("../font/BBTreeGR.woff") format("woff"),
+    url("../font/BBTreeGR.eot") format("eot");
+  font-family: "BBTreeGR";
+}
+@font-face {
+  src: url("../font/BBTreeGL.woff") format("woff"),
+    url("../font/BBTreeGL.eot") format("eot");
+  font-family: "BBTreeGL";
 }

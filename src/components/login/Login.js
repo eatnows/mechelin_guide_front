@@ -2,6 +2,7 @@ import React, { Component } from "react";
 import "components/css/loginStyle.css";
 import Google from "images/google.png";
 import axios from "axios";
+import { NavLink } from "react-router-dom";
 
 class Login extends Component {
   constructor(props) {
@@ -11,6 +12,7 @@ class Login extends Component {
       emailCkMsg: "",
     };
   }
+
   //값이 바뀌면 state 값을 변경
   handleInform = (e) => {
     this.setState({
@@ -18,33 +20,31 @@ class Login extends Component {
     });
   };
 
-  //이메일 존재 여부 확인
-  checkEmail = (e) => {
-    //형식이 맞으면 중복 체크
-    const url = "http://localhost:9000/mechelin/signupcheck/email";
+  //이메일, 비밀번호 체크 후 로그인
+  onSubmit = (e) => {
+    const url = "http://localhost:9000/mechelin/login";
     axios
-      .post(url, { email: e.email })
+      .post(url, { email: e.email, password: e.password })
       .then((res) => {
-        if (res.data === "usenot") {
+        if (res.data === "pwfalse" || res.data === "mailfalse") {
           this.setState({
-            emailCkMsg: "존재하지 않는 이메일 주소입니다.",
+            emailCkMsg:
+              "가입하지 않은 이메일 주소이거나, 틀린 비밀번호를 입력하였습니다.",
           });
         } else {
-          this.setState({
-            emailCkMsg: "",
-          });
+          this.props.history.push("/main");
         }
       })
       .catch((err) => {
-        console.log("이메일 존재 확인:" + err);
+        console.log("로그인 에러:" + err);
       });
   };
 
   render() {
     return (
       <div>
-        <form>
-          <table align="center" style={{ width: "200px", marginTop: "100px" }}>
+        <form onSubmit={this.onSubmit.bind(this)}>
+          <table align="center" style={{ width: "200px", marginTop: "30px" }}>
             <tbody>
               <tr>
                 <td>
@@ -53,7 +53,7 @@ class Login extends Component {
                       border: "1px solid lightgray",
                       width: "100px",
                       height: "100px",
-                      margin: "0 auto",
+                      margin: "7vh auto",
                     }}
                   >
                     로고
@@ -72,12 +72,12 @@ class Login extends Component {
                         marginLeft: "5px",
                         fontWeight: "normal",
                         fontSize: "13px",
-                        marginBottom: "10px",
                       }}
                     >
                       로그인 상태 유지
                     </span>
                   </span>
+                  <br />
                   <br />
                   <input
                     type="text"
@@ -85,7 +85,6 @@ class Login extends Component {
                     placeholder="EMAIL"
                     name="email"
                     onChange={this.handleInform.bind(this)}
-                    onKeyUp={this.checkEmail.bind(this)}
                     style={{
                       width: "250px",
                       height: "50px",
@@ -126,24 +125,26 @@ class Login extends Component {
               </tr>
               <tr>
                 <td style={{ paddingTop: "10px" }}>
-                  <span
+                  <div
                     style={{
                       marginLeft: "5px",
                       fontWeight: "normal",
                       fontSize: "10px",
+                      marginTop: "2vh",
+                      float: "left",
                     }}
                   >
                     비밀번호를 잊으셨나요?
-                  </span>
+                  </div>
                   <button
                     type="button"
                     className="btn btn-md"
                     style={{
                       width: "80px",
-                      height: "20px",
+                      height: "30px",
                       fontSize: "10px",
                       padding: "0",
-                      lineHeight: "10px",
+                      marginTop: "0.5vh",
                       float: "right",
                       border: "1px solid rgba(245,145,45)",
                       backgroundColor: "white",
@@ -152,19 +153,19 @@ class Login extends Component {
                   >
                     비밀번호 찾기
                   </button>
-                  <br />
                 </td>
               </tr>
               <tr>
                 <td style={{ textAlign: "center" }}>
-                  <br />
                   <button
                     type="submit"
                     className="btn"
                     style={{
+                      margin: "8vh 0",
                       backgroundColor: "rgba(245,145,45)",
                       color: "white",
-                      height: "30px",
+                      height: "40px",
+                      width: "100px",
                     }}
                   >
                     로그인
@@ -173,7 +174,6 @@ class Login extends Component {
               </tr>
               <tr>
                 <td style={{ textAlign: "center" }}>
-                  <br />
                   <button
                     type="button"
                     className="btn"

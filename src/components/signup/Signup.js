@@ -150,7 +150,7 @@ export default class SignUp extends Component {
         password: this.state.password,
       })
         .then((res) => {
-          this.showMain();
+          this.props.history.push("/welcome");
         })
         .catch((err) => {
           console.log("insert userInfom error:" + err);
