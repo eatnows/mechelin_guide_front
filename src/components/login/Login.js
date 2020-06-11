@@ -1,11 +1,45 @@
 import React, { Component } from "react";
-import "./loginStyle.css";
+import "components/css/loginStyle.css";
 import Google from "images/google.png";
+import axios from "axios";
+
 class Login extends Component {
   constructor(props) {
     super(props);
-    this.state = {};
+    this.state = {
+      email: "",
+      emailCkMsg: "",
+    };
   }
+  //값이 바뀌면 state 값을 변경
+  handleInform = (e) => {
+    this.setState({
+      [e.target.name]: e.target.value,
+    });
+  };
+
+  //이메일 존재 여부 확인
+  checkEmail = (e) => {
+    //형식이 맞으면 중복 체크
+    const url = "http://localhost:9000/mechelin/signupcheck/email";
+    axios
+      .post(url, { email: e.email })
+      .then((res) => {
+        if (res.data === "usenot") {
+          this.setState({
+            emailCkMsg: "존재하지 않는 이메일 주소입니다.",
+          });
+        } else {
+          this.setState({
+            emailCkMsg: "",
+          });
+        }
+      })
+      .catch((err) => {
+        console.log("이메일 존재 확인:" + err);
+      });
+  };
+
   render() {
     return (
       <div>
@@ -48,7 +82,10 @@ class Login extends Component {
                   <input
                     type="text"
                     className="form-control"
-                    placeholder="EAMIL"
+                    placeholder="EMAIL"
+                    name="email"
+                    onChange={this.handleInform.bind(this)}
+                    onKeyUp={this.checkEmail.bind(this)}
                     style={{
                       width: "250px",
                       height: "50px",
@@ -57,6 +94,18 @@ class Login extends Component {
                       fontSize: "13px",
                     }}
                   />
+                  <span
+                    style={{
+                      color: "red",
+                      fontSize: "10px",
+                      fontWeight: "normal",
+                      textAlign: "center",
+                      margin: "10px auto",
+                    }}
+                  >
+                    {this.state.emailCkMsg}
+                  </span>
+                  <br />
                 </td>
               </tr>
               <tr>
@@ -96,6 +145,9 @@ class Login extends Component {
                       padding: "0",
                       lineHeight: "10px",
                       float: "right",
+                      border: "1px solid rgba(245,145,45)",
+                      backgroundColor: "white",
+                      color: "rgba(245,145,45)",
                     }}
                   >
                     비밀번호 찾기
@@ -109,7 +161,11 @@ class Login extends Component {
                   <button
                     type="submit"
                     className="btn"
-                    style={{ backgroundColor: "lightgray", height: "30px" }}
+                    style={{
+                      backgroundColor: "rgba(245,145,45)",
+                      color: "white",
+                      height: "30px",
+                    }}
                   >
                     로그인
                   </button>

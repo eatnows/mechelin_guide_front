@@ -6,32 +6,18 @@ export default class SignUp extends Component {
     super(props);
     this.state = {
       email: "",
-      emailCk: "",
+      emailCkMsg: "",
+      emailCheck: "",
       nickname: "",
+      nicknameCkMsg: "",
+      nicknameCheck: "",
       password: "",
       rePassword: "",
-      possiblePwCk: "",
-      samePwCk: "",
+      possiblePwCkMsg: "",
+      samePwCkMsg: "",
       pwCheck: "",
     };
   }
-
-  //회원 가입 시 정보 테이블에 저장
-  onSendUserInform = (e) => {
-    console.log("insert userInform");
-    const url = "http://localhost:9000/mechelin/join.do";
-    Axios.post(url, {
-      email: e.email,
-      nickname: e.nickname,
-      password: e.password,
-    })
-      .then((res) => {
-        this.showMain();
-      })
-      .catch((err) => {
-        console.log("insert userInfom error:" + err);
-      });
-  };
 
   //값이 바뀌면 state 값을 변경
   handleInform = (e) => {
@@ -43,56 +29,67 @@ export default class SignUp extends Component {
   //이메일 형식 확인
   checkEmail = (e) => {
     //이메일 유효성검사(영문,숫자,-_. 혼합 ID @ domain 주소)
-    const chkEmail = function (str) {
+    const chkEmail = (str) => {
       var standard = /^[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*@[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*.[a-zA-Z]{2,3}$/i;
       return standard.test(str) ? true : false;
     };
     if (this.state.email !== "") {
       if (chkEmail(this.state.email) !== true) {
         this.setState({
-          emailCk: "이메일 형식이 유효하지 않습니다.",
+          emailCkMsg: "이메일 형식이 유효하지 않습니다.",
         });
       } else {
-        this.setState({
-          emailCk: "",
-        });
+        //형식이 맞으면 중복 체크
+        const url = "http://localhost:9000/mechelin/signupcheck/email";
+        Axios.post(url, { email: e.email })
+          .then((res) => {
+            if (res.data === "usenot") {
+              this.setState({
+                emailCkMsg: "",
+                emailCheck: this.state.email,
+              });
+            } else {
+              this.setState({
+                emailCkMsg: "이미 등록된 이메일입니다.",
+              });
+            }
+          })
+          .catch((err) => {
+            console.log("이메일 중복 체크 에러:" + err);
+          });
       }
     } else {
       this.setState({
-        emailCk: "",
+        emailCkMsg: "",
       });
     }
+  };
 
-    //   const inputEmail = {
-    //     email: this.state.email
-    //   }
-    //   const emailInfo = {
-    //     method: "POST",
-    //     body: JSON.stringify(inputEmail),
-    //     headers: {
-    //       "Content-Type": "application/json"
-    //     }
-    //   };
-    //    if (chkEmail(this.state.email) === false) {
-    //     alert("이메일 형식이 유효하지 않습니다.");
-    //     this.setState({
-    //       email: ""
-    //     });
-    //   } else {
-    //     fetch("http://localhost:9000/mechelin/email", emailInfo)
-    //       .then(res => res.json())
-    //       .then(json => {
-    //         if (json === true) {
-    //           alert("사용가능한 이메일입니다");
-    //           this.setState({
-    //             emailCheck: this.state.email
-    //           });
-    //         } else {
-    //           alert("사용중인 이메일입니다");
-    //         }
-    //       });
-    //   }
-    // };
+  //닉네임 중복 체크
+  checkNickname = (e) => {
+    if (this.state.nickname !== "") {
+      const url = "http://localhost:9000/mechelin/signupcheck/nickname";
+      Axios.post(url, { nickname: e.nickname })
+        .then((res) => {
+          if (res.data === "usenot") {
+            this.setState({
+              nicknameCkMsg: "",
+              nicknameCheck: this.state.nickname,
+            });
+          } else {
+            this.setState({
+              nicknameCkMsg: "이미 등록된 닉네임입니다.",
+            });
+          }
+        })
+        .catch((err) => {
+          console.log("닉네임 중복 체크 에러:" + err);
+        });
+    } else {
+      this.setState({
+        nicknameCkMsg: "",
+      });
+    }
   };
 
   //비밀번호 형식 확인
@@ -106,17 +103,17 @@ export default class SignUp extends Component {
     if (this.state.password !== "") {
       if (chkPw(this.state.password) === false) {
         this.setState({
-          possiblePwCk:
+          possiblePwCkMsg:
             "영문, 숫자, 특수문자를 혼합하여 8~20자 이내로 입력해주십시오.",
         });
       } else {
         this.setState({
-          possiblePwCk: "",
+          possiblePwCkMsg: "",
         });
       }
     } else {
       this.setState({
-        possiblePwCk: "",
+        possiblePwCkMsg: "",
       });
     }
 
@@ -124,18 +121,42 @@ export default class SignUp extends Component {
     if (this.state.rePassword !== "") {
       if (this.state.password === this.state.rePassword) {
         this.setState({
-          samePwCk: "",
+          samePwCkMsg: "",
           pwCheck: this.state.rePassword,
         });
       } else {
         this.setState({
-          samePwCk: "비밀번호가 일치하지 않습니다.",
+          samePwCkMsg: "비밀번호가 일치하지 않습니다.",
         });
       }
     } else {
       this.setState({
-        samePwCk: "",
+        samePwCkMsg: "",
       });
+    }
+  };
+
+  //회원 가입 시 정보 테이블에 저장
+  onSendUserInform = () => {
+    if (
+      this.state.emailCheck === this.state.email &&
+      this.state.nicknameCheck === this.state.nickname &&
+      this.state.pwCheck === this.state.password
+    ) {
+      const url = "http://localhost:9000/mechelin/signup";
+      Axios.post(url, {
+        email: this.state.email,
+        nickname: this.state.nickname,
+        password: this.state.password,
+      })
+        .then((res) => {
+          this.showMain();
+        })
+        .catch((err) => {
+          console.log("insert userInfom error:" + err);
+        });
+    } else {
+      alert("가입할 수 없습니다. 기입된 정보를 다시 확인해주세요.");
     }
   };
 
@@ -177,8 +198,16 @@ export default class SignUp extends Component {
                       fontSize: "13px",
                     }}
                   />
-                  <span style={{ color: "red", fontSize: "15px" }}>
-                    {this.state.emailCk}
+                  <span
+                    style={{
+                      color: "red",
+                      fontSize: "10px",
+                      fontWeight: "normal",
+                      textAlign: "center",
+                      margin: "10px auto",
+                    }}
+                  >
+                    {this.state.emailCkMsg}
                   </span>
                   <br />
                   <button
@@ -204,6 +233,7 @@ export default class SignUp extends Component {
                     type="text"
                     className="form-control"
                     onChange={this.handleInform.bind(this)}
+                    onKeyUp={this.checkNickname.bind(this)}
                     name="nickname"
                     placeholder="NICKNAME"
                     style={{
@@ -214,6 +244,17 @@ export default class SignUp extends Component {
                       fontSize: "13px",
                     }}
                   />
+                  <span
+                    style={{
+                      color: "red",
+                      fontSize: "10px",
+                      fontWeight: "normal",
+                      textAlign: "center",
+                      margin: "10px auto",
+                    }}
+                  >
+                    {this.state.nicknameCkMsg}
+                  </span>
                   <br />
                 </td>
               </tr>
@@ -234,8 +275,16 @@ export default class SignUp extends Component {
                       fontSize: "13px",
                     }}
                   />
-                  <span style={{ color: "red", fontSize: "15px" }}>
-                    {this.state.possiblePwCk}
+                  <span
+                    style={{
+                      color: "red",
+                      fontSize: "10px",
+                      fontWeight: "normal",
+                      textAlign: "center",
+                      margin: "10px auto",
+                    }}
+                  >
+                    {this.state.possiblePwCkMsg}
                   </span>
                   <br />
                 </td>
@@ -257,8 +306,16 @@ export default class SignUp extends Component {
                       fontSize: "13px",
                     }}
                   />
-                  <span style={{ color: "red", fontSize: "15px" }}>
-                    {this.state.samePwCk}
+                  <span
+                    style={{
+                      color: "red",
+                      fontSize: "10px",
+                      fontWeight: "normal",
+                      textAlign: "center",
+                      margin: "10px auto",
+                    }}
+                  >
+                    {this.state.samePwCkMsg}
                   </span>
                   <br />
                 </td>
