@@ -1,18 +1,18 @@
 import React, { Component } from "react";
 import { Route } from "react-router-dom";
-import SignUp from "components/signup/SignUp";
-import Login from "components/login/Login";
-import Welcome from "components/signup/Welcome";
-import Main from "components/main/Main";
-import FAQ from "components/customer_center/FAQ";
-import QnA from "components/customer_center/QnA";
-import MyPage from "components/mypage/MyPage";
-import WishList from "components/mypage/WishList";
-import NewsFeed from "components/post/NewsFeed";
-import Review from "components/post/Review";
-import ReviewAdd from "components/post/ReviewAdd";
-import Timeline from "components/post/Timeline";
-import Result from "components/search/Result";
+import SignUp from "pages/signup/SignUp";
+import Login from "pages/login/Login";
+import Welcome from "pages/signup/Welcome";
+import Main from "pages/main/Main";
+import FAQ from "pages/customer_center/FAQ";
+import QnA from "pages/customer_center/QnA";
+import MyPage from "pages/mypage/MyPage";
+import WishList from "pages/mypage/WishList";
+import NewsFeed from "pages/post/NewsFeed";
+import Review from "pages/post/Review";
+import ReviewAdd from "pages/post/ReviewAdd";
+import Timeline from "pages/post/Timeline";
+import Result from "pages/search/Result";
 
 import "components/css/allStyle.css";
 
