@@ -9,15 +9,8 @@ a {
   color: black;
   text-decoration: none;
 }
-ul {
-  padding: 0;
-}
 li {
   list-style: none;
-  display: inline-block;
-  width: "10vw";
-  height: "10vh";
-  border-right: "1px solid white";
 }
 @font-face {
   src: url("../font/BBTreeGR.woff") format("woff"),

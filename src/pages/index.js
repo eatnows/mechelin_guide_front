@@ -1,9 +1,1 @@
 export { default as Home } from "./Home";
-export { default as Login } from "components/login/Login";
-export { default as SignUp } from "components/signup/SignUp";
-export { default as Welcome } from "components/signup/Welcome";
-export { default as Main } from "components/main/Main";
-// export { default as  } from "components/";
-// export { default as  } from "components/";
-// export { default as  } from "components/";
-// export { default as  } from "components/";

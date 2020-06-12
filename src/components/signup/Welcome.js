@@ -41,7 +41,7 @@ class Welcome extends React.Component {
         </h4>
         <br />
         <br />
-        <NavLink to="/login">
+        <NavLink to="/Login">
           <button
             type="button"
             className="btn"
