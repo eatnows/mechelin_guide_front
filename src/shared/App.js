@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { Route, Switch } from "react-router-dom";
+import { Route } from "react-router-dom";
 //import { Home } from "pages";
 //import Menu from "components/Menu";
 import SignUp from "components/signup/SignUp";
@@ -12,12 +12,11 @@ class App extends Component {
   render() {
     return (
       <div>
-        <Switch>
-          <Route exact path="/login" component={Login} />
-          <Route exact path="/signup" component={SignUp} />
-          <Route exact path="/welcome" component={Welcome} />
-          <Route exact path="/" component={Main} />
-        </Switch>
+        <Route exact path="/" component={Main} />
+        <Route exact path="/login" component={Login} />
+        <Route exact path="/signup" component={SignUp} />
+        <Route exact path="/welcome" component={Welcome} />
+        <Route exact path="/mypage" component={MyPage} />
       </div>
     );
   }
