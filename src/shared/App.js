@@ -16,7 +16,6 @@ import Result from "components/search/Result";
 
 import "components/css/allStyle.css";
 import { reviewAdd } from "pages";
-import WriteFormMap2 from "../components/map/WriteFormMap copy";
 import WriteFormMap from "../components/map/WriteFormMap";
 
 class App extends Component {
@@ -36,7 +35,7 @@ class App extends Component {
         <Route exact path="/reviewadd" component={ReviewAdd} />
         <Route exact path="/timeline" component={Timeline} />
         <Route exact path="/result" component={Result} />
-        <Route exact path="/Reviewadd2" component={WriteFormMap2} />
+        <Route exact path="/Reviewadd2" component={WriteFormMap} />
       </div>
     );
   }

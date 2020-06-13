@@ -1,6 +1,8 @@
 /*global kakao*/
-import React, { useState, useEffect } from "react";
-import "./ss.css";
+import React, { useState, useEffect, createRef } from "react";
+import "./WriteFormMapStyle.css";
+import "@ant-design/icons";
+import LocationIcon from "images/location-02.png";
 
 const WriteFormMap2 = () => {
   const [latitude, setLatitude] = useState(37.505002);
@@ -10,7 +12,13 @@ const WriteFormMap2 = () => {
   const [infowindow, setInfoWindow] = useState("");
   const [map, setMap] = useState("");
   const [markers, setMarkers] = useState([]);
+  const [clickMarkers, setClickmarkers] = useState([]);
+  const [script, setScript] = useState("");
+  const [mapReference, setMyMap] = useState(() => createRef());
+  const [moveLatLon, setMoveLatLon] = useState("");
   useEffect(() => {
+    //let latitude = 37.505002;
+    //let longitude = 127.033617;
     /*
       GPS 받아오는 메소드
     */
@@ -18,6 +26,8 @@ const WriteFormMap2 = () => {
       if (navigator.geolocation) {
         navigator.geolocation.getCurrentPosition(
           (position) => {
+            //latitude = position.coords.latitude;
+            //longitude = position.coords.longitude;
             setLatitude(position.coords.latitude);
             setLongitude(position.coords.longitude);
           },
@@ -39,6 +49,7 @@ const WriteFormMap2 = () => {
     /*
      * 지도 받아오는 메소드
      */
+
     const script = document.createElement("script");
     script.async = true;
     script.src =
@@ -53,14 +64,55 @@ const WriteFormMap2 = () => {
         };
 
         // 지도를 생성합니다
-        setMap(new kakao.maps.Map(mapContainer, mapOption));
+        const createmap = new kakao.maps.Map(mapContainer, mapOption);
+
+        setMap(createmap);
         // 검색 결과 목록이나 마커를 클릭했을 때 장소명을 표출할 인포윈도우를 생성합니다
         setInfoWindow(new kakao.maps.InfoWindow({ zIndex: 1 }));
         // 장소 검색 객체를 생성합니다
         setPs(new kakao.maps.services.Places());
+
+        // 지도를 클릭한 위치에 표출할 마커입니다
+        // 지도 중심좌표에 마커를 생성합니다
+        setClickmarkers(
+          new kakao.maps.Marker({
+            position: createmap.getCenter(),
+          })
+        );
       });
     };
-  }, [latitude, longitude]);
+  }, []);
+
+  /*
+   * 클릭하면 핀 생성되는 메소드
+   * 지도를 클릭하면 마지막 파라미터로 넘어온 함수를 호출합니다
+   */
+  kakao.maps.event.addListener(map, "click", function (mouseEvent) {
+    // 클릭한 위도, 경도 정보를 가져옵니다
+    var latlng = mouseEvent.latLng;
+
+    // 마커 위치를 클릭한 위치로 옮깁니다
+    clickMarkers.setPosition(latlng);
+
+    var message = "클릭한 위치의 위도는 " + latlng.getLat() + " 이고, ";
+    message += "경도는 " + latlng.getLng() + " 입니다";
+
+    var resultDiv = document.getElementById("clickLatlng");
+    //resultDiv.innerHTML = message;
+  });
+
+  /*
+   * 좌표로 화면 부드럽게 이동
+   */
+  const panTo = () => {
+    // 이동할 위도 경도 위치를 생성합니다
+    setMoveLatLon(new kakao.maps.LatLng(latitude, longitude));
+
+    // 지도 중심을 부드럽게 이동시킵니다
+    // 만약 이동할 거리가 지도 화면보다 크면 부드러운 효과 없이 이동합니다
+
+    map.panTo(moveLatLon);
+  };
   /*
    * 키워드 검색 완료 시 호출되는 콜백함수 입니다
    */
@@ -272,12 +324,6 @@ const WriteFormMap2 = () => {
     infowindow.open(map, marker);
   };
 
-  const searchKeyUp = (e) => {
-    setKeyword(e.target.value);
-    if (e.key === "Enter") {
-      searchBtn();
-    }
-  };
   const searchBtn = () => {
     // 키워드로 장소를 검색합니다
     ps.keywordSearch(keyword, placesSearchCB);
@@ -311,7 +357,26 @@ const WriteFormMap2 = () => {
           overflow: " hidden",
         }}
       ></div>
-
+      <div
+        id="gps"
+        onClick={panTo}
+        onMouseDown={panTo}
+        style={{
+          width: "30px",
+          height: "30px",
+          position: "absolute",
+          top: "0",
+          right: "0",
+          bottom: "0",
+          zIndex: "1",
+          margin: "10px 10px 30px 0",
+          padding: "5px",
+          opacity: "0.8",
+        }}
+        className="bg_white"
+      >
+        <img src={LocationIcon} alt="" style={{ width: "20px" }} />
+      </div>
       <div id="menu_wrap" class="bg_white">
         <div class="option">
           <div>
