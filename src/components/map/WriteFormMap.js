@@ -51,6 +51,7 @@ const WriteFormMap2 = () => {
      */
 
     const script = document.createElement("script");
+    setScript(script);
     script.async = true;
     script.src =
       "https://dapi.kakao.com/v2/maps/sdk.js?appkey=본인앱키&autoload=false&libraries=services,clusterer,drawing";
@@ -87,20 +88,28 @@ const WriteFormMap2 = () => {
    * 클릭하면 핀 생성되는 메소드
    * 지도를 클릭하면 마지막 파라미터로 넘어온 함수를 호출합니다
    */
-  kakao.maps.event.addListener(map, "click", function (mouseEvent) {
-    // 클릭한 위도, 경도 정보를 가져옵니다
-    var latlng = mouseEvent.latLng;
+  const clickMap = () => {
+    script.onload = (() => {
+      kakao.maps.load(() => {
+        kakao.maps.event.addListener(map, "click", function (mouseEvent) {
+          // 클릭한 위도, 경도 정보를 가져옵니다
+          const latlng = mouseEvent.latLng;
 
-    // 마커 위치를 클릭한 위치로 옮깁니다
-    clickMarkers.setPosition(latlng);
+          // 마커 위치를 클릭한 위치로 옮깁니다
+          clickMarkers.setPosition(latlng);
 
-    var message = "클릭한 위치의 위도는 " + latlng.getLat() + " 이고, ";
-    message += "경도는 " + latlng.getLng() + " 입니다";
+          let message = "클릭한 위치의 위도는 " + latlng.getLat() + " 이고, ";
+          message += "경도는 " + latlng.getLng() + " 입니다";
+          console.log(message);
+          let resultDiv = document.getElementById("clickLatlng");
+          //resultDiv.innerHTML = message;
 
-    var resultDiv = document.getElementById("clickLatlng");
-    //resultDiv.innerHTML = message;
-  });
-
+          // 지도에 마커를 표시합니다
+          clickMarkers.setMap(map);
+        });
+      });
+    })();
+  };
   /*
    * 좌표로 화면 부드럽게 이동
    */
@@ -347,7 +356,7 @@ const WriteFormMap2 = () => {
   };
 
   return (
-    <div class="map_wrap">
+    <div className="map_wrap">
       <div
         id="map"
         style={{
@@ -356,6 +365,7 @@ const WriteFormMap2 = () => {
           position: "relative",
           overflow: " hidden",
         }}
+        onMouseUp={clickMap}
       ></div>
       <div
         id="gps"
@@ -377,8 +387,8 @@ const WriteFormMap2 = () => {
       >
         <img src={LocationIcon} alt="" style={{ width: "20px" }} />
       </div>
-      <div id="menu_wrap" class="bg_white">
-        <div class="option">
+      <div id="menu_wrap" className="bg_white">
+        <div className="option">
           <div>
             <form onSubmit={onSubmitBtn}>
               키워드 : <input type="text" id="keyword" size="15" />
