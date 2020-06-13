@@ -16,6 +16,9 @@ const WriteFormMap2 = () => {
   const [script, setScript] = useState("");
   const [mapReference, setMyMap] = useState(() => createRef());
   const [moveLatLon, setMoveLatLon] = useState("");
+  const [geoCoder, setGeoCoder] = useState("");
+  const [content, setContent] = useState("");
+  const [mouseLatlng, setMouseLatlng] = useState("");
   useEffect(() => {
     //let latitude = 37.505002;
     //let longitude = 127.033617;
@@ -63,7 +66,6 @@ const WriteFormMap2 = () => {
           center: new kakao.maps.LatLng(latitude, longitude),
           level: 3,
         };
-
         // 지도를 생성합니다
         const createmap = new kakao.maps.Map(mapContainer, mapOption);
 
@@ -72,6 +74,9 @@ const WriteFormMap2 = () => {
         setInfoWindow(new kakao.maps.InfoWindow({ zIndex: 1 }));
         // 장소 검색 객체를 생성합니다
         setPs(new kakao.maps.services.Places());
+
+        // 주소-좌표 변환 객체를 생성합니다
+        setGeoCoder(new kakao.maps.services.Geocoder());
 
         // 지도를 클릭한 위치에 표출할 마커입니다
         // 지도 중심좌표에 마커를 생성합니다
@@ -83,32 +88,72 @@ const WriteFormMap2 = () => {
       });
     };
   }, []);
-
   /*
    * 클릭하면 핀 생성되는 메소드
    * 지도를 클릭하면 마지막 파라미터로 넘어온 함수를 호출합니다
    */
   const clickMap = () => {
+    console.log("11");
     script.onload = (() => {
+      console.log("22");
       kakao.maps.load(() => {
-        kakao.maps.event.addListener(map, "click", function (mouseEvent) {
-          // 클릭한 위도, 경도 정보를 가져옵니다
-          const latlng = mouseEvent.latLng;
+        console.log("33");
+        kakao.maps.event.addListener(map, "click", function clickEvent(
+          mouseEvent
+        ) {
+          console.log("ddd");
+          // // 클릭한 위도, 경도 정보를 가져옵니다
+          // const latlng = mouseEvent.latLng;
 
-          // 마커 위치를 클릭한 위치로 옮깁니다
-          clickMarkers.setPosition(latlng);
+          // // 마커 위치를 클릭한 위치로 옮깁니다
+          // clickMarkers.setPosition(latlng);
 
-          let message = "클릭한 위치의 위도는 " + latlng.getLat() + " 이고, ";
-          message += "경도는 " + latlng.getLng() + " 입니다";
-          console.log(message);
-          let resultDiv = document.getElementById("clickLatlng");
-          //resultDiv.innerHTML = message;
+          // let message = "클릭한 위치의 위도는 " + latlng.getLat() + " 이고, ";
+          // message += "경도는 " + latlng.getLng() + " 입니다";
+          // console.log(message);
+          // let resultDiv = document.getElementById("clickLatlng");
+          // //resultDiv.innerHTML = message;
 
-          // 지도에 마커를 표시합니다
-          clickMarkers.setMap(map);
+          // // 지도에 마커를 표시합니다
+          // clickMarkers.setMap(map);
+          searchDetailAddrFromCoords(mouseEvent.latLng, (result, status) => {
+            console.log(mouseEvent.latLng);
+            if (status === kakao.maps.services.Status.OK) {
+              let detailAddr = !!result[0].road_address
+                ? "<div>도로명주소 : " +
+                  result[0].road_address.address_name +
+                  "</div>"
+                : "";
+              detailAddr +=
+                "<div>지번 주소 : " + result[0].address.address_name + "</div>";
+
+              let content =
+                '<div class="bAddr">' +
+                '<span class="title">상호명 : </span><br />' +
+                '<input type="text" name="placeName" placeholder="상호명을 입력해주세요."/>&nbsp;&nbsp;<button type="button">입력</button>' +
+                detailAddr +
+                "</div>";
+
+              // 마커를 클릭한 위치에 표시합니다
+              clickMarkers.setPosition(mouseEvent.latLng);
+              clickMarkers.setMap(map);
+
+              // 인포윈도우에 클릭한 위치에 대한 법정동 상세 주소정보를 표시합니다
+              infowindow.setContent(content);
+              infowindow.open(map, clickMarkers);
+            }
+          });
+          kakao.maps.event.removeListener(map, "click", clickEvent);
         });
       });
     })();
+  };
+  /*
+   * 좌표로 주소 요청
+   */
+  const searchDetailAddrFromCoords = (coords, callback) => {
+    // 좌표로 법정동 상세 주소 정보를 요청합니다
+    geoCoder.coord2Address(coords.getLng(), coords.getLat(), callback);
   };
   /*
    * 좌표로 화면 부드럽게 이동

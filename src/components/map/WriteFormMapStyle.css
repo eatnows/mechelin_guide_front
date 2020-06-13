@@ -150,3 +150,12 @@
   cursor: default;
   color: #777;
 }
+/*
+지도를 클릭했을때 나오는 맛집 정보칸
+*/
+.bAddr {
+  padding: 5px;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: nowrap;
+}
