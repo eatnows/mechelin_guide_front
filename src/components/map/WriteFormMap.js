@@ -65,7 +65,7 @@ const WriteFormMap2 = () => {
     setScript(script);
     script.async = true;
     script.src =
-      "https://dapi.kakao.com/v2/maps/sdk.js?appkey=본인앱키&autoload=false&libraries=services,clusterer,drawing";
+      "https://dapi.kakao.com/v2/maps/sdk.js?appkey=본인앱키3&autoload=false&libraries=services,clusterer,drawing";
     document.head.appendChild(script);
     script.onload = () => {
       kakao.maps.load(() => {
@@ -125,7 +125,6 @@ const WriteFormMap2 = () => {
                 setAddress(result[0].address.address_name);
               }
 
-              //let content = `<div class="bAddr"><form onsubmit=${}><p align='center' style='font-size: 12pt;'>맛집 등록</p><span class="title">상호명 : </span><br /><input type="text" name="placeName" placeholder="상호명을 입력해주세요." ref="placeName"/>&nbsp;&nbsp;<button type="button" onClick=${+onClickName+`>입력</button>`+detailAddr+`</form></div>`;
               let content = '<div class="bAddr">' + detailAddr + "</div>";
 
               // 마커를 클릭한 위치에 표시합니다
@@ -264,6 +263,17 @@ const WriteFormMap2 = () => {
         });
         itemEl.onmouseover = () => {
           displayInfowindow(marker, title);
+          for (let j = 0; j < xx.length; j++) {
+            if (place_Name[j].placesName === title) {
+              console.log(xx[j].placesX);
+              setMoveLatLon(
+                new kakao.maps.LatLng(xx[j].placesX, yy[j].placesY)
+              );
+            }
+          }
+
+          // 지도 중심을 부드럽게 이동시킵니다
+          // 만약 이동할 거리가 지도 화면보다 크면 부드러운 효과 없이 이동합니다
         };
 
         itemEl.onclick = () => {
@@ -274,6 +284,7 @@ const WriteFormMap2 = () => {
               setLongitudeY(yy[j].placesY);
               setPlaceName(place_Name[j].placesName);
               setAddress(road_Address_Name[j].placesAddress);
+              map.panTo(moveLatLon);
             }
           }
         };
@@ -389,7 +400,7 @@ const WriteFormMap2 = () => {
   // 검색결과 목록 또는 마커를 클릭했을 때 호출되는 함수입니다
   // 인포윈도우에 장소명을 표시합니다
   const displayInfowindow = (marker, title) => {
-    var content = '<div style="padding:5px;z-index:1;">' + title + "</div>";
+    let content = '<div style="padding:5px;z-index:1;">' + title + "</div>";
 
     infowindow.setContent(content);
     infowindow.open(map, marker);
