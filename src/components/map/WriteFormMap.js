@@ -101,16 +101,11 @@ const WriteFormMap2 = () => {
    * 지도를 클릭하면 마지막 파라미터로 넘어온 함수를 호출합니다
    */
   const clickMap = () => {
-    console.log("11");
     script.onload = (() => {
-      console.log("22");
       kakao.maps.load(() => {
-        console.log("33");
         kakao.maps.event.addListener(map, "click", function clickEvent(
           mouseEvent
         ) {
-          console.log("ddd");
-
           searchDetailAddrFromCoords(mouseEvent.latLng, (result, status) => {
             setLatitudeX(mouseEvent.latLng.Ha);
             setLongitudeY(mouseEvent.latLng.Ga);
@@ -129,10 +124,6 @@ const WriteFormMap2 = () => {
               } else {
                 setAddress(result[0].address.address_name);
               }
-
-              const onClickName1 = () => {
-                console.log("제발");
-              };
 
               //let content = `<div class="bAddr"><form onsubmit=${}><p align='center' style='font-size: 12pt;'>맛집 등록</p><span class="title">상호명 : </span><br /><input type="text" name="placeName" placeholder="상호명을 입력해주세요." ref="placeName"/>&nbsp;&nbsp;<button type="button" onClick=${+onClickName+`>입력</button>`+detailAddr+`</form></div>`;
               let content = '<div class="bAddr">' + detailAddr + "</div>";
@@ -257,8 +248,6 @@ const WriteFormMap2 = () => {
       setRoad_Address_Name([...road_Address_Name, placesAddress]);
       place_Name.push({ placesName });
       setPlace_Name([...place_Name, placesName]);
-      // console.log(places[i].place_url);
-      // console.log(places[i]);
       // 검색된 장소 위치를 기준으로 지도 범위를 재설정하기위해
       // LatLngBounds 객체에 좌표를 추가합니다
       bounds.extend(placePosition);
@@ -281,10 +270,6 @@ const WriteFormMap2 = () => {
           clickMarkers.setMap(null);
           for (let j = 0; j < xx.length; j++) {
             if (place_Name[j].placesName === title) {
-              console.log(xx[j].placesX);
-              console.log(yy[j].placesY);
-              console.log(place_Name[j].placesName);
-              console.log(road_Address_Name[j].placesAddress);
               setLatitudeX(xx[j].placesX);
               setLongitudeY(yy[j].placesY);
               setPlaceName(place_Name[j].placesName);
@@ -435,10 +420,6 @@ const WriteFormMap2 = () => {
    */
   const onClickName = (e) => {
     // 부모 컴포넌트에 값을 넘겨줄때 사용하자
-    console.log(placeName);
-    console.log(address);
-    console.log(latitudeX);
-    console.log(longitudeY);
   };
 
   /*
