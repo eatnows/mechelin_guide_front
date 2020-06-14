@@ -14,11 +14,19 @@ const WriteFormMap2 = () => {
   const [markers, setMarkers] = useState([]);
   const [clickMarkers, setClickmarkers] = useState([]);
   const [script, setScript] = useState("");
-  const [mapReference, setMyMap] = useState(() => createRef());
+  const [addPlaceName, setaddPlaceName] = useState(() => createRef());
+  const [placeName, setPlaceName] = useState("");
   const [moveLatLon, setMoveLatLon] = useState("");
   const [geoCoder, setGeoCoder] = useState("");
   const [content, setContent] = useState("");
   const [mouseLatlng, setMouseLatlng] = useState("");
+  const [address, setAddress] = useState("");
+  const [latitudeX, setLatitudeX] = useState("");
+  const [longitudeY, setLongitudeY] = useState("");
+  const [xx, setXx] = useState([]);
+  const [yy, setYy] = useState([]);
+  const [place_Name, setPlace_Name] = useState([]);
+  const [road_Address_Name, setRoad_Address_Name] = useState([]);
   useEffect(() => {
     //let latitude = 37.505002;
     //let longitude = 127.033617;
@@ -102,22 +110,11 @@ const WriteFormMap2 = () => {
           mouseEvent
         ) {
           console.log("ddd");
-          // // 클릭한 위도, 경도 정보를 가져옵니다
-          // const latlng = mouseEvent.latLng;
 
-          // // 마커 위치를 클릭한 위치로 옮깁니다
-          // clickMarkers.setPosition(latlng);
-
-          // let message = "클릭한 위치의 위도는 " + latlng.getLat() + " 이고, ";
-          // message += "경도는 " + latlng.getLng() + " 입니다";
-          // console.log(message);
-          // let resultDiv = document.getElementById("clickLatlng");
-          // //resultDiv.innerHTML = message;
-
-          // // 지도에 마커를 표시합니다
-          // clickMarkers.setMap(map);
           searchDetailAddrFromCoords(mouseEvent.latLng, (result, status) => {
-            console.log(mouseEvent.latLng);
+            setLatitudeX(mouseEvent.latLng.Ha);
+            setLongitudeY(mouseEvent.latLng.Ga);
+            setPlaceName("");
             if (status === kakao.maps.services.Status.OK) {
               let detailAddr = !!result[0].road_address
                 ? "<div>도로명주소 : " +
@@ -127,12 +124,18 @@ const WriteFormMap2 = () => {
               detailAddr +=
                 "<div>지번 주소 : " + result[0].address.address_name + "</div>";
 
-              let content =
-                '<div class="bAddr">' +
-                '<span class="title">상호명 : </span><br />' +
-                '<input type="text" name="placeName" placeholder="상호명을 입력해주세요."/>&nbsp;&nbsp;<button type="button">입력</button>' +
-                detailAddr +
-                "</div>";
+              if (!!result[0].road_address) {
+                setAddress(result[0].road_address.address_name);
+              } else {
+                setAddress(result[0].address.address_name);
+              }
+
+              const onClickName1 = () => {
+                console.log("제발");
+              };
+
+              //let content = `<div class="bAddr"><form onsubmit=${}><p align='center' style='font-size: 12pt;'>맛집 등록</p><span class="title">상호명 : </span><br /><input type="text" name="placeName" placeholder="상호명을 입력해주세요." ref="placeName"/>&nbsp;&nbsp;<button type="button" onClick=${+onClickName+`>입력</button>`+detailAddr+`</form></div>`;
+              let content = '<div class="bAddr">' + detailAddr + "</div>";
 
               // 마커를 클릭한 위치에 표시합니다
               clickMarkers.setPosition(mouseEvent.latLng);
@@ -143,6 +146,7 @@ const WriteFormMap2 = () => {
               infowindow.open(map, clickMarkers);
             }
           });
+          //add한 이벤트 리스너 삭제
           kakao.maps.event.removeListener(map, "click", clickEvent);
         });
       });
@@ -240,11 +244,24 @@ const WriteFormMap2 = () => {
       var placePosition = new kakao.maps.LatLng(places[i].y, places[i].x),
         marker = addMarker(placePosition, i),
         itemEl = getListItem(i, places[i]); // 검색 결과 항목 Element를 생성합니다
+      let placesX = places[i].y;
+      let placesY = places[i].x;
+      let placesAddress = places[i].road_address_name;
+      let placesName = places[i].place_name;
+      xx.push({ placesX });
+      setXx([...xx, placesX]);
+      yy.push({ placesY });
+      setYy([...yy, placesY]);
 
+      road_Address_Name.push({ placesAddress });
+      setRoad_Address_Name([...road_Address_Name, placesAddress]);
+      place_Name.push({ placesName });
+      setPlace_Name([...place_Name, placesName]);
+      // console.log(places[i].place_url);
+      // console.log(places[i]);
       // 검색된 장소 위치를 기준으로 지도 범위를 재설정하기위해
       // LatLngBounds 객체에 좌표를 추가합니다
       bounds.extend(placePosition);
-
       // 마커와 검색결과 항목에 mouseover 했을때
       // 해당 장소에 인포윈도우에 장소명을 표시합니다
       // mouseout 했을 때는 인포윈도우를 닫습니다
@@ -256,9 +273,24 @@ const WriteFormMap2 = () => {
         kakao.maps.event.addListener(marker, "mouseout", () => {
           infowindow.close();
         });
-
         itemEl.onmouseover = () => {
           displayInfowindow(marker, title);
+        };
+
+        itemEl.onclick = () => {
+          clickMarkers.setMap(null);
+          for (let j = 0; j < xx.length; j++) {
+            if (place_Name[j].placesName === title) {
+              console.log(xx[j].placesX);
+              console.log(yy[j].placesY);
+              console.log(place_Name[j].placesName);
+              console.log(road_Address_Name[j].placesAddress);
+              setLatitudeX(xx[j].placesX);
+              setLongitudeY(yy[j].placesY);
+              setPlaceName(place_Name[j].placesName);
+              setAddress(road_Address_Name[j].placesAddress);
+            }
+          }
         };
 
         itemEl.onmouseout = () => {
@@ -392,6 +424,24 @@ const WriteFormMap2 = () => {
   };
 
   /*
+   * 상호명 입력칸
+   */
+  const onChangeName = (e) => {
+    let name = e.target.value;
+    setPlaceName(name);
+  };
+  /*
+   * 상호명 입력 버튼
+   */
+  const onClickName = (e) => {
+    // 부모 컴포넌트에 값을 넘겨줄때 사용하자
+    console.log(placeName);
+    console.log(address);
+    console.log(latitudeX);
+    console.log(longitudeY);
+  };
+
+  /*
    * sumit 버튼
    */
   const onSubmitBtn = (e) => {
@@ -410,7 +460,7 @@ const WriteFormMap2 = () => {
           position: "relative",
           overflow: " hidden",
         }}
-        onMouseUp={clickMap}
+        onMouseDown={clickMap}
       ></div>
       <div
         id="gps"
@@ -432,11 +482,52 @@ const WriteFormMap2 = () => {
       >
         <img src={LocationIcon} alt="" style={{ width: "20px" }} />
       </div>
+      <div
+        id="addPlaceName"
+        style={{
+          width: "220px",
+          height: "100px",
+          position: "absolute",
+          right: "0",
+          bottom: "0",
+          zIndex: "1",
+          margin: "10px 10px 30px 0",
+          padding: "5px",
+          opacity: "0.8",
+        }}
+        className="bg_white"
+      >
+        <p align="center" style={{ fontSize: "12pt" }}>
+          맛집등록
+        </p>
+        상호명 :&nbsp;
+        <br />
+        <input
+          type="text"
+          name="placeName"
+          ref={addPlaceName}
+          onChange={onChangeName}
+          value={placeName}
+        />
+        &nbsp;
+        <button type="button" onClick={onClickName}>
+          입력
+        </button>
+        <br />
+        주소 : <br />
+        {address}
+      </div>
       <div id="menu_wrap" className="bg_white">
         <div className="option">
           <div>
             <form onSubmit={onSubmitBtn}>
-              키워드 : <input type="text" id="keyword" size="15" />
+              키워드 :{" "}
+              <input
+                type="text"
+                id="keyword"
+                size="15"
+                placeholder="지역명, 키워드"
+              />
               <button type="submit">검색하기</button>
             </form>
           </div>
