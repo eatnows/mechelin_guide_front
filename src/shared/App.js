@@ -7,6 +7,8 @@ import View from "pages/main/View";
 import FullMap from "pages/main/FullMap";
 
 import "components/css/allStyle.css";
+import { reviewAdd } from "pages";
+import WriteFormMap from "../components/map/WriteFormMap";
 
 class App extends Component {
   render() {
