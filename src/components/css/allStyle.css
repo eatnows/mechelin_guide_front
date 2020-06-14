@@ -4,6 +4,9 @@
   font-family: "Nanum Gothic Coding", monospace;
   font-weight: 700;
 }
+body {
+  overflow: hidden;
+}
 a {
   cursor: pointer;
   color: black;
