@@ -1,7 +1,6 @@
 /*global kakao*/
 import React, { useState, useEffect, createRef } from "react";
 import "./WriteFormMapStyle.css";
-import "@ant-design/icons";
 import LocationIcon from "images/location-02.png";
 
 const WriteFormMap2 = () => {

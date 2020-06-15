@@ -5,7 +5,6 @@ import Login from "pages/login/Login";
 import Welcome from "pages/signup/Welcome";
 import View from "pages/main/View";
 import FullMap from "pages/main/FullMap";
-
 import "components/css/allStyle.css";
 import { reviewAdd } from "pages";
 import WriteFormMap from "../components/map/WriteFormMap";

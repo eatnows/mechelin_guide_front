@@ -163,7 +163,8 @@ class View extends React.Component {
           <div
             style={{
               position: "absolute",
-              left: "40%",
+              left: "50%",
+              transform: "translateX(-50%)",
               height: "5vh",
               lineHeight: "5vh",
               clear: "both",

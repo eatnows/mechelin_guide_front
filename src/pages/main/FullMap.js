@@ -1,14 +1,21 @@
 import React from "react";
-import star from "images/star.png";
+
 import ReactQuill, { Quill } from "react-quill";
 import { ImageUpload } from "quill-image-upload";
 import "react-quill/dist/quill.snow.css";
+//import e from "cors";
+import StarRate from "./StarRate";
+
 Quill.register("modules/imageUpload", ImageUpload);
 
 class FullMap extends React.Component {
   state = {
     section: false,
     text: "",
+    sIdx: 0,
+    rating: 0,
+    cacheIdx: 0,
+    cacheRating: 0,
   };
 
   modules = {
@@ -82,6 +89,33 @@ class FullMap extends React.Component {
   ];
 
   changeEditor = (e) => this.setState({ text: e });
+  onMouseOver = (e, i) => {
+    e.persist();
+    let offsetX = e.nativeEvent.offsetX;
+    let clientX = e.target.clientWidth;
+
+    if (offsetX > clientX / 2) {
+      let value = 2;
+      this.setState({
+        sIdx: i,
+        rating: value,
+      });
+    } else {
+      let value = 1;
+      this.setState({
+        sIdx: i,
+        rating: value,
+      });
+    }
+  };
+  handleChange = (i, v) => {
+    this.setState({
+      sIdx: 0,
+      rating: 0,
+      cacheIdx: i,
+      cacheRating: v,
+    });
+  };
   render() {
     const seroStyle = {
       width: "5vw",
@@ -183,70 +217,37 @@ class FullMap extends React.Component {
                     width: "10vw",
                     float: "left",
                     height: "5vh",
-                    marginTop: "1.1vh",
+                    marginTop: "0.5vh",
                     marginLeft: "0.5vw",
                   }}
                 >
                   <div
+                    className="star"
                     style={{
-                      width: "3vw",
+                      clear: "both",
+                      display: "inline-block",
+                      width: "7vw",
+                    }}
+                  >
+                    <StarRate
+                      onMouseOver={this.onMouseOver.bind(this)}
+                      onChange={this.handleChange.bind(this)}
+                      sIdx={this.state.sIdx}
+                      rating={this.state.rating}
+                      cacheIdx={this.state.cacheIdx}
+                      cacheRating={this.state.cacheRating}
+                      score={this.state.score}
+                    />
+                  </div>
+                  <div
+                    style={{
+                      width: "2vw",
+                      lineHeight: "5vh",
                       display: "inline-block",
                     }}
                   >
-                    평점
-                  </div>
-                  <div
-                    className="star"
-                    style={{ display: "inline-block", width: "7vw" }}
-                  >
-                    <img
-                      src={star}
-                      alt=""
-                      style={{
-                        width: "1.2vw",
-                        height: "2.3vh",
-                      }}
-                    />
-                    <img
-                      src={star}
-                      alt=""
-                      style={{
-                        width: "1.2vw",
-                        height: "2.3vh",
-
-                        marginLeft: "0.1vw",
-                      }}
-                    />
-                    <img
-                      src={star}
-                      alt=""
-                      style={{
-                        width: "1.2vw",
-                        height: "2.3vh",
-
-                        marginLeft: "0.1vw",
-                      }}
-                    />
-                    <img
-                      src={star}
-                      alt=""
-                      style={{
-                        width: "1.2vw",
-                        height: "2.3vh",
-
-                        marginLeft: "0.1vw",
-                      }}
-                    />
-                    <img
-                      src={star}
-                      alt=""
-                      style={{
-                        width: "1.2vw",
-                        height: "2.3vh",
-
-                        marginLeft: "0.1vw",
-                      }}
-                    />
+                    {" "}
+                    점
                   </div>
                 </div>
                 <br />

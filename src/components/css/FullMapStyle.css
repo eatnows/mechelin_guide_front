@@ -1,0 +1,33 @@
+.starRate {
+  background: url("../../images/star-empty.svg");
+  width: 1vw;
+  height: 2vh;
+  background-size: 100%;
+  display: inline-block;
+  vertical-align: -7px;
+  margin: 0 2px;
+  cursor: pointer;
+  vertical-align: top;
+}
+.starRateisSelected {
+  background: url("../../images/star-full.svg");
+  width: 1vw;
+  height: 2vh;
+  background-size: 100%;
+  display: inline-block;
+  vertical-align: -7px;
+  margin: 0 2px;
+  cursor: pointer;
+  vertical-align: top;
+}
+.starRateisHalfSelected {
+  background: url("../../images/star-half.svg");
+  width: 1vw;
+  height: 2vh;
+  background-size: 100%;
+  display: inline-block;
+  vertical-align: -7px;
+  margin: 0 2px;
+  cursor: pointer;
+  vertical-align: top;
+}
