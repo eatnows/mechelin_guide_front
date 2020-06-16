@@ -8,11 +8,12 @@ class Login extends Component {
   constructor(props) {
     super(props);
     this.state = {
+      checked: false,
       email: "",
       emailCkMsg: "",
+      password: "",
     };
   }
-
   //값이 바뀌면 state 값을 변경
   handleInform = (e) => {
     this.setState({
@@ -21,10 +22,21 @@ class Login extends Component {
   };
 
   //이메일, 비밀번호 체크 후 로그인
-  onSubmit = (e) => {
-    const url = "http://localhost:9000/mechelin/login";
+  userLogin = (e) => {
+    e.preventDefault();
+
+    if (this.state.checked) {
+      this.props.onChecked({
+        checked: true,
+      });
+    }
+    const url =
+      "http://localhost:9000/mechelin/login?email=" +
+      this.state.email +
+      "&password=" +
+      this.refs.password.value;
     axios
-      .post(url, { email: e.email, password: e.password })
+      .post(url)
       .then((res) => {
         if (res.data === "pwfalse" || res.data === "mailfalse") {
           this.setState({
@@ -32,6 +44,8 @@ class Login extends Component {
               "가입하지 않은 이메일 주소이거나, 틀린 비밀번호를 입력하였습니다.",
           });
         } else {
+          localStorage.setItem("email", this.state.email);
+          localStorage.setItem("password", this.refs.password.value);
           this.props.history.push("/");
         }
       })
@@ -40,10 +54,22 @@ class Login extends Component {
       });
   };
 
+  ChangeCheck = () => {
+    if (this.state.checked === false) {
+      this.setState({
+        checked: true,
+      });
+    } else {
+      this.setState({
+        checked: false,
+      });
+    }
+  };
+
   render() {
     return (
       <div>
-        <form onSubmit={this.onSubmit.bind(this)}>
+        <form onSubmit={this.userLogin.bind(this)}>
           <table align="center" style={{ width: "200px", marginTop: "30px" }}>
             <tbody>
               <tr>
@@ -64,8 +90,11 @@ class Login extends Component {
                 <td>
                   <span style={{ float: "right", marginTop: "8px" }}>
                     <input
+                      className="loginck"
                       type="checkbox"
                       style={{ width: "13px", height: "13px" }}
+                      onChange={this.ChangeCheck.bind(this)}
+                      checked={this.state.checked}
                     />
                     <span
                       style={{
@@ -83,6 +112,7 @@ class Login extends Component {
                     type="text"
                     className="form-control"
                     placeholder="EMAIL"
+                    ref="email"
                     name="email"
                     onChange={this.handleInform.bind(this)}
                     style={{
@@ -113,6 +143,7 @@ class Login extends Component {
                     type="password"
                     className="form-control"
                     placeholder="PASSWORD"
+                    ref="password"
                     style={{
                       width: "250px",
                       outline: "none",
@@ -136,23 +167,25 @@ class Login extends Component {
                   >
                     비밀번호를 잊으셨나요?
                   </div>
-                  <button
-                    type="button"
-                    className="btn btn-md"
-                    style={{
-                      width: "80px",
-                      height: "30px",
-                      fontSize: "10px",
-                      padding: "0",
-                      marginTop: "0.5vh",
-                      float: "right",
-                      border: "1px solid rgba(245,145,45)",
-                      backgroundColor: "white",
-                      color: "rgba(245,145,45)",
-                    }}
-                  >
-                    비밀번호 찾기
-                  </button>
+                  <NavLink to="/changepwd">
+                    <button
+                      type="button"
+                      className="btn btn-md"
+                      style={{
+                        width: "80px",
+                        height: "30px",
+                        fontSize: "10px",
+                        padding: "0",
+                        marginTop: "0.5vh",
+                        float: "right",
+                        border: "1px solid rgba(245,145,45)",
+                        backgroundColor: "white",
+                        color: "rgba(245,145,45)",
+                      }}
+                    >
+                      비밀번호 찾기
+                    </button>
+                  </NavLink>
                 </td>
               </tr>
               <tr>

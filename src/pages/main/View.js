@@ -11,7 +11,18 @@ import Timeline from "pages/post/Timeline";
 import Result from "pages/search/Result";
 
 class View extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      check: this.props.checked,
+    };
+  }
   state = { main: true, section: false, bar: false };
+  componentWillMount() {
+    if (!this.state.check) {
+      this.props.history.push("/login");
+    }
+  }
   render() {
     const garoStyle = {
       display: "inline-block",

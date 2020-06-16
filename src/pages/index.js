@@ -1,5 +1,6 @@
 export { default as Home } from "./Home";
 export { default as Login } from "pages/login/Login";
+export { default as ChangePwd } from "pages/login/ChangePwd";
 export { default as SignUp } from "pages/signup/SignUp";
 export { default as Welcome } from "pages/signup/Welcome";
 export { default as View } from "pages/main/View";

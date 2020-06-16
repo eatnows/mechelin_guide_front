@@ -1,5 +1,6 @@
 import React, { Component } from "react";
 import Axios from "axios";
+import { timers } from "jquery";
 
 export default class SignUp extends Component {
   constructor(props) {
@@ -7,15 +8,17 @@ export default class SignUp extends Component {
     this.state = {
       email: "",
       emailCkMsg: "",
-      emailCheck: "",
       nickname: "",
       nicknameCkMsg: "",
-      nicknameCheck: "",
       password: "",
       rePassword: "",
       possiblePwCkMsg: "",
       samePwCkMsg: "",
-      pwCheck: "",
+      clickAuthBtn: false,
+      emailSuccess: false,
+      nicknameSuccess: false,
+      pwSuccess: false,
+      samePwSuccess: false,
     };
   }
 
@@ -27,7 +30,7 @@ export default class SignUp extends Component {
   };
 
   //이메일 형식 확인
-  checkEmail = (e) => {
+  checkEmail = () => {
     //이메일 유효성검사(영문,숫자,-_. 혼합 ID @ domain 주소)
     const chkEmail = (str) => {
       var standard = /^[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*@[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*.[a-zA-Z]{2,3}$/i;
@@ -40,13 +43,15 @@ export default class SignUp extends Component {
         });
       } else {
         //형식이 맞으면 중복 체크
-        const url = "http://localhost:9000/mechelin/signupcheck/email";
-        Axios.post(url, { email: e.email })
+        const url =
+          "http://localhost:9000/mechelin/signupcheck/email?email=" +
+          this.state.email;
+        Axios.get(url)
           .then((res) => {
-            if (res.data === "usenot") {
+            if (res.data === "usethis") {
               this.setState({
-                emailCkMsg: "",
-                emailCheck: this.state.email,
+                emailCkMsg: "사용 가능한 이메일입니다.",
+                emailSuccess: true,
               });
             } else {
               this.setState({
@@ -64,17 +69,44 @@ export default class SignUp extends Component {
       });
     }
   };
-
+  //이메일 인증 버튼 클릭시 실행되는 메소드
+  sendMail = () => {
+    if (this.state.email !== "" && this.state.emailCkMsg === "") {
+      const url =
+        "http://localhost:9000/mechelin/sendmail/email=" + this.state.email;
+      Axios.get(url)
+        .then((res) => {
+          this.setState({
+            clickAuthBtn: true,
+          });
+        })
+        .catch((err) => {
+          console.log("유저 메일 주소 전달 오류:" + err);
+        });
+    } else if (this.state.email === "" && this.state.emailCkMsg === "") {
+      this.setState({
+        emailCkMsg: "이메일을 입력해주세요.",
+      });
+    }
+  };
+  //이메일 입력창 변경시 버튼 활성화
+  changeBtn = () => {
+    this.setState({
+      clickAuthBtn: false,
+    });
+  };
   //닉네임 중복 체크
   checkNickname = (e) => {
     if (this.state.nickname !== "") {
-      const url = "http://localhost:9000/mechelin/signupcheck/nick";
-      Axios.post(url, { nickname: e.nickname })
+      const url =
+        "http://localhost:9000/mechelin/signupcheck/nick?nickname=" +
+        this.state.nickname;
+      Axios.get(url)
         .then((res) => {
-          if (res.data === "usenot") {
+          if (res.data === "usethis") {
             this.setState({
-              nicknameCkMsg: "",
-              nicknameCheck: this.state.nickname,
+              nicknameCkMsg: "사용 가능한 닉네임입니다.",
+              nicknameSuccess: true,
             });
           } else {
             this.setState({
@@ -108,7 +140,8 @@ export default class SignUp extends Component {
         });
       } else {
         this.setState({
-          possiblePwCkMsg: "",
+          possiblePwCkMsg: "사용 가능한 비밀번호입니다.",
+          pwSuccess: true,
         });
       }
     } else {
@@ -121,8 +154,8 @@ export default class SignUp extends Component {
     if (this.state.rePassword !== "") {
       if (this.state.password === this.state.rePassword) {
         this.setState({
-          samePwCkMsg: "",
-          pwCheck: this.state.rePassword,
+          samePwCkMsg: "비밀번호가 일치합니다.",
+          samePwSuccess: true,
         });
       } else {
         this.setState({
@@ -137,33 +170,46 @@ export default class SignUp extends Component {
   };
 
   //회원 가입 시 정보 테이블에 저장
-  onSendUserInform = () => {
-    if (
-      this.state.emailCheck === this.state.email &&
-      this.state.nicknameCheck === this.state.nickname &&
-      this.state.pwCheck === this.state.password
-    ) {
-      const url = "http://localhost:9000/mechelin/signup";
-      Axios.post(url, {
-        email: this.state.email,
-        nickname: this.state.nickname,
-        password: this.state.password,
+  sendUserInform = (e) => {
+    e.preventDefault();
+    const url = "http://localhost:9000/sendmail/completeauth?";
+    Axios.get(url)
+      .then((res) => {
+        if (res.data === "success") {
+          if (
+            this.state.emailSuccess &&
+            this.state.nicknameSuccess &&
+            this.state.pwSuccess
+          ) {
+            const url = "http://localhost:9000/mechelin/signup";
+            Axios.post(url, {
+              email: this.state.email,
+              nickname: this.state.nickname,
+              password: this.state.password,
+            })
+              .then((res) => {
+                this.props.history.push("/welcome");
+              })
+              .catch((err) => {
+                console.log("insert userInfom error:" + err);
+              });
+          } else {
+            alert("가입할 수 없습니다. 기입하신 정보를 다시 확인해주세요.");
+          }
+        } else {
+          alert("이메일 인증이 완료되지 않았습니다.");
+          return;
+        }
       })
-        .then((res) => {
-          this.props.history.push("/welcome");
-        })
-        .catch((err) => {
-          console.log("insert userInfom error:" + err);
-        });
-    } else {
-      alert("가입할 수 없습니다. 기입된 정보를 다시 확인해주세요.");
-    }
+      .catch((err) => {
+        console.log("이메일 인증 에러:" + err);
+      });
   };
 
   render() {
     return (
       <div>
-        <form onSubmit={this.onSendUserInform.bind(this)}>
+        <form onSubmit={this.sendUserInform.bind(this)}>
           <table align="center" style={{ width: "200px", marginTop: "100px" }}>
             <tbody>
               <tr>
@@ -188,8 +234,10 @@ export default class SignUp extends Component {
                     className="form-control"
                     onChange={this.handleInform.bind(this)}
                     onKeyUp={this.checkEmail.bind(this)}
+                    onKeyPress={this.changeBtn.bind(this)}
                     name="email"
-                    placeholder="EMAIL"
+                    ref="email"
+                    placeholder="이메일"
                     style={{
                       width: "250px",
                       outline: "none",
@@ -200,7 +248,7 @@ export default class SignUp extends Component {
                   />
                   <span
                     style={{
-                      color: "red",
+                      color: this.state.emailSuccess ? "green" : "red",
                       fontSize: "10px",
                       fontWeight: "normal",
                       textAlign: "center",
@@ -213,16 +261,24 @@ export default class SignUp extends Component {
                   <button
                     type="button"
                     className="btn"
+                    onClick={this.sendMail.bind(this)}
+                    disabled={this.state.clickAuthBtn}
                     style={{
-                      border: "1px solid rgba(245,145,45)",
-                      backgroundColor: "white",
-                      color: "rgba(245,145,45)",
+                      border: this.state.clickAuthBtn
+                        ? "1px solid #ccc"
+                        : "1px solid rgba(245,145,45)",
+                      backgroundColor: this.state.clickAuthBtn
+                        ? "#999"
+                        : "white",
+                      color: this.state.clickAuthBtn
+                        ? "white"
+                        : "rgba(245,145,45)",
                       verticalAlign: "center",
                       width: "250px",
                       height: "30px",
                     }}
                   >
-                    인증하기
+                    {this.state.clickAuthBtn ? "이메일 발송 완료" : "인증하기"}
                   </button>
                 </td>
               </tr>
@@ -235,7 +291,7 @@ export default class SignUp extends Component {
                     onChange={this.handleInform.bind(this)}
                     onKeyUp={this.checkNickname.bind(this)}
                     name="nickname"
-                    placeholder="NICKNAME"
+                    placeholder="닉네임"
                     style={{
                       width: "250px",
                       outline: "none",
@@ -246,7 +302,7 @@ export default class SignUp extends Component {
                   />
                   <span
                     style={{
-                      color: "red",
+                      color: this.state.nicknameSuccess ? "green" : "red",
                       fontSize: "10px",
                       fontWeight: "normal",
                       textAlign: "center",
@@ -266,7 +322,7 @@ export default class SignUp extends Component {
                     onChange={this.handleInform.bind(this)}
                     onKeyUp={this.checkPW.bind(this)}
                     name="password"
-                    placeholder="PASSWORD"
+                    placeholder="비밀번호"
                     style={{
                       width: "250px",
                       outline: "none",
@@ -277,7 +333,7 @@ export default class SignUp extends Component {
                   />
                   <span
                     style={{
-                      color: "red",
+                      color: this.state.pwSuccess ? "green" : "red",
                       fontSize: "10px",
                       fontWeight: "normal",
                       textAlign: "center",
@@ -297,7 +353,7 @@ export default class SignUp extends Component {
                     onChange={this.handleInform.bind(this)}
                     onKeyUp={this.checkPW.bind(this)}
                     name="rePassword"
-                    placeholder="PASSWORD"
+                    placeholder="비밀번호 재입력"
                     style={{
                       width: "250px",
                       outline: "none",
@@ -308,7 +364,7 @@ export default class SignUp extends Component {
                   />
                   <span
                     style={{
-                      color: "red",
+                      color: this.state.samePwSuccess ? "green" : "red",
                       fontSize: "10px",
                       fontWeight: "normal",
                       textAlign: "center",
