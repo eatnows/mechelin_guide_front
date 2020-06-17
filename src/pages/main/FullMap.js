@@ -180,6 +180,18 @@ class FullMap extends React.Component {
     })
       .then((response) => {
         console.log("데이터 주고받기 완료");
+        // 리뷰글 등록후 state값 초기화
+        this.setState({
+          x: "",
+          y: "",
+          placeName: "",
+          address: "",
+          subject: "",
+          content: "",
+          category: "",
+          starScore: 0,
+          front_image: null,
+        });
       })
       .catch((error) => {
         console.log(error);

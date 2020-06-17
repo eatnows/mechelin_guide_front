@@ -294,6 +294,7 @@ const WriteFormMap2 = (props) => {
 
         itemEl.onclick = () => {
           clickMarkers.setMap(null);
+          setVisible(false);
           for (let j = 0; j < xx.length; j++) {
             if (place_Name[j].placesName === title) {
               setLatitudeX(xx[j].placesX);
@@ -301,7 +302,6 @@ const WriteFormMap2 = (props) => {
               setPlaceName(place_Name[j].placesName);
               setAddress(road_Address_Name[j].placesAddress);
               map.panTo(moveLatLon);
-              setVisible(false);
             }
           }
         };
