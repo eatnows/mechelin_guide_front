@@ -1,14 +1,16 @@
 import React from "react";
 import { NavLink, Route } from "react-router-dom";
-import FullMap from "pages/main/FullMap";
-import FAQ from "pages/customer_center/FAQ";
-import QnA from "pages/customer_center/QnA";
-import MyPage from "pages/mypage/MyPage";
-import WishList from "pages/mypage/WishList";
-import NewsFeed from "pages/post/NewsFeed";
-import Review from "pages/post/Review";
-import Timeline from "pages/post/Timeline";
-import Result from "pages/search/Result";
+import {
+  FullMap,
+  FAQ,
+  QnA,
+  MyPage,
+  WishList,
+  NewsFeed,
+  Review,
+  Timeline,
+  Result,
+} from "pages";
 
 class View extends React.Component {
   constructor(props) {
@@ -19,7 +21,7 @@ class View extends React.Component {
   }
   state = { main: true, section: false, bar: false };
   componentWillMount() {
-    if (!this.state.check) {
+    if (localStorage.getItem("email") === null) {
       this.props.history.push("/login");
     }
   }
@@ -138,6 +140,7 @@ class View extends React.Component {
               </li>
             </NavLink>
           </ul>
+          5
         </nav>
         {/* 삼항 연산자를 이용해 출력 페이지 변경 */}
         {this.state.main ? <FullMap /> : ""}
@@ -310,15 +313,21 @@ class View extends React.Component {
               >
                 마이페이지
               </li>
-              <li
-                style={{
-                  marginBottom: "2vh",
-                  width: "10vw",
-                  height: "7vh",
-                }}
-              >
-                로그아웃
-              </li>
+              <NavLink to="/login">
+                <li
+                  style={{
+                    marginBottom: "2vh",
+                    width: "10vw",
+                    height: "7vh",
+                    cursor: "pointer",
+                  }}
+                  onClick={() => {
+                    localStorage.clear();
+                  }}
+                >
+                  로그아웃
+                </li>
+              </NavLink>
             </ul>
           </section>
         ) : (

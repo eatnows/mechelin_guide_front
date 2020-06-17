@@ -1,8 +1,8 @@
 import React, { Component } from "react";
 import "components/css/loginStyle.css";
-import Google from "images/google.png";
-import axios from "axios";
 import { NavLink } from "react-router-dom";
+import Google from "images/google.png";
+import axios from "util/axios";
 
 class Login extends Component {
   constructor(props) {
@@ -26,17 +26,17 @@ class Login extends Component {
     e.preventDefault();
 
     if (this.state.checked) {
-      this.props.onChecked({
+      this.setState({
         checked: true,
       });
+      this.props.onChecked(this.state.checked);
     }
-    const url =
-      "http://localhost:9000/mechelin/login?email=" +
-      this.state.email +
-      "&password=" +
-      this.refs.password.value;
+    const url = "/login";
     axios
-      .post(url)
+      .post(url, {
+        email: this.state.email,
+        password: this.refs.password.value,
+      })
       .then((res) => {
         if (res.data === "pwfalse" || res.data === "mailfalse") {
           this.setState({
@@ -46,6 +46,7 @@ class Login extends Component {
         } else {
           localStorage.setItem("email", this.state.email);
           localStorage.setItem("password", this.refs.password.value);
+
           this.props.history.push("/");
         }
       })
@@ -167,7 +168,7 @@ class Login extends Component {
                   >
                     비밀번호를 잊으셨나요?
                   </div>
-                  <NavLink to="/changepwd">
+                  <NavLink to="/login/changepwd">
                     <button
                       type="button"
                       className="btn btn-md"

@@ -1,6 +1,5 @@
 import React, { Component } from "react";
-import Axios from "axios";
-import { timers } from "jquery";
+import Axios from "util/axios";
 
 export default class SignUp extends Component {
   constructor(props) {
@@ -43,9 +42,7 @@ export default class SignUp extends Component {
         });
       } else {
         //형식이 맞으면 중복 체크
-        const url =
-          "http://localhost:9000/mechelin/signupcheck/email?email=" +
-          this.state.email;
+        const url = "/signupcheck/email?email=" + this.state.email;
         Axios.get(url)
           .then((res) => {
             if (res.data === "usethis") {
@@ -72,8 +69,7 @@ export default class SignUp extends Component {
   //이메일 인증 버튼 클릭시 실행되는 메소드
   sendMail = () => {
     if (this.state.email !== "" && this.state.emailCkMsg === "") {
-      const url =
-        "http://localhost:9000/mechelin/sendmail/email=" + this.state.email;
+      const url = "/validsend?email=" + this.state.email;
       Axios.get(url)
         .then((res) => {
           this.setState({
@@ -98,9 +94,7 @@ export default class SignUp extends Component {
   //닉네임 중복 체크
   checkNickname = (e) => {
     if (this.state.nickname !== "") {
-      const url =
-        "http://localhost:9000/mechelin/signupcheck/nick?nickname=" +
-        this.state.nickname;
+      const url = "/signupcheck/nick?nickname=" + this.state.nickname;
       Axios.get(url)
         .then((res) => {
           if (res.data === "usethis") {
@@ -172,8 +166,13 @@ export default class SignUp extends Component {
   //회원 가입 시 정보 테이블에 저장
   sendUserInform = (e) => {
     e.preventDefault();
-    const url = "http://localhost:9000/sendmail/completeauth?";
-    Axios.get(url)
+
+    const url = "/signup";
+    Axios.post(url, {
+      email: this.state.email,
+      nickname: this.state.nickname,
+      password: this.state.password,
+    })
       .then((res) => {
         if (res.data === "success") {
           if (
@@ -181,28 +180,16 @@ export default class SignUp extends Component {
             this.state.nicknameSuccess &&
             this.state.pwSuccess
           ) {
-            const url = "http://localhost:9000/mechelin/signup";
-            Axios.post(url, {
-              email: this.state.email,
-              nickname: this.state.nickname,
-              password: this.state.password,
-            })
-              .then((res) => {
-                this.props.history.push("/welcome");
-              })
-              .catch((err) => {
-                console.log("insert userInfom error:" + err);
-              });
+            this.props.history.push("/welcome");
           } else {
             alert("가입할 수 없습니다. 기입하신 정보를 다시 확인해주세요.");
           }
         } else {
           alert("이메일 인증이 완료되지 않았습니다.");
-          return;
         }
       })
       .catch((err) => {
-        console.log("이메일 인증 에러:" + err);
+        console.log("insert userInfom error:" + err);
       });
   };
 
