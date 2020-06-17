@@ -3,7 +3,7 @@ import React, { useState, useEffect, createRef } from "react";
 import "./WriteFormMapStyle.css";
 import LocationIcon from "images/location-02.png";
 
-const WriteFormMap2 = () => {
+const WriteFormMap2 = (props) => {
   const [latitude, setLatitude] = useState(37.505002);
   const [longitude, setLongitude] = useState(127.033617);
   const [keyword, setKeyword] = useState("");
@@ -264,7 +264,6 @@ const WriteFormMap2 = () => {
           displayInfowindow(marker, title);
           for (let j = 0; j < xx.length; j++) {
             if (place_Name[j].placesName === title) {
-              console.log(xx[j].placesX);
               setMoveLatLon(
                 new kakao.maps.LatLng(xx[j].placesX, yy[j].placesY)
               );
@@ -428,8 +427,9 @@ const WriteFormMap2 = () => {
   /*
    * 상호명 입력 버튼
    */
-  const onClickName = (e) => {
+  const onClickName = () => {
     // 부모 컴포넌트에 값을 넘겨줄때 사용하자
+    props.mapData(latitudeX, longitudeY, placeName, address);
   };
   /*
    * 상호명 입력 버튼

@@ -6,6 +6,7 @@ import "react-quill/dist/quill.snow.css";
 //import e from "cors";
 import StarRate from "./StarRate";
 import WriteFormMap from "../../components/map/WriteFormMap";
+import Axios from "axios";
 
 Quill.register("modules/imageUpload", ImageUpload);
 
@@ -18,6 +19,14 @@ class FullMap extends React.Component {
     cacheIdx: 0,
     cacheRating: 0,
     starScore: 0.0,
+    x: 0,
+    y: 0,
+    placeName: "",
+    address: "",
+    subject: "",
+    category: "",
+    content: "",
+    front_image: null,
   };
 
   modules = {
@@ -89,8 +98,12 @@ class FullMap extends React.Component {
     "image",
     "video",
   ];
-
-  changeEditor = (e) => this.setState({ text: e });
+  /*
+   * 내용을 기입했을때 실행
+   */
+  changeEditor = (e) => {
+    this.setState({ content: e });
+  };
   onMouseOver = (e, i) => {
     e.persist();
     let offsetX = e.nativeEvent.offsetX;
@@ -119,8 +132,59 @@ class FullMap extends React.Component {
       starScore: s,
     });
   };
+  /*
+   * 리뷰작성 폼 지도에서 넘어온 데이터
+   */
 
-  mapData = () => {};
+  mapData = (x, y, placeName, address) => {
+    this.setState({
+      x: x,
+      y: y,
+      placeName: placeName,
+      address: address,
+    });
+  };
+  /*
+   * 카테고리 변경했을때 실행
+   */
+  handleCategory = (e) => {
+    this.setState({
+      category: e.target.value,
+    });
+  };
+  /*
+   * 제목에 기입했을때 실행
+   */
+  handleSubject = (e) => {
+    this.setState({
+      subject: e.target.value,
+    });
+  };
+  /*
+   * 리뷰글 등록 버튼 클릭시 실행
+   */
+  onSubmitReview = (e) => {
+    e.preventDefault();
+    const url = "http://localhost:9000/mechelin/post/add";
+    Axios.post(url, {
+      user_id: 5,
+      latitude_x: this.state.x,
+      longitude_y: this.state.y,
+      name: this.state.placeName,
+      address: this.state.address,
+      subject: this.state.subject,
+      content: this.state.content,
+      category: this.state.category,
+      rating: this.state.starScore,
+      front_image: this.state.front_image,
+    })
+      .then((response) => {
+        console.log("데이터 주고받기 완료");
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  };
 
   render() {
     const seroStyle = {
@@ -165,7 +229,7 @@ class FullMap extends React.Component {
               transform: "translateX(-50%)",
             }}
           >
-            <form method="post">
+            <form onSubmit={this.onSubmitReview.bind(this)}>
               <h3 style={{ margin: "3vh 2vw" }}>리뷰 작성</h3>
               <hr
                 style={{
@@ -187,6 +251,7 @@ class FullMap extends React.Component {
               >
                 <input
                   className="form-control"
+                  name="subject"
                   style={{
                     marginLeft: "0.15vw",
                     width: "20vw",
@@ -195,9 +260,11 @@ class FullMap extends React.Component {
                   }}
                   type="text"
                   placeholder="제목"
+                  onChange={this.handleSubject.bind(this)}
                 />
                 <select
                   className="form-control"
+                  name="category"
                   style={{
                     marginLeft: "1.2vw",
                     width: "10vw",
@@ -207,6 +274,7 @@ class FullMap extends React.Component {
                     paddingLeft: "3px",
                     paddingRight: "3px",
                   }}
+                  onChange={this.handleCategory.bind(this)}
                 >
                   <option selected disabled hidden>
                     카테고리
@@ -268,7 +336,8 @@ class FullMap extends React.Component {
                   <ReactQuill
                     theme="snow"
                     ref={(el) => (this.quillRef = el)}
-                    value={this.state.text} // state 값
+                    name="content"
+                    value={this.state.content} // state 값
                     onChange={this.changeEditor.bind(this)}
                     modules={this.modules}
                     formats={this.formats}
