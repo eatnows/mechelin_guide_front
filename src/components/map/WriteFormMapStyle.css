@@ -159,3 +159,9 @@
   overflow: hidden;
   white-space: nowrap;
 }
+/*
+db에 저장된 맛집 리스트 출력되는 부분
+*/
+.dbDataList:hover {
+  background-color: #ff8c2d;
+}

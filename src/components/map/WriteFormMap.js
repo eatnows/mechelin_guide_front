@@ -2,6 +2,7 @@
 import React, { useState, useEffect, createRef } from "react";
 import "./WriteFormMapStyle.css";
 import LocationIcon from "images/location-02.png";
+import Axios from "axios";
 
 const WriteFormMap2 = (props) => {
   const [latitude, setLatitude] = useState(37.505002);
@@ -26,6 +27,8 @@ const WriteFormMap2 = (props) => {
   const [yy, setYy] = useState([]);
   const [place_Name, setPlace_Name] = useState([]);
   const [road_Address_Name, setRoad_Address_Name] = useState([]);
+  const [dbData, setDbData] = useState([]);
+  const [visible, setVisible] = useState(false);
   useEffect(() => {
     //let latitude = 37.505002;
     //let longitude = 127.033617;
@@ -133,6 +136,21 @@ const WriteFormMap2 = (props) => {
               // 인포윈도우에 클릭한 위치에 대한 법정동 상세 주소정보를 표시합니다
               infowindow.setContent(content);
               infowindow.open(map, clickMarkers);
+
+              // 지도를 클릭했을때 좌표값으로 DB에 근처 맛집 출력
+              const url = `http://localhost:9000/mechelin/place/around/place?x=${mouseEvent.latLng.Ha}&y=${mouseEvent.latLng.Ga}`;
+              Axios.get(url)
+                .then((res) => {
+                  setDbData(res.data);
+                  if (res.data.length !== 0) {
+                    setVisible(true);
+                  } else {
+                    setVisible(false);
+                  }
+                })
+                .catch((err) => {
+                  console.log(err);
+                });
             }
           });
           //add한 이벤트 리스너 삭제
@@ -216,7 +234,7 @@ const WriteFormMap2 = (props) => {
   };
 
   const displayPlaces = (places) => {
-    var listEl = document.getElementById("placesList"),
+    let listEl = document.getElementById("placesList"),
       menuEl = document.getElementById("menu_wrap"),
       fragment = document.createDocumentFragment(),
       bounds = new kakao.maps.LatLngBounds(),
@@ -283,6 +301,7 @@ const WriteFormMap2 = (props) => {
               setPlaceName(place_Name[j].placesName);
               setAddress(road_Address_Name[j].placesAddress);
               map.panTo(moveLatLon);
+              setVisible(false);
             }
           }
         };
@@ -432,13 +451,23 @@ const WriteFormMap2 = (props) => {
     props.mapData(latitudeX, longitudeY, placeName, address);
   };
   /*
-   * 상호명 입력 버튼
+   * 상호명 입력 칸 취소 버튼
    */
   const onClickCancle = () => {
     setLatitudeX("");
     setLongitudeY("");
     setAddress("");
     setPlaceName("");
+  };
+  /*
+   * 근처 맛집 리스트를 누를때 실행되는 메소드
+   */
+  const onClickDbList = (e) => {
+    setLatitudeX(e.target.getAttribute("x"));
+    setLongitudeY(e.target.getAttribute("y"));
+    setPlaceName(e.target.getAttribute("name"));
+    setAddress(e.target.getAttribute("address"));
+    setVisible(false);
   };
 
   /*
@@ -449,7 +478,6 @@ const WriteFormMap2 = (props) => {
     // 키워드로 장소를 검색합니다
     searchPlaces();
   };
-
   return (
     <div className="map_wrap">
       <div
@@ -462,6 +490,48 @@ const WriteFormMap2 = (props) => {
         }}
         onMouseDown={clickMap}
       ></div>
+      <div
+        style={{
+          width: "220px",
+          height: "130px",
+          position: "absolute",
+          right: "0",
+          bottom: "0",
+          zIndex: "1",
+          margin: "10px 10px 230px 0",
+          padding: "5px",
+          opacity: "0.9",
+          overflow: "auto",
+          display: visible ? "block" : "none",
+        }}
+        className="bg_white"
+      >
+        <p style={{ fontSize: "1.5em", textAlign: "center" }}>근처 맛집</p>
+        <br />
+        <ul id="dbDataList">
+          {dbData.map((contact, i) => (
+            <li
+              key={i}
+              className="dbDataList"
+              name={contact.name}
+              address={contact.address}
+              x={contact.latitude_x}
+              y={contact.longitude_y}
+              style={{
+                cursor: "pointer",
+                width: "180px",
+              }}
+              onClick={onClickDbList}
+            >
+              {contact.name}
+              <br />
+              {contact.address}
+              <br />
+              <hr />
+            </li>
+          ))}
+        </ul>
+      </div>
       <div
         id="gps"
         onClick={panTo}
