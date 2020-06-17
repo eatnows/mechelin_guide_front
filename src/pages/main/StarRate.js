@@ -7,10 +7,15 @@ class StarRate extends React.Component {
   };
   resetRating(e) {
     if (e.type === "mouseleave" || e.type === "onTouchEnd") {
-      this.props.onChange(this.props.cacheIdx, this.props.cacheRating);
+      this.props.onChange(
+        this.props.cacheIdx,
+        this.props.cacheRating,
+        this.state.score
+      );
     }
   }
   paintStars() {
+    let starScore = 0;
     let stars = [];
     for (let i = 1; i <= 5; i++) {
       let starClass = "starRate";
@@ -18,16 +23,20 @@ class StarRate extends React.Component {
         if (i <= this.props.sIdx) {
           if (this.props.sIdx === i && this.props.rating % 2 !== 0) {
             starClass += "isHalfSelected";
+            starScore += 0.5;
           } else {
             starClass += "isSelected";
+            starScore += 1.0;
           }
         }
       } else if (this.props.cacheRating !== 0) {
         if (i <= this.props.cacheIdx) {
           if (this.props.cacheIdx === i && this.props.cacheRating % 2 !== 0) {
             starClass += "isHalfSelected";
+            starScore += 0.5;
           } else {
             starClass += "isSelected";
+            starScore += 1.0;
           }
         }
       }
@@ -37,7 +46,11 @@ class StarRate extends React.Component {
           key={i}
           className={starClass}
           onClick={() => {
-            this.props.onChange(this.props.sIdx, this.props.rating);
+            this.props.onChange(this.props.sIdx, this.props.rating, starScore);
+            console.log(`starScore : ${starScore}`);
+            this.setState({
+              score: starScore,
+            });
           }}
           onMouseOver={(e) => {
             this.props.onMouseOver(e, i);

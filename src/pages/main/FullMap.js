@@ -17,6 +17,7 @@ class FullMap extends React.Component {
     rating: 0,
     cacheIdx: 0,
     cacheRating: 0,
+    starScore: 0.0,
   };
 
   modules = {
@@ -109,14 +110,18 @@ class FullMap extends React.Component {
       });
     }
   };
-  handleChange = (i, v) => {
+  handleChange = (i, v, s) => {
     this.setState({
       sIdx: 0,
       rating: 0,
       cacheIdx: i,
       cacheRating: v,
+      starScore: s,
     });
   };
+
+  mapData = () => {};
+
   render() {
     const seroStyle = {
       width: "5vw",
@@ -245,10 +250,14 @@ class FullMap extends React.Component {
                       width: "2vw",
                       lineHeight: "5vh",
                       display: "inline-block",
+                      fontSize: "1.5em",
                     }}
                   >
-                    {" "}
-                    점
+                    {this.state.starScore === 0
+                      ? this.state.starScore
+                      : this.state.starScore % 1 === 0
+                      ? `${this.state.starScore}.0`
+                      : this.state.starScore}
                   </div>
                 </div>
                 <br />
@@ -279,7 +288,7 @@ class FullMap extends React.Component {
                     border: "0px solid #999",
                   }}
                 >
-                  <WriteFormMap />
+                  <WriteFormMap mapData={this.mapData.bind(this)} />
                 </div>
               </div>
               <button
