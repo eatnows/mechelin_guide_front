@@ -64,7 +64,7 @@ const WriteFormMap2 = () => {
     setScript(script);
     script.async = true;
     script.src =
-      "https://dapi.kakao.com/v2/maps/sdk.js?appkey=본인앱키3&autoload=false&libraries=services,clusterer,drawing";
+      "https://dapi.kakao.com/v2/maps/sdk.js?appkey=본인앱키&autoload=false&libraries=services,clusterer,drawing";
     document.head.appendChild(script);
     script.onload = () => {
       kakao.maps.load(() => {
@@ -431,6 +431,15 @@ const WriteFormMap2 = () => {
   const onClickName = (e) => {
     // 부모 컴포넌트에 값을 넘겨줄때 사용하자
   };
+  /*
+   * 상호명 입력 버튼
+   */
+  const onClickCancle = () => {
+    setLatitudeX("");
+    setLongitudeY("");
+    setAddress("");
+    setPlaceName("");
+  };
 
   /*
    * sumit 버튼
@@ -477,7 +486,7 @@ const WriteFormMap2 = () => {
         id="addPlaceName"
         style={{
           width: "220px",
-          height: "100px",
+          height: "130px",
           position: "absolute",
           right: "0",
           bottom: "0",
@@ -500,13 +509,19 @@ const WriteFormMap2 = () => {
           onChange={onChangeName}
           value={placeName}
         />
-        &nbsp;
-        <button type="button" onClick={onClickName}>
-          입력
-        </button>
         <br />
         주소 : <br />
         {address}
+        <br />
+        <div style={{ textAlign: "center" }}>
+          <button type="button" onClick={onClickName}>
+            확인
+          </button>
+          &nbsp;
+          <button type="button" onClick={onClickCancle}>
+            취소
+          </button>
+        </div>
       </div>
       <div id="menu_wrap" className="bg_white">
         <div className="option">

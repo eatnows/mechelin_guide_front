@@ -5,6 +5,7 @@ import { ImageUpload } from "quill-image-upload";
 import "react-quill/dist/quill.snow.css";
 //import e from "cors";
 import StarRate from "./StarRate";
+import WriteFormMap from "../../components/map/WriteFormMap";
 
 Quill.register("modules/imageUpload", ImageUpload);
 
@@ -274,10 +275,12 @@ class FullMap extends React.Component {
                   style={{
                     margin: "0 auto 3vh",
                     width: "41.5vw",
-                    height: "30vh",
-                    border: "1px solid #999",
+                    height: "50vh",
+                    border: "0px solid #999",
                   }}
-                ></div>
+                >
+                  <WriteFormMap />
+                </div>
               </div>
               <button
                 type="submit"
