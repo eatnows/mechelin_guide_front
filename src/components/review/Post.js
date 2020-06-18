@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import queryString from "query-string";
 import Axios from "axios";
 
@@ -13,13 +13,25 @@ const Post = (props) => {
   const [content, setContent] = useState("");
   const [likes, setLikes] = useState("");
   const [data, setData] = useState([]);
+  const [preItems, setPreItems] = useState(0);
+  const [items, setItems] = useState(5);
+  const targetRef = useRef(null);
+  const rootRef = useRef(null);
   useEffect(() => {
+    dataPull();
+    window.addEventListener("scroll", infiniteScroll, true);
+  }, []);
+
+  const dataPull = () => {
     const url = `http://localhost:9000/mechelin/post/review?user_place_id=${props.userPlaceId}`;
     Axios.get(url)
       .then((response) => {
         //const data = response.data;
-        setData(response.data);
+        //setData(response.data);
         console.log(response.data);
+        let result = response.data.slice(preItems, items);
+        console.log(result);
+        setData(result);
         // setPlaceName(data.name);
         // setNickname(data.nickname);
         // setPostCount(data.post_count);
@@ -33,15 +45,32 @@ const Post = (props) => {
       .catch((error) => {
         console.log(error);
       });
-  }, []);
+  };
 
+  const infiniteScroll = () => {
+    let scrollHeight = Math.max(
+      document.documentElement.scrollHeight,
+      document.body.scrollHeight
+    );
+    let scrollTop = Math.max(
+      document.documentElement.scrollTop,
+      document.body.scrollTop
+    );
+    let clientHeight = document.documentElement.clientHeight;
+
+    if (scrollTop + clientHeight === scrollHeight) {
+      setPreItems(items);
+      setItems(items + 20);
+    }
+  };
   //
   return (
     <div
+      id="reviewForm"
       className="reviewForm"
       style={{
         overflow: "auto",
-        width: "700px",
+        width: "1500px",
         height: "700px",
         marginTop: "200px",
         marginLeft: "300px",
@@ -100,6 +129,7 @@ const Post = (props) => {
           </div>
         );
       })}
+      <div ref={targetRef} />
     </div>
   );
 };
