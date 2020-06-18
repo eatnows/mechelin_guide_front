@@ -13,7 +13,8 @@ export default class SignUp extends Component {
       rePassword: "",
       possiblePwCkMsg: "",
       samePwCkMsg: "",
-      clickAuthBtn: false,
+      clickAuthBtn: "",
+      finishSending: false,
       emailSuccess: false,
       nicknameSuccess: false,
       pwSuccess: false,
@@ -68,18 +69,23 @@ export default class SignUp extends Component {
   };
   //이메일 인증 버튼 클릭시 실행되는 메소드
   sendMail = () => {
-    if (this.state.email !== "" && this.state.emailCkMsg === "") {
+    this.setState({
+      clickAuthBtn: true,
+    });
+    if (this.state.email !== "" && this.state.emailSuccess) {
       const url = "/validsend?email=" + this.state.email;
+      console.log("hi" + this.state.email);
       Axios.get(url)
         .then((res) => {
           this.setState({
-            clickAuthBtn: true,
+            finishSending: true,
+            clickAuthBtn: false,
           });
         })
         .catch((err) => {
           console.log("유저 메일 주소 전달 오류:" + err);
         });
-    } else if (this.state.email === "" && this.state.emailCkMsg === "") {
+    } else if (this.state.email === "") {
       this.setState({
         emailCkMsg: "이메일을 입력해주세요.",
       });
@@ -88,7 +94,7 @@ export default class SignUp extends Component {
   //이메일 입력창 변경시 버튼 활성화
   changeBtn = () => {
     this.setState({
-      clickAuthBtn: false,
+      finishSending: false,
     });
   };
   //닉네임 중복 체크
@@ -221,7 +227,7 @@ export default class SignUp extends Component {
                     className="form-control"
                     onChange={this.handleInform.bind(this)}
                     onKeyUp={this.checkEmail.bind(this)}
-                    onKeyPress={this.changeBtn.bind(this)}
+                    onKeyDown={this.changeBtn.bind(this)}
                     name="email"
                     ref="email"
                     placeholder="이메일"
@@ -249,15 +255,17 @@ export default class SignUp extends Component {
                     type="button"
                     className="btn"
                     onClick={this.sendMail.bind(this)}
-                    disabled={this.state.clickAuthBtn}
+                    disabled={
+                      this.state.clickAuthBtn || this.state.finishSending
+                    }
                     style={{
-                      border: this.state.clickAuthBtn
+                      border: this.state.finishSending
                         ? "1px solid #ccc"
                         : "1px solid rgba(245,145,45)",
-                      backgroundColor: this.state.clickAuthBtn
+                      backgroundColor: this.state.finishSending
                         ? "#999"
                         : "white",
-                      color: this.state.clickAuthBtn
+                      color: this.state.finishSending
                         ? "white"
                         : "rgba(245,145,45)",
                       verticalAlign: "center",
@@ -265,7 +273,11 @@ export default class SignUp extends Component {
                       height: "30px",
                     }}
                   >
-                    {this.state.clickAuthBtn ? "이메일 발송 완료" : "인증하기"}
+                    {this.state.clickAuthBtn
+                      ? "이메일 발송 중"
+                      : this.state.finishSending
+                      ? "이메일 발송 완료"
+                      : "인증하기"}
                   </button>
                 </td>
               </tr>

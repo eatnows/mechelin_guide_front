@@ -1,8 +1,8 @@
 import React, { Component } from "react";
 import "components/css/loginStyle.css";
 import { NavLink } from "react-router-dom";
-import Google from "images/google.png";
-import axios from "util/axios";
+import kakaotalk from "images/kakaotalk.png";
+import Axios from "util/axios";
 
 class Login extends Component {
   constructor(props) {
@@ -12,47 +12,21 @@ class Login extends Component {
       email: "",
       emailCkMsg: "",
       password: "",
+      kUserEmail: "",
     };
+  }
+  componentWillMount() {
+    if (localStorage.getItem("check") === "checked") {
+      this.props.history.push("/mechelin");
+    } else {
+      localStorage.clear();
+    }
   }
   //값이 바뀌면 state 값을 변경
   handleInform = (e) => {
     this.setState({
       [e.target.name]: e.target.value,
     });
-  };
-
-  //이메일, 비밀번호 체크 후 로그인
-  userLogin = (e) => {
-    e.preventDefault();
-
-    if (this.state.checked) {
-      this.setState({
-        checked: true,
-      });
-      this.props.onChecked(this.state.checked);
-    }
-    const url = "/login";
-    axios
-      .post(url, {
-        email: this.state.email,
-        password: this.refs.password.value,
-      })
-      .then((res) => {
-        if (res.data === "pwfalse" || res.data === "mailfalse") {
-          this.setState({
-            emailCkMsg:
-              "가입하지 않은 이메일 주소이거나, 틀린 비밀번호를 입력하였습니다.",
-          });
-        } else {
-          localStorage.setItem("email", this.state.email);
-          localStorage.setItem("password", this.refs.password.value);
-
-          this.props.history.push("/");
-        }
-      })
-      .catch((err) => {
-        console.log("로그인 에러:" + err);
-      });
   };
 
   ChangeCheck = () => {
@@ -65,6 +39,51 @@ class Login extends Component {
         checked: false,
       });
     }
+  };
+
+  //이메일, 비밀번호 체크 후 로그인
+  userLogin = (e) => {
+    e.preventDefault();
+    if (this.state.checked) {
+      localStorage.setItem("check", "checked");
+    }
+    const url = "/login";
+    Axios.post(url, {
+      email: this.state.email,
+      password: this.refs.password.value,
+    })
+      .then((res) => {
+        if (res.data === "pwfalse" || res.data === "mailfalse") {
+          this.setState({
+            emailCkMsg:
+              "가입하지 않은 이메일 주소이거나, 틀린 비밀번호를 입력하였습니다.",
+          });
+        } else {
+          localStorage.setItem("email", this.state.email);
+          this.props.history.push("/mechelin/:userid");
+        }
+      })
+      .catch((err) => {
+        console.log("로그인 에러:" + err);
+      });
+  };
+
+  kUserLogin = (e) => {
+    this.setState({
+      kUser: true,
+    });
+    const url = "/login/kakaologin";
+    Axios.get(url)
+      .then((res) => {
+        this.setState({
+          kUserEmail: res.data,
+        });
+        localStorage.setItem("email", this.state.kUserEmail);
+        localStorage.setItem("kLogin", true);
+      })
+      .catch((err) => {
+        console.log(`카카오 로그인 에러:${err}`);
+      });
   };
 
   render() {
@@ -112,7 +131,7 @@ class Login extends Component {
                   <input
                     type="text"
                     className="form-control"
-                    placeholder="EMAIL"
+                    placeholder="이메일"
                     ref="email"
                     name="email"
                     onChange={this.handleInform.bind(this)}
@@ -143,7 +162,7 @@ class Login extends Component {
                   <input
                     type="password"
                     className="form-control"
-                    placeholder="PASSWORD"
+                    placeholder="비밀번호"
                     ref="password"
                     style={{
                       width: "250px",
@@ -168,7 +187,7 @@ class Login extends Component {
                   >
                     비밀번호를 잊으셨나요?
                   </div>
-                  <NavLink to="/login/changepwd">
+                  <NavLink to="/changepwd">
                     <button
                       type="button"
                       className="btn btn-md"
@@ -216,15 +235,16 @@ class Login extends Component {
                       border: "1px solid lightgray",
                       width: "50px",
                       height: "50px",
-                      backgroundColor: "white",
+                      backgroundColor: "#ede10d",
                     }}
                   >
                     <img
-                      src={Google}
+                      src={kakaotalk}
                       style={{
                         textAlign: "center",
-                        width: "25px",
-                        height: "25px",
+                        width: "28px",
+                        height: "28px",
+                        margin: "3.5px 0 0 -1px",
                       }}
                       alt=""
                     />
@@ -242,7 +262,8 @@ class Login extends Component {
                         backgroundColor: "white",
                       }}
                     >
-                      <img
+                      미쉐린 회원가입
+                      {/*<img
                         src={Google}
                         style={{
                           textAlign: "center",
@@ -250,7 +271,7 @@ class Login extends Component {
                           height: "25px",
                         }}
                         alt=""
-                      />
+                      />*/}
                     </button>
                   </NavLink>
                 </td>
