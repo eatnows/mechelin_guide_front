@@ -5,8 +5,9 @@ import { ImageUpload } from "quill-image-upload";
 import "react-quill/dist/quill.snow.css";
 //import e from "cors";
 import StarRate from "./StarRate";
-import WriteFormMap from "../../components/map/WriteFormMap";
+import WriteFormMap from "components/map/WriteFormMap";
 import Axios from "axios";
+import { Link } from "react-router-dom";
 
 Quill.register("modules/imageUpload", ImageUpload);
 
@@ -165,31 +166,31 @@ class FullMap extends React.Component {
    */
   onSubmitReview = (e) => {
     e.preventDefault();
-    // 데이터 유효성 검사
-    if (this.state.subject === "") {
-      alert("제목을 입력해주세요.");
-      return false;
-    }
-    if (this.state.content === "") {
-      alert("내용을 입력해주세요.");
-      return false;
-    }
-    if (this.state.category === "") {
-      alert("카테고리를 선택해주세요.");
-      return false;
-    }
-    if (this.state.starScore === 0) {
-      alert("맛집 평가를 해주세요.");
-      return false;
-    }
-    if (this.state.x === 0 && this.state.y === 0) {
-      alert("맛집을 등록해주세요.");
-      return false;
-    }
-    if (this.state.placeName === "") {
-      alert("상호명을 입력해주세요.");
-      return false;
-    }
+    //데이터 유효성 검사
+    // if (this.state.subject === "") {
+    //   alert("제목을 입력해주세요.");
+    //   return false;
+    // }
+    // if (this.state.content === "") {
+    //   alert("내용을 입력해주세요.");
+    //   return false;
+    // }
+    // if (this.state.category === "") {
+    //   alert("카테고리를 선택해주세요.");
+    //   return false;
+    // }
+    // if (this.state.starScore === 0) {
+    //   alert("맛집 평가를 해주세요.");
+    //   return false;
+    // }
+    // if (this.state.x === 0 && this.state.y === 0) {
+    //   alert("맛집을 등록해주세요.");
+    //   return false;
+    // }
+    // if (this.state.placeName === "") {
+    //   alert("상호명을 입력해주세요.");
+    //   return false;
+    // }
 
     const url = "http://localhost:9000/mechelin/post/add";
     Axios.post(url, {
@@ -218,6 +219,9 @@ class FullMap extends React.Component {
           starScore: 0,
           front_image: null,
         });
+        const userPlaceId = response.data.user_place_id;
+        console.log(response.data.user_place_id);
+        this.props.history.push(`/review/${userPlaceId}`);
       })
       .catch((error) => {
         console.log(error);
@@ -398,6 +402,7 @@ class FullMap extends React.Component {
                   <WriteFormMap mapData={this.mapData.bind(this)} />
                 </div>
               </div>
+
               <button
                 type="submit"
                 className="btn btn-warning"
@@ -411,7 +416,6 @@ class FullMap extends React.Component {
               >
                 등록하기
               </button>
-
               <button
                 type="reset"
                 className="btn btn-warning"

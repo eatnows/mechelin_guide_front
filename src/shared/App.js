@@ -7,6 +7,7 @@ import Welcome from "pages/signup/Welcome";
 import View from "pages/main/View";
 import FullMap from "pages/main/FullMap";
 import "components/css/allStyle.css";
+import Review from "pages/post/Review";
 
 //import { reviewAdd } from "pages";
 //import WriteFormMap from "../components/map/WriteFormMap";
@@ -36,6 +37,7 @@ class App extends Component {
         <Route path="/signup" component={SignUp} />
         <Route path="/welcome" component={Welcome} />
         <Route path="/fullmap" component={FullMap} />
+        <Route path="/review/:userPlaceId" component={Review} />
       </div>
     );
   }
