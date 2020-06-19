@@ -44,9 +44,7 @@ class Login extends Component {
   //이메일, 비밀번호 체크 후 로그인
   userLogin = (e) => {
     e.preventDefault();
-    if (this.state.checked) {
-      localStorage.setItem("check", "checked");
-    }
+
     const url = "/login";
     Axios.post(url, {
       email: this.state.email,
@@ -66,6 +64,9 @@ class Login extends Component {
       .catch((err) => {
         console.log("로그인 에러:" + err);
       });
+    if (this.state.checked) {
+      localStorage.setItem("check", "checked");
+    }
   };
 
   kUserLogin = (e) => {
@@ -235,7 +236,7 @@ class Login extends Component {
                       border: "1px solid lightgray",
                       width: "50px",
                       height: "50px",
-                      backgroundColor: "#ede10d",
+                      backgroundColor: "#fee500",
                     }}
                   >
                     <img

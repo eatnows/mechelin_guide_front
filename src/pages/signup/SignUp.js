@@ -51,6 +51,10 @@ export default class SignUp extends Component {
                 emailCkMsg: "사용 가능한 이메일입니다.",
                 emailSuccess: true,
               });
+            } else if (res.data === "kakaouser") {
+              this.setState({
+                emailCkMsg: "카카오로 가입된 이메일입니다.",
+              });
             } else {
               this.setState({
                 emailCkMsg: "이미 등록된 이메일입니다.",

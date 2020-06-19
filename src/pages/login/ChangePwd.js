@@ -16,8 +16,11 @@ class ChangePwd extends React.Component {
     finishSending: false,
     pwCode: "",
     userCode: "",
+    timer: "",
   };
-
+  componentWillMount() {
+    this.setTimer();
+  }
   //값이 바뀌면 state 값을 변경
   handleInform = (e) => {
     this.setState({
@@ -77,6 +80,7 @@ class ChangePwd extends React.Component {
             finishSending: true,
             clickAuthBtn: false,
           });
+          this.setTimer();
         })
         .catch((err) => {
           console.log("유저 메일 주소 전달 오류:" + err);
@@ -87,11 +91,51 @@ class ChangePwd extends React.Component {
       });
     }
   };
+
   //이메일 입력창 변경시 버튼 활성화
   changeBtn = () => {
     this.setState({
       finishSending: false,
     });
+  };
+
+  //인증코드 타이머
+  setTimer = () => {
+    let mi = 5;
+    let s1 = 6;
+    let s2 = 10;
+
+    const runTime = () => {
+      this.setState({
+        timer: mi + ":" + (s1 === 6 ? 0 : s1) + (s2 === 10 ? 0 : s2),
+      });
+      if (mi === 5 && s1 === 6 && s2 === 10) {
+        mi--;
+        s1--;
+        s2--;
+      } else {
+        s2--;
+        if (mi === 0 && s1 === 0 && s2 === 0) {
+          clearInterval(go);
+          this.setState({
+            timer: "인증시간이 초과되었습니다.",
+            pwCode: "",
+            finishSending: false,
+          });
+        } else if (s1 === 0 && s2 === 0) {
+          s1 = 6;
+          s2 = 10;
+        } else if (s2 === 0) {
+          s2 = 10;
+        } else if (s2 === 9) {
+          s1--;
+        }
+        if (s1 === 5 && s2 === 9) {
+          mi--;
+        }
+      }
+    };
+    let go = setInterval(runTime, 1000);
   };
 
   //비밀번호 형식 확인
@@ -239,10 +283,56 @@ class ChangePwd extends React.Component {
                   </button>
                 </td>
               </tr>
+              <tr
+                style={{ display: this.state.finishSending ? "block" : "none" }}
+              >
+                <td>
+                  <br />
+                  <input
+                    type="text"
+                    className="form-control"
+                    placeholder="인증코드"
+                    style={{
+                      width: "250px",
+                      outline: "none",
+                      height: "50px",
+                      fontWeight: "normal",
+                      fontSize: "13px",
+                    }}
+                  />
+                  <span
+                    style={{
+                      float:
+                        this.state.timer === "인증시간이 초과되었습니다."
+                          ? "none"
+                          : "right",
+                      fontWeight: "normal",
+                      color:
+                        this.state.timer === "인증시간이 초과되었습니다."
+                          ? "red"
+                          : "#999",
+                      margin:
+                        this.state.timer === "인증시간이 초과되었습니다."
+                          ? "5px 0 0"
+                          : "-33px 15px",
+                      fontSize:
+                        this.state.timer === "인증시간이 초과되었습니다."
+                          ? "11px"
+                          : "13px",
+                    }}
+                  >
+                    {this.state.timer}
+                  </span>
+                </td>
+              </tr>
               <tr>
                 <td>
                   {" "}
-                  <br />
+                  {this.state.timer === "인증시간이 초과되었습니다." ? (
+                    ""
+                  ) : (
+                    <br />
+                  )}
                   <input
                     type="password"
                     className="form-control"
