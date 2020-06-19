@@ -10,6 +10,7 @@ export { default as MyPage } from "pages/mypage/MyPage";
 export { default as WishList } from "pages/mypage/WishList";
 export { default as MyList } from "pages/mypage/MyList";
 export { default as NewsFeed } from "pages/post/NewsFeed";
+export { default as Comment } from "pages/post/Comment";
 export { default as Review } from "pages/post/Review";
 export { default as Timeline } from "pages/post/Timeline";
 export { default as Result } from "pages/search/Result";
