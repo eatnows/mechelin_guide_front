@@ -5,7 +5,7 @@ const Review = ({ match }) => {
   return (
     <div>
       <h2></h2>
-      <Post userPlaceId={match.params.userPlaceId} />
+      <Post id={match.params.id} userPlaceId={match.params.userPlaceId} />
     </div>
   );
 };

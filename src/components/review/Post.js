@@ -1,3 +1,59 @@
+import React, { useState, useEffect } from "react";
+import useIntersect from "./useIntersect";
+
+const fakeFetch = (delay = 1000) =>
+  new Promise((res) => setTimeout(res, delay));
+
+const ListItem = ({ number }) => (
+  <div className="ListItem">
+    <span>{number}</span>
+  </div>
+);
+function Post() {
+  const [state, setState] = useState({ itemCount: 0, isLoading: false });
+  /* fake async fetch */
+  const fetchItems = async () => {
+    setState((prev) => ({ ...prev, isLoading: true }));
+    await fakeFetch();
+    setState((prev) => ({
+      itemCount: prev.itemCount + 20,
+      isLoading: false,
+    }));
+  };
+  /* initial fetch */
+  useEffect(() => {
+    fetchItems();
+  }, []);
+  const [_, setRef] = useIntersect(async (entry, observer) => {
+    observer.unobserve(entry.target);
+    await fetchItems();
+    observer.observe(entry.target);
+  }, {});
+  const { itemCount, isLoading } = state;
+  if (!itemCount) return null;
+  return (
+    <div
+      className="App"
+      style={{
+        overflow: "auto",
+        width: "1500px",
+        height: "700px",
+        marginTop: "200px",
+        marginLeft: "300px",
+      }}
+    >
+      {[...Array(itemCount)].map((_, i) => {
+        return <ListItem key={i} number={i} />;
+      })}
+      <div ref={setRef} className="Loading">
+        {isLoading && "Loading..."}
+      </div>
+    </div>
+  );
+}
+export default Post;
+
+/*
 import React, { useEffect, useState, useRef } from "react";
 import queryString from "query-string";
 import Axios from "axios";
@@ -13,25 +69,30 @@ const Post = (props) => {
   const [content, setContent] = useState("");
   const [likes, setLikes] = useState("");
   const [data, setData] = useState([]);
+  const [result, setResult] = useState([]);
   const [preItems, setPreItems] = useState(0);
-  const [items, setItems] = useState(5);
+  const [items, setItems] = useState(3);
   const targetRef = useRef(null);
   const rootRef = useRef(null);
-  useEffect(() => {
-    dataPull();
-    window.addEventListener("scroll", infiniteScroll, true);
-  }, []);
+  const [state, setState] = useState({ itemCount: 0, isLoading: false });
 
-  const dataPull = () => {
+  const fetchItems = () => {
+    console.log("!!");
+    setItems(items + 3);
+    setResult(result.concat(data.splice(items + 3, items + 6)));
+    // setItems(items + 3);
+    // setResult(data.slice(items + 3, items + 6));
+    // setItems(items + 3);
+    // setResult(data.slice(items + 3, items + 6));
+  };
+  useEffect(() => {
     const url = `http://localhost:9000/mechelin/post/review?user_place_id=${props.userPlaceId}`;
     Axios.get(url)
       .then((response) => {
         //const data = response.data;
-        //setData(response.data);
-        console.log(response.data);
-        let result = response.data.slice(preItems, items);
-        console.log(result);
-        setData(result);
+        setData(response.data);
+
+        setResult(response.data.slice(items, items + 3));
         // setPlaceName(data.name);
         // setNickname(data.nickname);
         // setPostCount(data.post_count);
@@ -45,25 +106,29 @@ const Post = (props) => {
       .catch((error) => {
         console.log(error);
       });
-  };
+    fetchItems();
+  }, []);
+  //const target = useRef(null);
 
-  const infiniteScroll = () => {
-    let scrollHeight = Math.max(
-      document.documentElement.scrollHeight,
-      document.body.scrollHeight
-    );
-    let scrollTop = Math.max(
-      document.documentElement.scrollTop,
-      document.body.scrollTop
-    );
-    let clientHeight = document.documentElement.clientHeight;
-
-    if (scrollTop + clientHeight === scrollHeight) {
-      setPreItems(items);
-      setItems(items + 20);
+  const onIntersect = async ([entry], observer) => {
+    if (entry.isIntersecting) {
+      observer.unobserve(entry.target);
+      await fetchItems();
+      observer.observe(entry.target);
     }
   };
-  //
+  //옵저버 등록
+  const [target, setTarget] = useState(null);
+  useEffect(() => {
+    let observer;
+    if (target) {
+      observer = new IntersectionObserver(onIntersect, { threshold: 0.5 });
+      observer.observe(target);
+    }
+    return () => observer && observer.disconnect();
+  }, [target]);
+  const { itemCount, isLoading } = state;
+
   return (
     <div
       id="reviewForm"
@@ -77,7 +142,7 @@ const Post = (props) => {
       }}
     >
       sdfdsf
-      {data.map((contact, i) => {
+      {result.map((contact, i) => {
         return (
           <div>
             <table
@@ -129,7 +194,9 @@ const Post = (props) => {
           </div>
         );
       })}
-      <div ref={targetRef} />
+      <div ref={setTarget} className="Loading">
+        {isLoading && "Loading..."}
+      </div>
     </div>
   );
 };

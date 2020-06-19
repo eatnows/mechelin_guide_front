@@ -219,9 +219,10 @@ class FullMap extends React.Component {
           starScore: 0,
           front_image: null,
         });
+        const id = response.data.id;
         const userPlaceId = response.data.user_place_id;
         console.log(response.data.user_place_id);
-        this.props.history.push(`/review/${userPlaceId}`);
+        this.props.history.push(`/review/${id}/${userPlaceId}`);
       })
       .catch((error) => {
         console.log(error);
