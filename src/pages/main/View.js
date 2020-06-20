@@ -20,11 +20,11 @@ class View extends React.Component {
     bar: false,
     email: localStorage.getItem("email"),
   };
-  componentWillMount() {
-    if (localStorage.getItem("email") === null) {
-      this.props.history.push("/login");
-    }
-  }
+  // componentWillMount() {
+  //   if (localStorage.getItem("email") === null) {
+  //     this.props.history.push("/login");
+  //   }
+  // }
   render() {
     const garoStyle = {
       display: "inline-block",

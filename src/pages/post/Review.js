@@ -6,7 +6,7 @@ const Review = ({ match, props }) => {
   return (
     <div>
       <h2></h2>
-      <Post id={match.params.id} userPlaceId={match.params.userPlaceId} />
+      <Post userPlaceId={match.params.userPlaceId} />
     </div>
   );
 };

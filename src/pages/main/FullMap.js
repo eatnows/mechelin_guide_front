@@ -167,30 +167,30 @@ class FullMap extends React.Component {
   onSubmitReview = (e) => {
     e.preventDefault();
     //데이터 유효성 검사
-    // if (this.state.subject === "") {
-    //   alert("제목을 입력해주세요.");
-    //   return false;
-    // }
-    // if (this.state.content === "") {
-    //   alert("내용을 입력해주세요.");
-    //   return false;
-    // }
-    // if (this.state.category === "") {
-    //   alert("카테고리를 선택해주세요.");
-    //   return false;
-    // }
-    // if (this.state.starScore === 0) {
-    //   alert("맛집 평가를 해주세요.");
-    //   return false;
-    // }
-    // if (this.state.x === 0 && this.state.y === 0) {
-    //   alert("맛집을 등록해주세요.");
-    //   return false;
-    // }
-    // if (this.state.placeName === "") {
-    //   alert("상호명을 입력해주세요.");
-    //   return false;
-    // }
+    if (this.state.subject === "") {
+      alert("제목을 입력해주세요.");
+      return false;
+    }
+    if (this.state.content === "") {
+      alert("내용을 입력해주세요.");
+      return false;
+    }
+    if (this.state.category === "") {
+      alert("카테고리를 선택해주세요.");
+      return false;
+    }
+    if (this.state.starScore === 0) {
+      alert("맛집 평가를 해주세요.");
+      return false;
+    }
+    if (this.state.x === 0 && this.state.y === 0) {
+      alert("맛집을 등록해주세요.");
+      return false;
+    }
+    if (this.state.placeName === "") {
+      alert("상호명을 입력해주세요.");
+      return false;
+    }
 
     const url = "http://localhost:9000/mechelin/post/add";
     Axios.post(url, {
@@ -222,7 +222,7 @@ class FullMap extends React.Component {
         const id = response.data.id;
         const userPlaceId = response.data.user_place_id;
         console.log(response.data.user_place_id);
-        this.props.history.push(`/review/${id}/${userPlaceId}`);
+        this.props.history.push(`/review/${userPlaceId}`);
       })
       .catch((error) => {
         console.log(error);
