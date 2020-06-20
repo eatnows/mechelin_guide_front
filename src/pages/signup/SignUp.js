@@ -1,6 +1,5 @@
 import React, { Component } from "react";
-import Axios from "axios";
-import { timers } from "jquery";
+import Axios from "util/axios";
 
 export default class SignUp extends Component {
   constructor(props) {
@@ -14,7 +13,8 @@ export default class SignUp extends Component {
       rePassword: "",
       possiblePwCkMsg: "",
       samePwCkMsg: "",
-      clickAuthBtn: false,
+      clickAuthBtn: "",
+      finishSending: false,
       emailSuccess: false,
       nicknameSuccess: false,
       pwSuccess: false,
@@ -43,15 +43,17 @@ export default class SignUp extends Component {
         });
       } else {
         //형식이 맞으면 중복 체크
-        const url =
-          "http://localhost:9000/mechelin/signupcheck/email?email=" +
-          this.state.email;
+        const url = "/signupcheck/email?email=" + this.state.email;
         Axios.get(url)
           .then((res) => {
             if (res.data === "usethis") {
               this.setState({
                 emailCkMsg: "사용 가능한 이메일입니다.",
                 emailSuccess: true,
+              });
+            } else if (res.data === "kakaouser") {
+              this.setState({
+                emailCkMsg: "카카오로 가입된 이메일입니다.",
               });
             } else {
               this.setState({
@@ -71,19 +73,23 @@ export default class SignUp extends Component {
   };
   //이메일 인증 버튼 클릭시 실행되는 메소드
   sendMail = () => {
-    if (this.state.email !== "" && this.state.emailCkMsg === "") {
-      const url =
-        "http://localhost:9000/mechelin/sendmail/email=" + this.state.email;
+    this.setState({
+      clickAuthBtn: true,
+    });
+    if (this.state.email !== "" && this.state.emailSuccess) {
+      const url = "/validsend?email=" + this.state.email;
+      console.log("hi" + this.state.email);
       Axios.get(url)
         .then((res) => {
           this.setState({
-            clickAuthBtn: true,
+            finishSending: true,
+            clickAuthBtn: false,
           });
         })
         .catch((err) => {
           console.log("유저 메일 주소 전달 오류:" + err);
         });
-    } else if (this.state.email === "" && this.state.emailCkMsg === "") {
+    } else if (this.state.email === "") {
       this.setState({
         emailCkMsg: "이메일을 입력해주세요.",
       });
@@ -92,15 +98,13 @@ export default class SignUp extends Component {
   //이메일 입력창 변경시 버튼 활성화
   changeBtn = () => {
     this.setState({
-      clickAuthBtn: false,
+      finishSending: false,
     });
   };
   //닉네임 중복 체크
   checkNickname = (e) => {
     if (this.state.nickname !== "") {
-      const url =
-        "http://localhost:9000/mechelin/signupcheck/nick?nickname=" +
-        this.state.nickname;
+      const url = "/signupcheck/nick?nickname=" + this.state.nickname;
       Axios.get(url)
         .then((res) => {
           if (res.data === "usethis") {
@@ -172,8 +176,13 @@ export default class SignUp extends Component {
   //회원 가입 시 정보 테이블에 저장
   sendUserInform = (e) => {
     e.preventDefault();
-    const url = "http://localhost:9000/sendmail/completeauth?";
-    Axios.get(url)
+
+    const url = "/signup";
+    Axios.post(url, {
+      email: this.state.email,
+      nickname: this.state.nickname,
+      password: this.state.password,
+    })
       .then((res) => {
         if (res.data === "success") {
           if (
@@ -181,28 +190,16 @@ export default class SignUp extends Component {
             this.state.nicknameSuccess &&
             this.state.pwSuccess
           ) {
-            const url = "http://localhost:9000/mechelin/signup";
-            Axios.post(url, {
-              email: this.state.email,
-              nickname: this.state.nickname,
-              password: this.state.password,
-            })
-              .then((res) => {
-                this.props.history.push("/welcome");
-              })
-              .catch((err) => {
-                console.log("insert userInfom error:" + err);
-              });
+            this.props.history.push("/welcome");
           } else {
             alert("가입할 수 없습니다. 기입하신 정보를 다시 확인해주세요.");
           }
         } else {
           alert("이메일 인증이 완료되지 않았습니다.");
-          return;
         }
       })
       .catch((err) => {
-        console.log("이메일 인증 에러:" + err);
+        console.log("insert userInfom error:" + err);
       });
   };
 
@@ -234,7 +231,7 @@ export default class SignUp extends Component {
                     className="form-control"
                     onChange={this.handleInform.bind(this)}
                     onKeyUp={this.checkEmail.bind(this)}
-                    onKeyPress={this.changeBtn.bind(this)}
+                    onKeyDown={this.changeBtn.bind(this)}
                     name="email"
                     ref="email"
                     placeholder="이메일"
@@ -262,15 +259,17 @@ export default class SignUp extends Component {
                     type="button"
                     className="btn"
                     onClick={this.sendMail.bind(this)}
-                    disabled={this.state.clickAuthBtn}
+                    disabled={
+                      this.state.clickAuthBtn || this.state.finishSending
+                    }
                     style={{
-                      border: this.state.clickAuthBtn
+                      border: this.state.finishSending
                         ? "1px solid #ccc"
                         : "1px solid rgba(245,145,45)",
-                      backgroundColor: this.state.clickAuthBtn
+                      backgroundColor: this.state.finishSending
                         ? "#999"
                         : "white",
-                      color: this.state.clickAuthBtn
+                      color: this.state.finishSending
                         ? "white"
                         : "rgba(245,145,45)",
                       verticalAlign: "center",
@@ -278,7 +277,11 @@ export default class SignUp extends Component {
                       height: "30px",
                     }}
                   >
-                    {this.state.clickAuthBtn ? "이메일 발송 완료" : "인증하기"}
+                    {this.state.clickAuthBtn
+                      ? "이메일 발송 중"
+                      : this.state.finishSending
+                      ? "이메일 발송 완료"
+                      : "인증하기"}
                   </button>
                 </td>
               </tr>

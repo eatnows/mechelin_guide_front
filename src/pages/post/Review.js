@@ -1,7 +1,8 @@
-import React from "react";
+import React, { useState } from "react";
 import Post from "components/review/Post";
 
-const Review = ({ match }) => {
+const Review = ({ match, props }) => {
+  const [email, setEmail] = useState(match.params.email);
   return (
     <div>
       <h2></h2>

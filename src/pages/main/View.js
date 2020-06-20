@@ -1,25 +1,27 @@
 import React from "react";
 import { NavLink, Route } from "react-router-dom";
-import FullMap from "pages/main/FullMap";
-import FAQ from "pages/customer_center/FAQ";
-import QnA from "pages/customer_center/QnA";
-import MyPage from "pages/mypage/MyPage";
-import WishList from "pages/mypage/WishList";
-import NewsFeed from "pages/post/NewsFeed";
-import Review from "pages/post/Review";
-import Timeline from "pages/post/Timeline";
-import Result from "pages/search/Result";
+import {
+  FullMap,
+  FAQ,
+  QnA,
+  MyPage,
+  WishList,
+  NewsFeed,
+  Review,
+  Timeline,
+  Result,
+  MyList,
+} from "pages/index.js";
 
 class View extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      check: this.props.checked,
-    };
-  }
-  state = { main: true, section: false, bar: false };
+  state = {
+    main: true,
+    section: false,
+    bar: false,
+    email: localStorage.getItem("email"),
+  };
   componentWillMount() {
-    if (!this.state.check) {
+    if (localStorage.getItem("email") === null) {
       this.props.history.push("/login");
     }
   }
@@ -42,7 +44,7 @@ class View extends React.Component {
 
     return (
       <div>
-        <NavLink to="/">
+        <NavLink to={"/mechelin/" + this.state.email}>
           <div
             className="logo"
             style={{
@@ -71,7 +73,7 @@ class View extends React.Component {
               width: "20vw",
             }}
           />
-          <NavLink to="/result">
+          <NavLink to={"/mechelin/result/" + this.state.email}>
             <button
               type="button"
               className="btn xi-search"
@@ -101,7 +103,7 @@ class View extends React.Component {
               margin: "5vh 5vw 0 0",
             }}
           >
-            <NavLink to="/newsfeed">
+            <NavLink to={"/mechelin/newsfeed/" + this.state.email}>
               <li>
                 <div
                   onClick={() => {
@@ -113,7 +115,7 @@ class View extends React.Component {
                 </div>
               </li>
             </NavLink>
-            <NavLink to="/timeline">
+            <NavLink to={"/mechelin/timeline/" + this.state.email}>
               <li>
                 <div
                   onClick={() => {
@@ -125,7 +127,7 @@ class View extends React.Component {
                 </div>
               </li>
             </NavLink>
-            <NavLink to="/wishlist">
+            <NavLink to={"/mechelin/wishlist/" + this.state.email}>
               <li>
                 <div
                   onClick={() => {
@@ -141,14 +143,15 @@ class View extends React.Component {
         </nav>
         {/* 삼항 연산자를 이용해 출력 페이지 변경 */}
         {this.state.main ? <FullMap /> : ""}
-        <Route path="/faq" component={FAQ} />
-        <Route path="/qna" component={QnA} />
-        <Route path="/mypage" component={MyPage} />
-        <Route path="/wishlist" component={WishList} />
-        <Route path="/newsfeed" component={NewsFeed} />
-        <Route path="/review" component={Review} />
-        <Route path="/timeline" component={Timeline} />
-        <Route path="/result" component={Result} />
+        <Route path="/mechelin/faq/:email" component={FAQ} />
+        <Route path="/mechelin/qna/:email" component={QnA} />
+        <Route path="/mechelin/mypage/:email" component={MyPage} />
+        <Route path="/mechelin/wishlist/:email" component={WishList} />
+        <Route path="/mechelin/newsfeed/:email" component={NewsFeed} />
+        <Route path="/mechelin/review/:email" component={Review} />
+        <Route path="/mechelin/timeline/:email" component={Timeline} />
+        <Route path="/mechelin/result/:email" component={Result} />
+        <Route path="/mechelin/mylist/:email" component={MyList} />
         <div
           className="bottomBar"
           style={{
@@ -216,7 +219,10 @@ class View extends React.Component {
               </span>
             </NavLink>{" "}
             ·{" "}
-            <NavLink to="/faq" activeStyle={activeStyle}>
+            <NavLink
+              to={"/mechelin/faq/" + this.state.email}
+              activeStyle={activeStyle}
+            >
               <span
                 onClick={() => {
                   this.setState({ main: false });
@@ -230,7 +236,11 @@ class View extends React.Component {
           <div
             className="xi-bars xi-2x"
             onClick={() => {
-              this.setState({ bar: true });
+              if (this.state.bar) {
+                this.setState({ bar: false });
+              } else {
+                this.setState({ bar: true });
+              }
             }}
             style={{
               color: "white",
@@ -265,60 +275,76 @@ class View extends React.Component {
                 lineHeight: "7vh",
               }}
             >
-              <li
-                style={{
-                  marginBottom: "2vh",
-                  height: "7vh",
-                  width: "10vw",
-                }}
-              >
-                나만의맛집
-              </li>
-              <li
-                style={{
-                  marginBottom: "2vh",
-                  width: "10vw",
-                  height: "7vh",
-                }}
-              >
-                뉴스피드
-              </li>
-              <li
-                style={{
-                  marginBottom: "2vh",
-                  width: "10vw",
-                  height: "7vh",
-                }}
-              >
-                타임라인
-              </li>
-              <li
-                style={{
-                  marginBottom: "2vh",
-                  width: "10vw",
-                  height: "7vh",
-                }}
-              >
-                위시리스트
-              </li>
-              <li
-                style={{
-                  marginBottom: "2vh",
-                  width: "10vw",
-                  height: "7vh",
-                }}
-              >
-                마이페이지
-              </li>
-              <li
-                style={{
-                  marginBottom: "2vh",
-                  width: "10vw",
-                  height: "7vh",
-                }}
-              >
-                로그아웃
-              </li>
+              <NavLink to={"/mechelin/mylist/" + this.state.email}>
+                <li
+                  style={{
+                    marginBottom: "2vh",
+                    height: "7vh",
+                    width: "10vw",
+                  }}
+                >
+                  나만의맛집
+                </li>
+              </NavLink>
+              <NavLink to={"/mechelin/newsfeed/" + this.state.email}>
+                <li
+                  style={{
+                    marginBottom: "2vh",
+                    width: "10vw",
+                    height: "7vh",
+                  }}
+                >
+                  뉴스피드
+                </li>
+              </NavLink>
+              <NavLink to={"/mechelin/timeline/" + this.state.email}>
+                <li
+                  style={{
+                    marginBottom: "2vh",
+                    width: "10vw",
+                    height: "7vh",
+                  }}
+                >
+                  타임라인
+                </li>
+              </NavLink>
+              <NavLink to={"/mechelin/wishlist/" + this.state.email}>
+                <li
+                  style={{
+                    marginBottom: "2vh",
+                    width: "10vw",
+                    height: "7vh",
+                  }}
+                >
+                  위시리스트
+                </li>
+              </NavLink>
+              <NavLink to={"/mechelin/mypage/" + this.state.email}>
+                <li
+                  style={{
+                    marginBottom: "2vh",
+                    width: "10vw",
+                    height: "7vh",
+                  }}
+                >
+                  마이페이지
+                </li>
+              </NavLink>
+              <NavLink to="/login">
+                <li
+                  style={{
+                    marginBottom: "2vh",
+                    width: "10vw",
+                    height: "7vh",
+                    cursor: "pointer",
+                  }}
+                  onClick={() => {
+                    localStorage.clear();
+                  }}
+                >
+                  로그아웃
+                </li>
+              </NavLink>
             </ul>
           </section>
         ) : (
