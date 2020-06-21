@@ -13,13 +13,15 @@ class Login extends Component {
       emailCkMsg: "",
       password: "",
       kUserEmail: "",
+      userid: "",
     };
   }
   componentWillMount() {
-    if (localStorage.getItem("check") === "checked") {
+    if (localStorage.getItem("email") !== null) {
+      sessionStorage.setItem("email", localStorage.getItem("email"));
+    }
+    if (sessionStorage.getItem("email") !== null) {
       this.props.history.push("/mechelin");
-    } else {
-      localStorage.clear();
     }
   }
   //값이 바뀌면 state 값을 변경
@@ -51,21 +53,25 @@ class Login extends Component {
       password: this.refs.password.value,
     })
       .then((res) => {
-        if (res.data === "pwfalse" || res.data === "mailfalse") {
+        console.log(res.data);
+        if (
+          res.data.check_item === "pwfalse" ||
+          res.data.check_item === "mailfalse"
+        ) {
           this.setState({
             emailCkMsg:
               "가입하지 않은 이메일 주소이거나, 틀린 비밀번호를 입력하였습니다.",
           });
         } else {
-          localStorage.setItem("email", this.state.email);
-          this.props.history.push("/mechelin/:userid");
+          sessionStorage.setItem("email", this.state.email);
+          this.props.history.push("/mechelin");
         }
       })
       .catch((err) => {
         console.log("로그인 에러:" + err);
       });
     if (this.state.checked) {
-      localStorage.setItem("check", "checked");
+      localStorage.setItem("email", this.state.email);
     }
   };
 
@@ -79,8 +85,8 @@ class Login extends Component {
         this.setState({
           kUserEmail: res.data,
         });
-        localStorage.setItem("email", this.state.kUserEmail);
-        localStorage.setItem("kLogin", true);
+        sessionStorage.setItem("email", this.state.kUserEmail);
+        sessionStorage.setItem("kLogin", true);
       })
       .catch((err) => {
         console.log(`카카오 로그인 에러:${err}`);

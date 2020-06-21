@@ -18,13 +18,13 @@ class View extends React.Component {
     main: true,
     section: false,
     bar: false,
-    email: localStorage.getItem("email"),
+    email: sessionStorage.getItem("email"),
   };
-  // componentWillMount() {
-  //   if (localStorage.getItem("email") === null) {
-  //     this.props.history.push("/login");
-  //   }
-  // }
+  componentWillMount() {
+    if (sessionStorage.getItem("email") === null) {
+      this.props.history.push("/");
+    }
+  }
   render() {
     const garoStyle = {
       display: "inline-block",
@@ -330,7 +330,7 @@ class View extends React.Component {
                   마이페이지
                 </li>
               </NavLink>
-              <NavLink to="/login">
+              <NavLink to="/">
                 <li
                   style={{
                     marginBottom: "2vh",
@@ -339,6 +339,7 @@ class View extends React.Component {
                     cursor: "pointer",
                   }}
                   onClick={() => {
+                    sessionStorage.clear();
                     localStorage.clear();
                   }}
                 >
