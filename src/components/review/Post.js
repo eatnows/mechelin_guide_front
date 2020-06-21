@@ -5,7 +5,7 @@ import Axios from "axios";
 const fakeFetch = (delay = 1000) =>
   new Promise((res) => setTimeout(res, delay));
 
-const ListItem = ({ contact, i }) => (
+const ListItem = ({ contact, i, likesChange }) => (
   <div key={i}>
     <table
       style={{
@@ -44,10 +44,10 @@ const ListItem = ({ contact, i }) => (
       <tfoot>
         <tr>
           <td colSpan="3">
-            <button type="button" onClick={onClickLikes}>
+            <button type="button" onClick={likesChange} postId={contact.id}>
               공감
               <br />
-              {contact.likes}
+              <span>{contact.likes}</span>
             </button>
           </td>
         </tr>
@@ -57,27 +57,16 @@ const ListItem = ({ contact, i }) => (
   </div>
 );
 
-const onClickLikes = () => {
-  const url = `http://localhost:9000/mechelin/likes/post`;
-  Axios.post(url, {
-    user_id: "dfsdf",
-  })
-    .then((response) => {
-      console.log(response.data);
-    })
-    .catch((error) => {
-      console.log(error);
-    });
-};
-
 let item = 3;
 let dataLength = 0;
 let theposition;
+let userPlaceId;
+let likes = "";
 const Post = (props) => {
   const [state, setState] = useState({ itemCount: 3, isLoading: false });
   const [result, setResult] = useState([]);
   const [theposition, setTheposition] = useState("");
-
+  const [likes, setLikes] = useState(false);
   console.log("state구역");
   /* fake async fetch */
   const fetchItems = async () => {
@@ -127,6 +116,36 @@ const Post = (props) => {
 
     setTheposition(scrolled);
   };
+  // 공감 버튼 클릭시 실행되는 메소드
+  const onClickLikes = (e) => {
+    const url = `http://localhost:9000/mechelin/likes/post`;
+    Axios.post(url, {
+      user_id: "5",
+      post_id: e.target.getAttribute("postId"),
+    })
+      .then((response) => {
+        console.log(response.data);
+        onClickLikesRender();
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  };
+  // 공감 버튼을 눌렀을때 바로 반영될 수 있게 하는 메소드
+  const onClickLikesRender = () => {
+    console.log(item);
+    item = dataLength;
+    console.log(item);
+    const url = `http://localhost:9000/mechelin/post/review?user_place_id=${props.userPlaceId}&row=${item}`;
+    Axios.get(url)
+      .then((response) => {
+        setResult(response.data);
+        item += 3;
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  };
 
   return (
     <div
@@ -140,7 +159,7 @@ const Post = (props) => {
       }}
     >
       {[...result].map((contact, i) => {
-        return <ListItem contact={contact} i={i} />;
+        return <ListItem contact={contact} i={i} likesChange={onClickLikes} />;
       })}
       <div ref={setRef} className="Loading">
         {isLoading && "Loading..."}

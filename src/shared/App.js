@@ -12,7 +12,7 @@ class App extends Component {
   render() {
     return (
       <div>
-        <Redirect to="/login" />
+        {/* <Redirect to="/login" /> */}
         <Route path="/mechelin" component={View} />
         <Route path="/login" component={Login} />
         <Route path="/changepwd" component={ChangePwd} />
