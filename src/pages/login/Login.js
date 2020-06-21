@@ -1,18 +1,29 @@
 import React, { Component } from "react";
 import "components/css/loginStyle.css";
-import Google from "images/google.png";
-import axios from "axios";
 import { NavLink } from "react-router-dom";
+import kakaotalk from "images/kakaotalk.png";
+import Axios from "util/axios";
 
 class Login extends Component {
   constructor(props) {
     super(props);
     this.state = {
+      checked: false,
       email: "",
       emailCkMsg: "",
+      password: "",
+      kUserEmail: "",
+      userid: "",
     };
   }
-
+  componentWillMount() {
+    if (localStorage.getItem("email") !== null) {
+      sessionStorage.setItem("email", localStorage.getItem("email"));
+    }
+    if (sessionStorage.getItem("email") !== null) {
+      this.props.history.push("/mechelin");
+    }
+  }
   //값이 바뀌면 state 값을 변경
   handleInform = (e) => {
     this.setState({
@@ -20,30 +31,72 @@ class Login extends Component {
     });
   };
 
+  ChangeCheck = () => {
+    if (this.state.checked === false) {
+      this.setState({
+        checked: true,
+      });
+    } else {
+      this.setState({
+        checked: false,
+      });
+    }
+  };
+
   //이메일, 비밀번호 체크 후 로그인
-  onSubmit = (e) => {
-    const url = "http://localhost:9000/mechelin/login";
-    axios
-      .post(url, { email: e.email, password: e.password })
+  userLogin = (e) => {
+    e.preventDefault();
+
+    const url = "/login";
+    Axios.post(url, {
+      email: this.state.email,
+      password: this.refs.password.value,
+    })
       .then((res) => {
-        if (res.data === "pwfalse" || res.data === "mailfalse") {
+        console.log(res.data);
+        if (
+          res.data.check_item === "pwfalse" ||
+          res.data.check_item === "mailfalse"
+        ) {
           this.setState({
             emailCkMsg:
               "가입하지 않은 이메일 주소이거나, 틀린 비밀번호를 입력하였습니다.",
           });
         } else {
-          this.props.history.push("/");
+          sessionStorage.setItem("email", this.state.email);
+          this.props.history.push("/mechelin");
         }
       })
       .catch((err) => {
         console.log("로그인 에러:" + err);
+      });
+    if (this.state.checked) {
+      localStorage.setItem("email", this.state.email);
+    }
+  };
+
+  kUserLogin = (e) => {
+    this.setState({
+      kUser: true,
+    });
+    const url = "/login/kakaologin";
+    Axios.get(url)
+      .then((res) => {
+        this.setState({
+          kUserEmail: res.data,
+        });
+        sessionStorage.setItem("email", this.state.kUserEmail);
+        sessionStorage.setItem("kLogin", true);
+      })
+      .catch((err) => {
+        console.log(`카카오 로그인 에러:${err}`);
       });
   };
 
   render() {
     return (
       <div>
-        <form onSubmit={this.onSubmit.bind(this)}>
+        <form onSubmit={this.userLogin.bind(this)}>
           <table align="center" style={{ width: "200px", marginTop: "30px" }}>
             <tbody>
               <tr>
@@ -64,8 +117,11 @@ class Login extends Component {
                 <td>
                   <span style={{ float: "right", marginTop: "8px" }}>
                     <input
+                      className="loginck"
                       type="checkbox"
                       style={{ width: "13px", height: "13px" }}
+                      onChange={this.ChangeCheck.bind(this)}
+                      checked={this.state.checked}
                     />
                     <span
                       style={{
@@ -82,7 +138,8 @@ class Login extends Component {
                   <input
                     type="text"
                     className="form-control"
-                    placeholder="EMAIL"
+                    placeholder="이메일"
+                    ref="email"
                     name="email"
                     onChange={this.handleInform.bind(this)}
                     style={{
@@ -112,7 +169,8 @@ class Login extends Component {
                   <input
                     type="password"
                     className="form-control"
-                    placeholder="PASSWORD"
+                    placeholder="비밀번호"
+                    ref="password"
                     style={{
                       width: "250px",
                       outline: "none",
@@ -136,23 +194,25 @@ class Login extends Component {
                   >
                     비밀번호를 잊으셨나요?
                   </div>
-                  <button
-                    type="button"
-                    className="btn btn-md"
-                    style={{
-                      width: "80px",
-                      height: "30px",
-                      fontSize: "10px",
-                      padding: "0",
-                      marginTop: "0.5vh",
-                      float: "right",
-                      border: "1px solid rgba(245,145,45)",
-                      backgroundColor: "white",
-                      color: "rgba(245,145,45)",
-                    }}
-                  >
-                    비밀번호 찾기
-                  </button>
+                  <NavLink to="/changepwd">
+                    <button
+                      type="button"
+                      className="btn btn-md"
+                      style={{
+                        width: "80px",
+                        height: "30px",
+                        fontSize: "10px",
+                        padding: "0",
+                        marginTop: "0.5vh",
+                        float: "right",
+                        border: "1px solid rgba(245,145,45)",
+                        backgroundColor: "white",
+                        color: "rgba(245,145,45)",
+                      }}
+                    >
+                      비밀번호 찾기
+                    </button>
+                  </NavLink>
                 </td>
               </tr>
               <tr>
@@ -182,15 +242,16 @@ class Login extends Component {
                       border: "1px solid lightgray",
                       width: "50px",
                       height: "50px",
-                      backgroundColor: "white",
+                      backgroundColor: "#fee500",
                     }}
                   >
                     <img
-                      src={Google}
+                      src={kakaotalk}
                       style={{
                         textAlign: "center",
-                        width: "25px",
-                        height: "25px",
+                        width: "28px",
+                        height: "28px",
+                        margin: "3.5px 0 0 -1px",
                       }}
                       alt=""
                     />
@@ -208,7 +269,8 @@ class Login extends Component {
                         backgroundColor: "white",
                       }}
                     >
-                      <img
+                      미쉐린 회원가입
+                      {/*<img
                         src={Google}
                         style={{
                           textAlign: "center",
@@ -216,7 +278,7 @@ class Login extends Component {
                           height: "25px",
                         }}
                         alt=""
-                      />
+                      />*/}
                     </button>
                   </NavLink>
                 </td>

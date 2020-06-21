@@ -1,24 +1,26 @@
-import React, { Component } from "react";
-import Axios from "axios";
+import React from "react";
+import Axios from "util/axios";
 
-export default class SignUp extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      email: "",
-      emailCkMsg: "",
-      emailCheck: "",
-      nickname: "",
-      nicknameCkMsg: "",
-      nicknameCheck: "",
-      password: "",
-      rePassword: "",
-      possiblePwCkMsg: "",
-      samePwCkMsg: "",
-      pwCheck: "",
-    };
+class ChangePwd extends React.Component {
+  state = {
+    email: "",
+    emailCkMsg: "",
+    password: "",
+    rePassword: "",
+    possiblePwCkMsg: "",
+    samePwCkMsg: "",
+    emailSuccess: false,
+    pwSuccess: false,
+    samePwSuccess: false,
+    clickAuthBtn: "",
+    finishSending: false,
+    pwCode: "",
+    userCode: "",
+    timer: "",
+  };
+  componentWillMount() {
+    this.setTimer();
   }
-
   //값이 바뀌면 state 값을 변경
   handleInform = (e) => {
     this.setState({
@@ -27,7 +29,7 @@ export default class SignUp extends Component {
   };
 
   //이메일 형식 확인
-  checkEmail = (e) => {
+  checkEmail = () => {
     //이메일 유효성검사(영문,숫자,-_. 혼합 ID @ domain 주소)
     const chkEmail = (str) => {
       var standard = /^[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*@[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*.[a-zA-Z]{2,3}$/i;
@@ -40,22 +42,22 @@ export default class SignUp extends Component {
         });
       } else {
         //형식이 맞으면 중복 체크
-        const url = "http://localhost:9000/mechelin/signupcheck/email";
-        Axios.post(url, { email: e.email })
+        const url = "/signupcheck/email?email=" + this.state.email;
+        Axios.get(url)
           .then((res) => {
-            if (res.data === "usenot") {
+            if (res.data === "usethis") {
               this.setState({
-                emailCkMsg: "",
-                emailCheck: this.state.email,
+                emailCkMsg: "존재하지 않는 이메일입니다.",
               });
             } else {
               this.setState({
-                emailCkMsg: "이미 등록된 이메일입니다.",
+                emailSuccess: true,
+                emailCkMsg: "",
               });
             }
           })
           .catch((err) => {
-            console.log("이메일 중복 체크 에러:" + err);
+            console.log("이메일 존재 여부 확인 에러:" + err);
           });
       }
     } else {
@@ -64,32 +66,76 @@ export default class SignUp extends Component {
       });
     }
   };
-
-  //닉네임 중복 체크
-  checkNickname = (e) => {
-    if (this.state.nickname !== "") {
-      const url = "http://localhost:9000/mechelin/signupcheck/nick";
-      Axios.post(url, { nickname: e.nickname })
+  //이메일 인증 버튼 클릭시 실행되는 메소드
+  sendMail = () => {
+    this.setState({
+      clickAuthBtn: true,
+    });
+    if (this.state.email !== "" && this.state.emailSuccess) {
+      const url = "/changepwd?email=" + this.state.email;
+      Axios.get(url)
         .then((res) => {
-          if (res.data === "usenot") {
-            this.setState({
-              nicknameCkMsg: "",
-              nicknameCheck: this.state.nickname,
-            });
-          } else {
-            this.setState({
-              nicknameCkMsg: "이미 등록된 닉네임입니다.",
-            });
-          }
+          this.setState({
+            pwCode: res.data,
+            finishSending: true,
+            clickAuthBtn: false,
+          });
+          this.setTimer();
         })
         .catch((err) => {
-          console.log("닉네임 중복 체크 에러:" + err);
+          console.log("유저 메일 주소 전달 오류:" + err);
         });
-    } else {
+    } else if (this.state.email === "") {
       this.setState({
-        nicknameCkMsg: "",
+        emailCkMsg: "이메일을 입력해주세요.",
       });
     }
+  };
+
+  //이메일 입력창 변경시 버튼 활성화
+  changeBtn = () => {
+    this.setState({
+      finishSending: false,
+    });
+  };
+
+  //인증코드 타이머
+  setTimer = () => {
+    let mi = 5;
+    let s1 = 6;
+    let s2 = 10;
+
+    const runTime = () => {
+      this.setState({
+        timer: mi + ":" + (s1 === 6 ? 0 : s1) + (s2 === 10 ? 0 : s2),
+      });
+      if (mi === 5 && s1 === 6 && s2 === 10) {
+        mi--;
+        s1--;
+        s2--;
+      } else {
+        s2--;
+        if (mi === 0 && s1 === 0 && s2 === 0) {
+          clearInterval(go);
+          this.setState({
+            timer: "인증시간이 초과되었습니다.",
+            pwCode: "",
+            finishSending: false,
+          });
+        } else if (s1 === 0 && s2 === 0) {
+          s1 = 6;
+          s2 = 10;
+        } else if (s2 === 0) {
+          s2 = 10;
+        } else if (s2 === 9) {
+          s1--;
+        }
+        if (s1 === 5 && s2 === 9) {
+          mi--;
+        }
+      }
+    };
+    let go = setInterval(runTime, 1000);
   };
 
   //비밀번호 형식 확인
@@ -108,7 +154,8 @@ export default class SignUp extends Component {
         });
       } else {
         this.setState({
-          possiblePwCkMsg: "",
+          possiblePwCkMsg: "사용 가능한 비밀번호입니다.",
+          pwSuccess: true,
         });
       }
     } else {
@@ -121,8 +168,8 @@ export default class SignUp extends Component {
     if (this.state.rePassword !== "") {
       if (this.state.password === this.state.rePassword) {
         this.setState({
-          samePwCkMsg: "",
-          pwCheck: this.state.rePassword,
+          samePwCkMsg: "비밀번호가 일치합니다.",
+          samePwSuccess: true,
         });
       } else {
         this.setState({
@@ -136,51 +183,46 @@ export default class SignUp extends Component {
     }
   };
 
-  //회원 가입 시 정보 테이블에 저장
-  onSendUserInform = () => {
+  ChangePwd = (e) => {
+    e.preventDefault();
     if (
-      this.state.emailCheck === this.state.email &&
-      this.state.nicknameCheck === this.state.nickname &&
-      this.state.pwCheck === this.state.password
+      this.state.pwCode !== this.state.userCode &&
+      this.state.emailSuccess &&
+      this.state.pwSuccess
     ) {
-      const url = "http://localhost:9000/mechelin/signup";
+      const url = "/changepwd/changepwd";
       Axios.post(url, {
         email: this.state.email,
-        nickname: this.state.nickname,
         password: this.state.password,
       })
         .then((res) => {
-          this.props.history.push("/welcome");
+          this.props.history.push("/login");
         })
         .catch((err) => {
-          console.log("insert userInfom error:" + err);
+          console.log("update userInfom error:" + err);
         });
     } else {
-      alert("가입할 수 없습니다. 기입된 정보를 다시 확인해주세요.");
+      alert("변경할 수 없습니다. 기입하신 정보를 다시 확인해주세요.");
     }
   };
 
   render() {
     return (
       <div>
-        <form onSubmit={this.onSendUserInform.bind(this)}>
-          <table align="center" style={{ width: "200px", marginTop: "100px" }}>
+        <form onSubmit={this.ChangePwd.bind(this)}>
+          <table
+            style={{
+              position: "absolute",
+              left: "50%",
+              top: "50%",
+              transform: "translate(-50%,-50%)",
+            }}
+          >
+            <caption style={{ textAlign: "center", fontSize: "20px" }}>
+              비밀번호 재설정
+            </caption>
+
             <tbody>
-              <tr>
-                <td>
-                  <div
-                    style={{
-                      border: "1px solid lightgray",
-                      width: "100px",
-                      height: "100px",
-                      margin: "0 auto",
-                    }}
-                  >
-                    로고
-                  </div>
-                  <br />
-                </td>
-              </tr>
               <tr>
                 <td>
                   <input
@@ -188,8 +230,9 @@ export default class SignUp extends Component {
                     className="form-control"
                     onChange={this.handleInform.bind(this)}
                     onKeyUp={this.checkEmail.bind(this)}
+                    onKeyDown={this.changeBtn.bind(this)}
                     name="email"
-                    placeholder="EMAIL"
+                    placeholder="이메일"
                     style={{
                       width: "250px",
                       outline: "none",
@@ -213,29 +256,42 @@ export default class SignUp extends Component {
                   <button
                     type="button"
                     className="btn"
+                    onClick={this.sendMail.bind(this)}
+                    disabled={
+                      this.state.clickAuthBtn || this.state.finishSending
+                    }
                     style={{
-                      border: "1px solid rgba(245,145,45)",
-                      backgroundColor: "white",
-                      color: "rgba(245,145,45)",
+                      border: this.state.finishSending
+                        ? "1px solid #ccc"
+                        : "1px solid rgba(245,145,45)",
+                      backgroundColor: this.state.finishSending
+                        ? "#999"
+                        : "white",
+                      color: this.state.finishSending
+                        ? "white"
+                        : "rgba(245,145,45)",
                       verticalAlign: "center",
                       width: "250px",
                       height: "30px",
                     }}
                   >
-                    인증하기
+                    {this.state.clickAuthBtn
+                      ? "이메일 발송 중"
+                      : this.state.finishSending
+                      ? "이메일 발송 완료"
+                      : "인증하기"}
                   </button>
                 </td>
               </tr>
-              <tr>
+              <tr
+                style={{ display: this.state.finishSending ? "block" : "none" }}
+              >
                 <td>
                   <br />
                   <input
                     type="text"
                     className="form-control"
-                    onChange={this.handleInform.bind(this)}
-                    onKeyUp={this.checkNickname.bind(this)}
-                    name="nickname"
-                    placeholder="NICKNAME"
+                    placeholder="인증코드"
                     style={{
                       width: "250px",
                       outline: "none",
@@ -246,27 +302,44 @@ export default class SignUp extends Component {
                   />
                   <span
                     style={{
-                      color: "red",
-                      fontSize: "10px",
+                      float:
+                        this.state.timer === "인증시간이 초과되었습니다."
+                          ? "none"
+                          : "right",
                       fontWeight: "normal",
-                      textAlign: "center",
-                      margin: "10px auto",
+                      color:
+                        this.state.timer === "인증시간이 초과되었습니다."
+                          ? "red"
+                          : "#999",
+                      margin:
+                        this.state.timer === "인증시간이 초과되었습니다."
+                          ? "5px 0 0"
+                          : "-33px 15px",
+                      fontSize:
+                        this.state.timer === "인증시간이 초과되었습니다."
+                          ? "11px"
+                          : "13px",
                     }}
                   >
-                    {this.state.nicknameCkMsg}
+                    {this.state.timer}
                   </span>
-                  <br />
                 </td>
               </tr>
               <tr>
                 <td>
+                  {" "}
+                  {this.state.timer === "인증시간이 초과되었습니다." ? (
+                    ""
+                  ) : (
+                    <br />
+                  )}
                   <input
                     type="password"
                     className="form-control"
                     onChange={this.handleInform.bind(this)}
                     onKeyUp={this.checkPW.bind(this)}
                     name="password"
-                    placeholder="PASSWORD"
+                    placeholder="비밀번호"
                     style={{
                       width: "250px",
                       outline: "none",
@@ -277,7 +350,7 @@ export default class SignUp extends Component {
                   />
                   <span
                     style={{
-                      color: "red",
+                      color: this.state.nicknameSuccess ? "green" : "red",
                       fontSize: "10px",
                       fontWeight: "normal",
                       textAlign: "center",
@@ -297,7 +370,7 @@ export default class SignUp extends Component {
                     onChange={this.handleInform.bind(this)}
                     onKeyUp={this.checkPW.bind(this)}
                     name="rePassword"
-                    placeholder="PASSWORD"
+                    placeholder="비밀번호 재입력"
                     style={{
                       width: "250px",
                       outline: "none",
@@ -308,7 +381,7 @@ export default class SignUp extends Component {
                   />
                   <span
                     style={{
-                      color: "red",
+                      color: this.state.nicknameSuccess ? "green" : "red",
                       fontSize: "10px",
                       fontWeight: "normal",
                       textAlign: "center",
@@ -332,7 +405,7 @@ export default class SignUp extends Component {
                       height: "30px",
                     }}
                   >
-                    회원가입
+                    수정하기
                   </button>
                 </td>
               </tr>
@@ -343,3 +416,4 @@ export default class SignUp extends Component {
     );
   }
 }
+export default ChangePwd;
