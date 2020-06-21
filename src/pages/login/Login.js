@@ -12,16 +12,17 @@ class Login extends Component {
       email: "",
       emailCkMsg: "",
       password: "",
+      kUser: false,
       kUserEmail: "",
-      userid: "",
+      userId: "",
     };
   }
   componentWillMount() {
-    if (localStorage.getItem("email") !== null) {
-      sessionStorage.setItem("email", localStorage.getItem("email"));
+    if (localStorage.getItem("userId") !== null) {
+      sessionStorage.setItem("userId", localStorage.getItem("userId"));
     }
-    if (sessionStorage.getItem("email") !== null) {
-      this.props.history.push("/mechelin");
+    if (sessionStorage.getItem("userId") !== null) {
+      this.props.history.push("/mechelin/" + this.state.userId);
     }
   }
   //값이 바뀌면 state 값을 변경
@@ -63,18 +64,14 @@ class Login extends Component {
               "가입하지 않은 이메일 주소이거나, 틀린 비밀번호를 입력하였습니다.",
           });
         } else {
-          sessionStorage.setItem("email", this.state.email);
-          this.props.history.push("/mechelin");
+          this.getUserId();
         }
       })
       .catch((err) => {
         console.log("로그인 에러:" + err);
       });
-    if (this.state.checked) {
-      localStorage.setItem("email", this.state.email);
-    }
   };
-
+  //카카오 로그인 메소드
   kUserLogin = (e) => {
     this.setState({
       kUser: true,
@@ -85,11 +82,31 @@ class Login extends Component {
         this.setState({
           kUserEmail: res.data,
         });
-        sessionStorage.setItem("email", this.state.kUserEmail);
         sessionStorage.setItem("kLogin", true);
+        this.getUserId();
       })
       .catch((err) => {
         console.log(`카카오 로그인 에러:${err}`);
+      });
+  };
+  //email 값 보내고 user id 가져오는 메소드
+  getUserId = () => {
+    const email =
+      this.state.kUser === true ? this.state.kUserEmail : this.state.email;
+    const url = "/select/id?email=" + email;
+    Axios.get(url)
+      .then((res) => {
+        this.setState({
+          userId: res.data,
+        });
+        sessionStorage.setItem("userId", this.state.userId);
+        if (this.state.checked) {
+          localStorage.setItem("userId", this.state.userId);
+        }
+        this.props.history.push("/mechelin/" + this.state.userId);
+      })
+      .catch((err) => {
+        console.log(`get user id error:${err}`);
       });
   };
 

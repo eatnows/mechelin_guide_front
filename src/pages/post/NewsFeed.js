@@ -32,7 +32,7 @@ class NewsFeed extends React.Component {
     };
 
     let now = new Date();
-    let createAt = parseDate(this.props.create_at);
+    let createAt = parseDate("2020-05-04 04:45");
     let timeDiff = now.getTime() - createAt.getTime();
     timeDiff /= 1000 * 60;
 

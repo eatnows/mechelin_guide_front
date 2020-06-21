@@ -6,7 +6,7 @@ import "react-quill/dist/quill.snow.css";
 //import e from "cors";
 import StarRate from "./StarRate";
 import WriteFormMap from "components/map/WriteFormMap";
-import Axios from "axios";
+import Axios from "util/axios";
 import { Link } from "react-router-dom";
 
 Quill.register("modules/imageUpload", ImageUpload);
@@ -166,7 +166,7 @@ class FullMap extends React.Component {
    */
   onSubmitReview = (e) => {
     e.preventDefault();
-    //데이터 유효성 검사
+    /* //데이터 유효성 검사
     if (this.state.subject === "") {
       alert("제목을 입력해주세요.");
       return false;
@@ -191,10 +191,10 @@ class FullMap extends React.Component {
       alert("상호명을 입력해주세요.");
       return false;
     }
-
-    const url = "http://localhost:9000/mechelin/post/add";
+ */
+    const url = "/post/add";
     Axios.post(url, {
-      user_id: 5,
+      user_id: sessionStorage.getItem("userId"),
       latitude_x: this.state.x,
       longitude_y: this.state.y,
       name: this.state.placeName,
@@ -222,7 +222,7 @@ class FullMap extends React.Component {
         const id = response.data.id;
         const userPlaceId = response.data.user_place_id;
         console.log(response.data.user_place_id);
-        this.props.history.push(`/review/${userPlaceId}`);
+        this.props.history.push(`/mechelin/review/${userPlaceId}`);
       })
       .catch((error) => {
         console.log(error);
