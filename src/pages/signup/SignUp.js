@@ -207,7 +207,15 @@ export default class SignUp extends Component {
     return (
       <div>
         <form onSubmit={this.sendUserInform.bind(this)}>
-          <table align="center" style={{ width: "200px", marginTop: "100px" }}>
+          <table
+            style={{
+              position: "absolute",
+              left: "50%",
+              top: "50%",
+              transform: "translate(-50%,-50%)",
+              width: "200px",
+            }}
+          >
             <tbody>
               <tr>
                 <td>
