@@ -71,8 +71,42 @@ class FullMap extends React.Component {
       // optional
       // add callback when a image have been chosen
       checkBeforeSend: (file, next) => {
+        const AWS = require("aws-sdk");
         console.log(file);
         next(file); // go back to component and send to the server
+
+        const credentials = {
+          accessKeyId: "액세스키",
+          secretAccessKey: "시크릿액세스키",
+          region: "ap-northeast-2",
+        };
+        const s3 = new AWS.S3(credentials);
+
+        // Tried with and without this. Since s3 is not region-specific, I don't
+        // think it should be necessary.
+        //AWS.config.update({ region: "ap-northeast-2" });
+
+        const param = {
+          Bucket: "버킷이름",
+          Key: `images/place/${file.name}`,
+          ACL: "public-read",
+          Body: file,
+          ContentType: "image/png",
+        }; // s3업로드에 필요한 옵션 설정
+
+        s3.upload(param, (err, data) => {
+          if (err) {
+            console.log(`image upload err : ${err}`);
+          }
+          console.log(data.Location);
+          const imgTag = `<img src=${data.Location} width="100%" />`;
+
+          // const action = {
+          //   type: "content",
+          //   value : `${postState.content} \n ${imgTag}`
+          // }
+          // postDispatch(action);
+        });
       },
     },
     clipboard: {
@@ -167,30 +201,30 @@ class FullMap extends React.Component {
   onSubmitReview = (e) => {
     e.preventDefault();
     //데이터 유효성 검사
-    if (this.state.subject === "") {
-      alert("제목을 입력해주세요.");
-      return false;
-    }
-    if (this.state.content === "") {
-      alert("내용을 입력해주세요.");
-      return false;
-    }
-    if (this.state.category === "") {
-      alert("카테고리를 선택해주세요.");
-      return false;
-    }
-    if (this.state.starScore === 0) {
-      alert("맛집 평가를 해주세요.");
-      return false;
-    }
-    if (this.state.x === 0 && this.state.y === 0) {
-      alert("맛집을 등록해주세요.");
-      return false;
-    }
-    if (this.state.placeName === "") {
-      alert("상호명을 입력해주세요.");
-      return false;
-    }
+    // if (this.state.subject === "") {
+    //   alert("제목을 입력해주세요.");
+    //   return false;
+    // }
+    // if (this.state.content === "") {
+    //   alert("내용을 입력해주세요.");
+    //   return false;
+    // }
+    // if (this.state.category === "") {
+    //   alert("카테고리를 선택해주세요.");
+    //   return false;
+    // }
+    // if (this.state.starScore === 0) {
+    //   alert("맛집 평가를 해주세요.");
+    //   return false;
+    // }
+    // if (this.state.x === 0 && this.state.y === 0) {
+    //   alert("맛집을 등록해주세요.");
+    //   return false;
+    // }
+    // if (this.state.placeName === "") {
+    //   alert("상호명을 입력해주세요.");
+    //   return false;
+    // }
 
     const url = "http://localhost:9000/mechelin/post/add";
     Axios.post(url, {
