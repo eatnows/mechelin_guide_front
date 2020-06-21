@@ -116,7 +116,9 @@ const Post = (props) => {
 
     setTheposition(scrolled);
   };
-  // 공감 버튼 클릭시 실행되는 메소드
+  /*
+   * 공감 버튼 클릭시 실행되는 메소드
+   */
   const onClickLikes = (e) => {
     const url = `http://localhost:9000/mechelin/likes/post`;
     Axios.post(url, {
@@ -131,7 +133,9 @@ const Post = (props) => {
         console.log(error);
       });
   };
-  // 공감 버튼을 눌렀을때 바로 반영될 수 있게 하는 메소드
+  /*
+   *  공감 버튼을 눌렀을때 바로 반영될 수 있게 하는 메소드
+   */
   const onClickLikesRender = () => {
     console.log(item);
     item = dataLength;
