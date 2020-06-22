@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import "components/css/loginStyle.css";
-import { NavLink } from "react-router-dom";
+import { NavLink, Link } from "react-router-dom";
 import kakaotalk from "images/kakaotalk.png";
 import Axios from "util/axios";
 
@@ -15,6 +15,7 @@ class Login extends Component {
       kUser: false,
       kUserEmail: "",
       userId: "",
+      accessToken: "",
     };
   }
   componentWillMount() {
@@ -73,22 +74,25 @@ class Login extends Component {
   };
   //카카오 로그인 메소드
   kUserLogin = (e) => {
-    this.setState({
-      kUser: true,
-    });
-    const url = "/login/kakaologin";
-    Axios.get(url)
-      .then((res) => {
-        console.log(res.data);
-        this.setState({
-          // kUserEmail: ,
+    setTimeout(() => {
+      console.log("되나?");
+      const url = "/klogin";
+      Axios.get(url)
+        .then((res) => {
+          this.setState({
+            kUserEmail: res.data.email,
+            access_token: res.data.accessToken,
+          });
+          sessionStorage.setItem("kLogin", true);
+          this.setState({
+            kUser: true,
+          });
+          this.getUserId();
+        })
+        .catch((err) => {
+          console.log(`카카오 로그인 에러:${err}`);
         });
-        sessionStorage.setItem("kLogin", true);
-        this.getUserId();
-      })
-      .catch((err) => {
-        console.log(`카카오 로그인 에러:${err}`);
-      });
+    }, 30000);
   };
   //email 값 보내고 user id 가져오는 메소드
   getUserId = () => {
@@ -252,9 +256,11 @@ class Login extends Component {
               </tr>
               <tr>
                 <td style={{ textAlign: "center" }}>
-                  <button
-                    type="button"
+                  <a
+                    href="https://kauth.kakao.com/oauth/authorize?client_id=71100263fd4bab7558fb465089e72859&redirect_uri=http://localhost:9000/mechelin/klogin&response_type=code"
                     className="btn"
+                    target="_blank"
+                    onClick={this.kUserLogin.bind(this)}
                     style={{
                       borderRadius: "100%",
                       border: "1px solid lightgray",
@@ -262,7 +268,6 @@ class Login extends Component {
                       height: "50px",
                       backgroundColor: "#fee500",
                     }}
-                    onClick={this.kUserLogin.bind(this)}
                   >
                     <img
                       src={kakaotalk}
@@ -270,11 +275,11 @@ class Login extends Component {
                         textAlign: "center",
                         width: "28px",
                         height: "28px",
-                        margin: "3.5px 0 0 -1px",
+                        margin: "5px 0 0 -1px",
                       }}
                       alt=""
                     />
-                  </button>
+                  </a>
                   &nbsp;&nbsp;
                   <NavLink to="/signup">
                     <button

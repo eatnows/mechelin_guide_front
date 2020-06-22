@@ -1,5 +1,6 @@
 import React from "react";
 import Axios from "util/axios";
+import Comment from "pages/post/Comment";
 //import Comment from "pages";
 class NewsFeed extends React.Component {
   constructor({ match, props }) {
@@ -9,6 +10,7 @@ class NewsFeed extends React.Component {
       Data: [],
       time: "",
       ex: "2020-05-09 05:30",
+      row: 5,
     };
   }
   componentWillMount() {
@@ -54,13 +56,22 @@ class NewsFeed extends React.Component {
       time: simpleTime,
     });
   };
+
   getAllPost = () => {
-    let url = "/newsfeed/getAllPost?email=" + this.state.email;
+    let url =
+      "/post/newsfeed/getallpost?user_id=" +
+      sessionStorage.getItem("userId") +
+      "&row=" +
+      0;
+    //this.state.row;
     Axios.get(url)
       .then((res) => {
+        console.log(res.data);
+
         this.setState({
           Data: res.data,
         });
+        console.log(this.state.Data);
       })
       .catch((err) => {
         console.log("getAllPost error:" + err);
@@ -70,27 +81,52 @@ class NewsFeed extends React.Component {
     return (
       <div>
         {this.state.Data.map((row, idx) => (
-          <table>
-            <thead>
-              <th>
-                <td>{this.state.Data.row.subject}</td>
-                <td>{this.state.Data.row.rating}</td>
-              </th>
-              <th>
-                <td>{this.state.Data.row.profile_url}</td>
-                <td>
-                  {this.state.Data.row.nickname}
-                  <br />
-                  {this.state.Data.row.create_at}
-                </td>
-              </th>
-            </thead>
-            <tbody>
-              <tr>{this.state.Data.row.content}</tr>
-              <tr>{this.state.Data.row.likes}</tr>
-              <tr>{/* {  <Comment row={row} idx={idx} key={row.num} />} */}</tr>
-            </tbody>
-          </table>
+          <form>
+            <table
+              style={{
+                border: "1px solid #999",
+                width: "50vw",
+                position: "absolute",
+                left: "50%",
+                top: "20%",
+                transform: "translateX(-50%)",
+              }}
+              className="table"
+            >
+              <thead>
+                <tr style={{ width: "50%" }}>
+                  <th colSpan="2">{row.name}</th>
+                </tr>
+                <tr>
+                  <th>사진:{row.profile_url}</th>
+                  <th>
+                    닉네임:{row.nickname}
+                    <br />
+                    작성일:{row.create_at}
+                  </th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td colSpan="2">
+                    제목:{row.subject}{" "}
+                    <div style={{ float: "right" }}>{row.rating}점</div>
+                  </td>
+                </tr>
+                <tr>
+                  <td colSpan="2">내용:{row.content}</td>
+                </tr>
+                <tr>
+                  <td colSpan="2">좋아요:{row.likes}</td>
+                </tr>
+                <tr>
+                  <td colSpan="2">
+                    <Comment row={row} idx={idx} key={row.num} />
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </form>
         ))}
         {this.state.time}
       </div>

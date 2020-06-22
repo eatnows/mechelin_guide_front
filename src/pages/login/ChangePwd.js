@@ -69,7 +69,7 @@ class ChangePwd extends React.Component {
       clickAuthBtn: true,
     });
     if (this.state.email !== "" && this.state.emailSuccess) {
-      const url = "/changepwd?email=" + this.state.email;
+      const url = "/login/changepwd?email=" + this.state.email;
       Axios.get(url)
         .then((res) => {
           this.setState({
@@ -179,7 +179,7 @@ class ChangePwd extends React.Component {
       });
     }
   };
-
+  //변경된 비밀번호로 업데이트
   ChangePwd = (e) => {
     e.preventDefault();
     if (
@@ -187,7 +187,7 @@ class ChangePwd extends React.Component {
       this.state.emailSuccess &&
       this.state.pwSuccess
     ) {
-      const url = "/changepwd/changepwd";
+      const url = "/changepwd/reset";
       Axios.post(url, {
         email: this.state.email,
         password: this.state.password,
@@ -281,9 +281,7 @@ class ChangePwd extends React.Component {
                 </td>
               </tr>
               <tr
-                style={{
-                  display: this.state.finishSending ? "block" : "none",
-                }}
+                style={{ display: this.state.finishSending ? "block" : "none" }}
               >
                 <td>
                   <br />
@@ -356,6 +354,7 @@ class ChangePwd extends React.Component {
                       color: this.state.pwSuccess ? "green" : "red",
                       fontSize: "10px",
                       fontWeight: "normal",
+                      textAlign: "center",
                       margin: "10px auto",
                     }}
                   >
