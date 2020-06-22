@@ -18,10 +18,10 @@ class View extends React.Component {
     main: true,
     section: false,
     bar: false,
-    email: sessionStorage.getItem("email"),
+    userId: sessionStorage.getItem("userId"),
   };
   componentWillMount() {
-    if (sessionStorage.getItem("email") === null) {
+    if (sessionStorage.getItem("userId") === null) {
       this.props.history.push("/");
     }
   }
@@ -44,7 +44,7 @@ class View extends React.Component {
 
     return (
       <div>
-        <NavLink to={"/mechelin/" + this.state.email}>
+        <NavLink to={"/mechelin/" + this.state.userId}>
           <div
             className="logo"
             style={{
@@ -73,7 +73,7 @@ class View extends React.Component {
               width: "20vw",
             }}
           />
-          <NavLink to={"/mechelin/result/" + this.state.email}>
+          <NavLink to={"/mechelin/result/" + this.state.userId}>
             <button
               type="button"
               className="btn xi-search"
@@ -103,7 +103,7 @@ class View extends React.Component {
               margin: "5vh 5vw 0 0",
             }}
           >
-            <NavLink to={"/mechelin/newsfeed/" + this.state.email}>
+            <NavLink to={"/mechelin/newsfeed/" + this.state.userId}>
               <li>
                 <div
                   onClick={() => {
@@ -115,7 +115,7 @@ class View extends React.Component {
                 </div>
               </li>
             </NavLink>
-            <NavLink to={"/mechelin/timeline/" + this.state.email}>
+            <NavLink to={"/mechelin/timeline/" + this.state.userId}>
               <li>
                 <div
                   onClick={() => {
@@ -127,7 +127,7 @@ class View extends React.Component {
                 </div>
               </li>
             </NavLink>
-            <NavLink to={"/mechelin/wishlist/" + this.state.email}>
+            <NavLink to={"/mechelin/wishlist/" + this.state.userId}>
               <li>
                 <div
                   onClick={() => {
@@ -143,15 +143,15 @@ class View extends React.Component {
         </nav>
         {/* 삼항 연산자를 이용해 출력 페이지 변경 */}
         {this.state.main ? <FullMap /> : ""}
-        <Route path="/mechelin/faq/:email" component={FAQ} />
-        <Route path="/mechelin/qna/:email" component={QnA} />
-        <Route path="/mechelin/mypage/:email" component={MyPage} />
-        <Route path="/mechelin/wishlist/:email" component={WishList} />
-        <Route path="/mechelin/newsfeed/:email" component={NewsFeed} />
-        <Route path="/mechelin/review/:email" component={Review} />
-        <Route path="/mechelin/timeline/:email" component={Timeline} />
-        <Route path="/mechelin/result/:email" component={Result} />
-        <Route path="/mechelin/mylist/:email" component={MyList} />
+        <Route path="/mechelin/faq/:userId" component={FAQ} />
+        <Route path="/mechelin/qna/:userId" component={QnA} />
+        <Route path="/mechelin/mypage/:userId" component={MyPage} />
+        <Route path="/mechelin/wishlist/:userId" component={WishList} />
+        <Route path="/mechelin/newsfeed/:userId" component={NewsFeed} />
+        <Route path="/mechelin/review/:userPlaceId" component={Review} />
+        <Route path="/mechelin/timeline/:userId" component={Timeline} />
+        <Route path="/mechelin/result/:userId" component={Result} />
+        <Route path="/mechelin/mylist/:userId" component={MyList} />
         <div
           className="bottomBar"
           style={{
@@ -220,7 +220,7 @@ class View extends React.Component {
             </NavLink>{" "}
             ·{" "}
             <NavLink
-              to={"/mechelin/faq/" + this.state.email}
+              to={"/mechelin/faq/" + this.state.userId}
               activeStyle={activeStyle}
             >
               <span
@@ -275,7 +275,7 @@ class View extends React.Component {
                 lineHeight: "7vh",
               }}
             >
-              <NavLink to={"/mechelin/mylist/" + this.state.email}>
+              <NavLink to={"/mechelin/mylist/" + this.state.userId}>
                 <li
                   style={{
                     marginBottom: "2vh",
@@ -286,7 +286,7 @@ class View extends React.Component {
                   나만의맛집
                 </li>
               </NavLink>
-              <NavLink to={"/mechelin/newsfeed/" + this.state.email}>
+              <NavLink to={"/mechelin/newsfeed/" + this.state.userId}>
                 <li
                   style={{
                     marginBottom: "2vh",
@@ -297,7 +297,7 @@ class View extends React.Component {
                   뉴스피드
                 </li>
               </NavLink>
-              <NavLink to={"/mechelin/timeline/" + this.state.email}>
+              <NavLink to={"/mechelin/timeline/" + this.state.userId}>
                 <li
                   style={{
                     marginBottom: "2vh",
@@ -308,7 +308,7 @@ class View extends React.Component {
                   타임라인
                 </li>
               </NavLink>
-              <NavLink to={"/mechelin/wishlist/" + this.state.email}>
+              <NavLink to={"/mechelin/wishlist/" + this.state.userId}>
                 <li
                   style={{
                     marginBottom: "2vh",
@@ -319,7 +319,7 @@ class View extends React.Component {
                   위시리스트
                 </li>
               </NavLink>
-              <NavLink to={"/mechelin/mypage/" + this.state.email}>
+              <NavLink to={"/mechelin/mypage/" + this.state.userId}>
                 <li
                   style={{
                     marginBottom: "2vh",

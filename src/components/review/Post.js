@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import useIntersect from "./useIntersect";
-import Axios from "axios";
+import Axios from "util/axios";
 
 const fakeFetch = (delay = 1000) =>
   new Promise((res) => setTimeout(res, delay));
@@ -70,7 +70,7 @@ const Post = (props) => {
   console.log("state구역");
   /* fake async fetch */
   const fetchItems = async () => {
-    const url = `http://localhost:9000/mechelin/post/review?user_place_id=${props.userPlaceId}&row=${item}`;
+    const url = `/post/review?user_place_id=${props.userPlaceId}&row=${item}`;
     Axios.get(url)
       .then((response) => {
         console.log(response.data);
@@ -120,9 +120,9 @@ const Post = (props) => {
    * 공감 버튼 클릭시 실행되는 메소드
    */
   const onClickLikes = (e) => {
-    const url = `http://localhost:9000/mechelin/likes/post`;
+    const url = `/likes/post`;
     Axios.post(url, {
-      user_id: "5",
+      user_id: sessionStorage.getItem("userId"),
       post_id: e.target.getAttribute("postId"),
     })
       .then((response) => {
@@ -140,7 +140,7 @@ const Post = (props) => {
     console.log(item);
     item = dataLength;
     console.log(item);
-    const url = `http://localhost:9000/mechelin/post/review?user_place_id=${props.userPlaceId}&row=${item}`;
+    const url = `/post/review?user_place_id=${props.userPlaceId}&row=${item}`;
     Axios.get(url)
       .then((response) => {
         setResult(response.data);

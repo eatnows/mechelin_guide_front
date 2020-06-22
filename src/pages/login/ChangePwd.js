@@ -18,9 +18,6 @@ class ChangePwd extends React.Component {
     userCode: "",
     timer: "",
   };
-  componentWillMount() {
-    this.setTimer();
-  }
   //값이 바뀌면 state 값을 변경
   handleInform = (e) => {
     this.setState({
@@ -72,7 +69,7 @@ class ChangePwd extends React.Component {
       clickAuthBtn: true,
     });
     if (this.state.email !== "" && this.state.emailSuccess) {
-      const url = "/changepwd?email=" + this.state.email;
+      const url = "/login/changepwd?email=" + this.state.email;
       Axios.get(url)
         .then((res) => {
           this.setState({
@@ -182,21 +179,21 @@ class ChangePwd extends React.Component {
       });
     }
   };
-
+  //변경된 비밀번호로 업데이트
   ChangePwd = (e) => {
     e.preventDefault();
     if (
-      this.state.pwCode !== this.state.userCode &&
+      this.state.pwCode === this.state.userCode &&
       this.state.emailSuccess &&
       this.state.pwSuccess
     ) {
-      const url = "/changepwd/changepwd";
+      const url = "/changepwd/reset";
       Axios.post(url, {
         email: this.state.email,
         password: this.state.password,
       })
         .then((res) => {
-          this.props.history.push("/login");
+          this.props.history.push("/");
         })
         .catch((err) => {
           console.log("update userInfom error:" + err);
@@ -216,6 +213,7 @@ class ChangePwd extends React.Component {
               left: "50%",
               top: "50%",
               transform: "translate(-50%,-50%)",
+              width: "200px",
             }}
           >
             <caption style={{ textAlign: "center", fontSize: "20px" }}>
@@ -246,7 +244,6 @@ class ChangePwd extends React.Component {
                       color: "red",
                       fontSize: "10px",
                       fontWeight: "normal",
-                      textAlign: "center",
                       margin: "10px auto",
                     }}
                   >
@@ -325,7 +322,11 @@ class ChangePwd extends React.Component {
                   </span>
                 </td>
               </tr>
-              <tr>
+              <tr
+                style={{
+                  clear: "both",
+                }}
+              >
                 <td>
                   {" "}
                   {this.state.timer === "인증시간이 초과되었습니다." ? (
@@ -350,7 +351,7 @@ class ChangePwd extends React.Component {
                   />
                   <span
                     style={{
-                      color: this.state.nicknameSuccess ? "green" : "red",
+                      color: this.state.pwSuccess ? "green" : "red",
                       fontSize: "10px",
                       fontWeight: "normal",
                       textAlign: "center",
@@ -358,8 +359,8 @@ class ChangePwd extends React.Component {
                     }}
                   >
                     {this.state.possiblePwCkMsg}
+                    <br />
                   </span>
-                  <br />
                 </td>
               </tr>
               <tr>
@@ -381,7 +382,7 @@ class ChangePwd extends React.Component {
                   />
                   <span
                     style={{
-                      color: this.state.nicknameSuccess ? "green" : "red",
+                      color: this.state.samePwSuccess ? "green" : "red",
                       fontSize: "10px",
                       fontWeight: "normal",
                       textAlign: "center",

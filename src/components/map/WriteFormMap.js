@@ -2,7 +2,7 @@
 import React, { useState, useEffect, createRef } from "react";
 import "./WriteFormMapStyle.css";
 import LocationIcon from "images/location-02.png";
-import Axios from "axios";
+import Axios from "util/axios";
 
 const WriteFormMap2 = (props) => {
   const [latitude, setLatitude] = useState(37.505002);
@@ -138,7 +138,7 @@ const WriteFormMap2 = (props) => {
               infowindow.open(map, clickMarkers);
 
               // 지도를 클릭했을때 좌표값으로 DB에 근처 맛집 출력
-              const url = `http://localhost:9000/mechelin/place/around/place?x=${mouseEvent.latLng.Ha}&y=${mouseEvent.latLng.Ga}`;
+              const url = `/place/around/place?x=${mouseEvent.latLng.Ha}&y=${mouseEvent.latLng.Ga}`;
               Axios.get(url)
                 .then((res) => {
                   setDbData(res.data);
