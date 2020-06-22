@@ -79,8 +79,9 @@ class Login extends Component {
     const url = "/login/kakaologin";
     Axios.get(url)
       .then((res) => {
+        console.log(res.data);
         this.setState({
-          kUserEmail: res.data,
+          // kUserEmail: ,
         });
         sessionStorage.setItem("kLogin", true);
         this.getUserId();
@@ -261,6 +262,7 @@ class Login extends Component {
                       height: "50px",
                       backgroundColor: "#fee500",
                     }}
+                    onClick={this.kUserLogin.bind(this)}
                   >
                     <img
                       src={kakaotalk}
