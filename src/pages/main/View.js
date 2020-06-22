@@ -12,7 +12,7 @@ import {
   Result,
   MyList,
 } from "pages/index.js";
-
+import "components/css/mainStyle.css";
 class View extends React.Component {
   state = {
     main: true,
@@ -29,7 +29,7 @@ class View extends React.Component {
     const garoStyle = {
       display: "inline-block",
       width: "10vw",
-      height: "10vh",
+      height: "7vh",
       borderRight: "1px solid white",
       lineHeight: "7vh",
       color: "white",
@@ -54,6 +54,9 @@ class View extends React.Component {
               height: "100px",
               border: "1px solid #999",
               cursor: "pointer",
+              background: "white",
+              borderRadius: "50%",
+              lineHeight: "100px",
             }}
             onClick={() => {
               this.setState({ main: true });
@@ -62,85 +65,6 @@ class View extends React.Component {
             로고 {/* <img src={} alt=""/> */}
           </div>
         </NavLink>
-        <div>
-          <input
-            type="text"
-            className="form-control"
-            placeholder="search"
-            style={{
-              float: "left",
-              margin: "7.5vh 0 0 15vw",
-              width: "20vw",
-            }}
-          />
-          <NavLink to={"/mechelin/result/" + this.state.userId}>
-            <button
-              type="button"
-              className="btn xi-search"
-              onClick={() => {
-                this.setState({ main: false });
-              }}
-              style={{
-                margin: "7.5vh 15vw 0 0",
-                float: "left",
-                width: "3vw",
-                height: "35px",
-                padding: 0,
-                backgroundColor: "rgba(245,145,45)",
-                color: "white",
-                fontSize: "20px",
-              }}
-            ></button>
-          </NavLink>
-        </div>
-        <nav style={{ float: "right" }}>
-          <ul
-            style={{
-              width: "30vw",
-              height: "7vh",
-              backgroundColor: "rgba(245,145,45)",
-              borderRadius: "10px",
-              margin: "5vh 5vw 0 0",
-            }}
-          >
-            <NavLink to={"/mechelin/newsfeed/" + this.state.userId}>
-              <li>
-                <div
-                  onClick={() => {
-                    this.setState({ main: false });
-                  }}
-                  style={garoStyle}
-                >
-                  뉴스피드
-                </div>
-              </li>
-            </NavLink>
-            <NavLink to={"/mechelin/timeline/" + this.state.userId}>
-              <li>
-                <div
-                  onClick={() => {
-                    this.setState({ main: false });
-                  }}
-                  style={garoStyle}
-                >
-                  타임라인
-                </div>
-              </li>
-            </NavLink>
-            <NavLink to={"/mechelin/wishlist/" + this.state.userId}>
-              <li>
-                <div
-                  onClick={() => {
-                    this.setState({ main: false });
-                  }}
-                  style={garoStyle}
-                >
-                  위시리스트
-                </div>
-              </li>
-            </NavLink>
-          </ul>
-        </nav>
         {/* 삼항 연산자를 이용해 출력 페이지 변경 */}
         {this.state.main ? <FullMap /> : ""}
         <Route path="/mechelin/faq/:userId" component={FAQ} />
@@ -153,118 +77,76 @@ class View extends React.Component {
         <Route path="/mechelin/result/:userId" component={Result} />
         <Route path="/mechelin/mylist/:userId" component={MyList} />
         <div
-          className="bottomBar"
-          style={{
-            width: "100%",
-            height: "5vh",
-            backgroundColor: "rgba(245,145,45)",
-            color: "white",
-            position: "absolute",
-            bottom: "0%",
+          className={
+            this.state.bar
+              ? "xi-close barIcon xi-2x closeBar"
+              : "xi-bars barIcon xi-2x openBar"
+          }
+          onClick={() => {
+            if (this.state.bar) {
+              this.setState({ bar: false });
+            } else {
+              this.setState({ bar: true });
+            }
           }}
-        >
+          style={{
+            color: "rgba(245,145,45)",
+            height: "6vh",
+            width: "6vh",
+            backgroundColor: "white",
+            position: "absolute",
+            top: "6%",
+            right: "2%",
+            textAlign: "center",
+            borderRadius: "50%",
+            lineHeight: "6vh",
+            cursor: "pointer",
+            zIndex: "9999",
+            transition: "all 1s",
+            transform: "rotate(180deg)",
+            border: this.state.bar ? "1px solid rgba(245,145,45)" : "none",
+          }}
+        ></div>
+        <section>
+          <div className={this.state.bar ? "barSection" : "defaultBar"}></div>
           <div
             style={{
-              height: "5vh",
-              width: "5vw",
-              lineHeight: "5vh",
-              float: "left",
-            }}
-          >
-            로고
-          </div>
-
-          <div
-            style={{
+              opacity: this.state.bar ? "1" : "0",
+              transition: "all 0.3s ease .4s",
               position: "absolute",
-              left: "50%",
-              transform: "translateX(-50%)",
-              height: "5vh",
-              lineHeight: "5vh",
-              clear: "both",
-              bottom: "0",
-              color: "white",
             }}
           >
-            <NavLink to="" activeStyle={activeStyle}>
-              <span
-                onClick={() => {
-                  this.setState({ main: false });
+            <div className="searchBar">
+              <input
+                type="text"
+                className="form-control"
+                placeholder="search"
+                style={{
+                  float: "left",
+                  margin: "7.5vh 0 0 15vw",
+                  width: "20vw",
                 }}
-                style={{ cursor: "pointer" }}
-              >
-                개인정보처리방침
-              </span>
-            </NavLink>{" "}
-            ·{" "}
-            <NavLink to="" activeStyle={activeStyle}>
-              <span
-                onClick={() => {
-                  this.setState({ main: false });
-                }}
-                style={{ cursor: "pointer" }}
-              >
-                Copyright
-              </span>
-            </NavLink>{" "}
-            ·{" "}
-            <NavLink to="" activeStyle={activeStyle}>
-              <span
-                onClick={() => {
-                  this.setState({ main: false });
-                }}
-                style={{ cursor: "pointer" }}
-              >
-                이용약관
-              </span>
-            </NavLink>{" "}
-            ·{" "}
-            <NavLink
-              to={"/mechelin/faq/" + this.state.userId}
-              activeStyle={activeStyle}
-            >
-              <span
-                onClick={() => {
-                  this.setState({ main: false });
-                }}
-                style={{ cursor: "pointer" }}
-              >
-                고객센터
-              </span>
-            </NavLink>
-          </div>
-          <div
-            className="xi-bars xi-2x"
-            onClick={() => {
-              if (this.state.bar) {
-                this.setState({ bar: false });
-              } else {
-                this.setState({ bar: true });
-              }
-            }}
-            style={{
-              color: "white",
-              height: "5vh",
-              width: "4vw",
-              float: "right",
-              textAlign: "center",
-              lineHeight: "5vh",
-              cursor: "pointer",
-            }}
-          ></div>
-        </div>
-        {this.state.bar ? (
-          <section
-            style={{
-              width: "15vw",
-              height: "100vh",
-              backgroundColor: "white",
-              border: "1px solid #999",
-              position: "absolute",
-              bottom: "5vh",
-              right: "0",
-            }}
-          >
+              />
+              <NavLink to={"/mechelin/result/" + this.state.userId}>
+                <button
+                  type="button"
+                  className="btn xi-search"
+                  onClick={() => {
+                    this.setState({ main: false });
+                  }}
+                  style={{
+                    margin: "7.5vh 15vw 0 0",
+                    float: "left",
+                    width: "3vw",
+                    height: "35px",
+                    padding: 0,
+                    backgroundColor: "rgba(245,145,45)",
+                    color: "white",
+                    fontSize: "20px",
+                  }}
+                ></button>
+              </NavLink>
+            </div>
             <ul
               style={{
                 width: "15vw",
@@ -347,10 +229,8 @@ class View extends React.Component {
                 </li>
               </NavLink>
             </ul>
-          </section>
-        ) : (
-          ""
-        )}
+          </div>
+        </section>
       </div>
     );
   }

@@ -1,0 +1,25 @@
+.barSection {
+  height: 150vw;
+  width: 150vw;
+  position: absolute;
+  top: -45%;
+  right: -25%;
+  background-color: white;
+  border-radius: 50%;
+  transition: all 1s ease;
+}
+.defaultBar {
+  height: 6vh;
+  width: 6vh;
+  position: absolute;
+  background-color: white;
+  top: 6%;
+  right: 2%;
+  border-radius: 50%;
+  transition: all 1s ease 0.4s;
+}
+
+.closeBar:hover {
+  color: white;
+  background-color: rgba(245, 145, 45);
+}

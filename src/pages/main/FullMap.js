@@ -7,7 +7,7 @@ import "react-quill/dist/quill.snow.css";
 import StarRate from "./StarRate";
 import WriteFormMap from "components/map/WriteFormMap";
 import Axios from "util/axios";
-import { Link } from "react-router-dom";
+import map from "images/map.PNG";
 
 Quill.register("modules/imageUpload", ImageUpload);
 
@@ -243,6 +243,21 @@ class FullMap extends React.Component {
 
     return (
       <div>
+        <div>
+          <img
+            src={map}
+            style={{
+              position: "absolute",
+              left: "0",
+              top: "0",
+              zIndex: "-9",
+              width: "100vw",
+              height: "100vh",
+            }}
+            alt=""
+          />
+        </div>
+        {/* 백그라운드(섹션이 열렸을 때 배경 까맣게 해주는 것) */}
         <div
           className="background"
           style={{
@@ -440,46 +455,6 @@ class FullMap extends React.Component {
         ) : (
           ""
         )}{" "}
-        <nav style={{ float: "right" }}>
-          <ul
-            style={{
-              width: "5vw",
-              height: "30vh",
-              backgroundColor: "rgba(245,145,45)",
-              borderRadius: "10px",
-              transform: "translate(50%,95%)",
-              position: "absolute",
-              left: "90%",
-              top: "0%",
-              cursor: "pointer",
-            }}
-          >
-            <li
-              style={seroStyle}
-              onClick={() => {
-                this.setState({ idx: 3 });
-              }}
-            >
-              필터
-            </li>
-            <li
-              style={seroStyle}
-              onClick={() => {
-                this.setState({ section: true });
-              }}
-            >
-              리뷰 작성
-            </li>
-            <li
-              style={seroStyle}
-              onClick={() => {
-                this.setState({ idx: 5 });
-              }}
-            >
-              DM
-            </li>
-          </ul>
-        </nav>
       </div>
     );
   }
