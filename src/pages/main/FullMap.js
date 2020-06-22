@@ -28,6 +28,7 @@ class FullMap extends React.Component {
     category: "",
     content: "",
     front_image: null,
+    imageId: [],
   };
 
   modules = {
@@ -65,9 +66,10 @@ class FullMap extends React.Component {
         console.log(serverResponse.src);
         // 성공하면 리턴되는 함수
         next(serverResponse.data);
-        console.log("여기실행됨");
-        console.log(serverResponse);
-        console.log(next);
+        const { imageId } = this.state;
+        this.setState({
+          imageId: imageId.concat(serverResponse.image_id),
+        });
       },
       callbackKO: (serverError) => {
         // 실패하면 리턴되는 함수
@@ -211,6 +213,7 @@ class FullMap extends React.Component {
       category: this.state.category,
       rating: this.state.starScore,
       front_image: this.state.front_image,
+      image_id: this.state.imageId,
     })
       .then((response) => {
         console.log("데이터 주고받기 완료");
@@ -225,6 +228,7 @@ class FullMap extends React.Component {
           category: "",
           starScore: 0,
           front_image: null,
+          imageId: [],
         });
         const id = response.data.id;
         const userPlaceId = response.data.user_place_id;
