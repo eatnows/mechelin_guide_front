@@ -52,16 +52,22 @@ class FullMap extends React.Component {
       // handlers: { 'image' : this.handleImage }
     },
     imageUpload: {
-      url: "http://localhost:9000/mechelin/image/add", // server url
-      method: "POST", // change query method, default 'POST'
+      url:
+        "http://localhost:9000/mechelin/image/add&id=" +
+        sessionStorage.getItem("userId"), // server url
+      method: "GET", // change query method, default 'POST'
       name: "images", // 아래 설정으로 image upload form의 key 값을 변경할 수 있다.
       headers: {
         //Authorization: `Bearer ${}`,
         "X-Total-Count": 0,
       },
       callbackOK: (serverResponse, next) => {
+        console.log(serverResponse.src);
         // 성공하면 리턴되는 함수
-        next(serverResponse);
+        next(serverResponse.data);
+        console.log("여기실행됨");
+        console.log(serverResponse);
+        console.log(next);
       },
       callbackKO: (serverError) => {
         // 실패하면 리턴되는 함수
@@ -71,6 +77,7 @@ class FullMap extends React.Component {
       // optional
       // add callback when a image have been chosen
       checkBeforeSend: (file, next) => {
+        console.log("ceckbeforesend");
         console.log(file);
         next(file); // go back to component and send to the server
       },
@@ -79,8 +86,8 @@ class FullMap extends React.Component {
       // toggle to add extra line breaks when pasting HTML:
       matchVisual: false,
     },
-    // imageDrop: true, // imageDrop 등록
-    // imageResize: {} // imageResize 등록
+    //imageDrop: true, // imageDrop 등록
+    //imageResize: {}, // imageResize 등록
   };
 
   formats = [
