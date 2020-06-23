@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from "react";
 import useIntersect from "./useIntersect";
-import Axios from "axios";
+import Axios from "util/axios";
 
 const fakeFetch = (delay = 1000) =>
   new Promise((res) => setTimeout(res, delay));
 
-const ListItem = ({ contact, i, likesChange }) => (
+const ListItem = ({ contact, i, likesChange, deleteBtn }) => (
   <div key={i}>
     <table
       style={{
@@ -17,7 +17,11 @@ const ListItem = ({ contact, i, likesChange }) => (
       <thead>
         <tr>
           <td colSpan="2">수정</td>
-          <td>삭제</td>
+          <td>
+            <span onClick={deleteBtn} postId={contact.id}>
+              삭제
+            </span>
+          </td>
         </tr>
       </thead>
       <tbody>
@@ -28,7 +32,7 @@ const ListItem = ({ contact, i, likesChange }) => (
 
           <td>작성일 : {contact.created_at}</td>
 
-          <td>{i}번째 리뷰글</td>
+          <td>{contact.post_count - i}번째 리뷰글</td>
           <td>평점 {contact.rating}</td>
         </tr>
         <tr>
@@ -70,7 +74,7 @@ const Post = (props) => {
   console.log("state구역");
   /* fake async fetch */
   const fetchItems = async () => {
-    const url = `http://localhost:9000/mechelin/post/review?user_place_id=${props.userPlaceId}&row=${item}`;
+    const url = `/post/review?user_place_id=${props.userPlaceId}&row=${item}`;
     Axios.get(url)
       .then((response) => {
         console.log(response.data);
@@ -120,9 +124,9 @@ const Post = (props) => {
    * 공감 버튼 클릭시 실행되는 메소드
    */
   const onClickLikes = (e) => {
-    const url = `http://localhost:9000/mechelin/likes/post`;
+    const url = `/likes/post`;
     Axios.post(url, {
-      user_id: "5",
+      user_id: sessionStorage.getItem("userId"),
       post_id: e.target.getAttribute("postId"),
     })
       .then((response) => {
@@ -140,7 +144,7 @@ const Post = (props) => {
     console.log(item);
     item = dataLength;
     console.log(item);
-    const url = `http://localhost:9000/mechelin/post/review?user_place_id=${props.userPlaceId}&row=${item}`;
+    const url = `/post/review?user_place_id=${props.userPlaceId}&row=${item}`;
     Axios.get(url)
       .then((response) => {
         setResult(response.data);
@@ -149,6 +153,24 @@ const Post = (props) => {
       .catch((error) => {
         console.log(error);
       });
+  };
+  /*
+   * 삭제 버튼을 눌렀을시 실행되는 메소드
+   */
+  const onClickDelete = (e) => {
+    const postId = e.target.getAttribute("postId");
+    const url = `/post/delete/${postId}/${props.userPlaceId}`;
+    let check = window.confirm("정말 삭제하시겠습니까?");
+    if (check) {
+      Axios.put(url)
+        .then((response) => {
+          // 새로고침을 하지 않고 화면에 바로 반영할 수 있게 메소드 재활용
+          onClickLikesRender();
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    }
   };
 
   return (
@@ -163,7 +185,14 @@ const Post = (props) => {
       }}
     >
       {[...result].map((contact, i) => {
-        return <ListItem contact={contact} i={i} likesChange={onClickLikes} />;
+        return (
+          <ListItem
+            contact={contact}
+            i={i}
+            likesChange={onClickLikes}
+            deleteBtn={onClickDelete}
+          />
+        );
       })}
       <div ref={setRef} className="Loading">
         {isLoading && "Loading..."}

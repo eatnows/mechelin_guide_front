@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import "components/css/loginStyle.css";
-import { NavLink } from "react-router-dom";
+import { NavLink, Link } from "react-router-dom";
 import kakaotalk from "images/kakaotalk.png";
 import Axios from "util/axios";
 
@@ -12,16 +12,18 @@ class Login extends Component {
       email: "",
       emailCkMsg: "",
       password: "",
+      kUser: false,
       kUserEmail: "",
-      userid: "",
+      userId: "",
+      accessToken: "",
     };
   }
   componentWillMount() {
-    if (localStorage.getItem("email") !== null) {
-      sessionStorage.setItem("email", localStorage.getItem("email"));
+    if (localStorage.getItem("userId") !== null) {
+      sessionStorage.setItem("userId", localStorage.getItem("userId"));
     }
-    if (sessionStorage.getItem("email") !== null) {
-      this.props.history.push("/mechelin");
+    if (sessionStorage.getItem("userId") !== null) {
+      this.props.history.push("/mechelin/" + this.state.userId);
     }
   }
   //값이 바뀌면 state 값을 변경
@@ -63,33 +65,53 @@ class Login extends Component {
               "가입하지 않은 이메일 주소이거나, 틀린 비밀번호를 입력하였습니다.",
           });
         } else {
-          sessionStorage.setItem("email", this.state.email);
-          this.props.history.push("/mechelin");
+          this.getUserId();
         }
       })
       .catch((err) => {
         console.log("로그인 에러:" + err);
       });
-    if (this.state.checked) {
-      localStorage.setItem("email", this.state.email);
-    }
   };
-
+  //카카오 로그인 메소드
   kUserLogin = (e) => {
-    this.setState({
-      kUser: true,
-    });
-    const url = "/login/kakaologin";
+    setTimeout(() => {
+      console.log("되나?");
+      const url = "/klogin";
+      Axios.get(url)
+        .then((res) => {
+          this.setState({
+            kUserEmail: res.data.email,
+            access_token: res.data.accessToken,
+          });
+          sessionStorage.setItem("kLogin", true);
+          this.setState({
+            kUser: true,
+          });
+          this.getUserId();
+        })
+        .catch((err) => {
+          console.log(`카카오 로그인 에러:${err}`);
+        });
+    }, 30000);
+  };
+  //email 값 보내고 user id 가져오는 메소드
+  getUserId = () => {
+    const email =
+      this.state.kUser === true ? this.state.kUserEmail : this.state.email;
+    const url = "/select/id?email=" + email;
     Axios.get(url)
       .then((res) => {
         this.setState({
-          kUserEmail: res.data,
+          userId: res.data,
         });
-        sessionStorage.setItem("email", this.state.kUserEmail);
-        sessionStorage.setItem("kLogin", true);
+        sessionStorage.setItem("userId", this.state.userId);
+        if (this.state.checked) {
+          localStorage.setItem("userId", this.state.userId);
+        }
+        this.props.history.push("/mechelin/" + this.state.userId);
       })
       .catch((err) => {
-        console.log(`카카오 로그인 에러:${err}`);
+        console.log(`get user id error:${err}`);
       });
   };
 
@@ -234,9 +256,11 @@ class Login extends Component {
               </tr>
               <tr>
                 <td style={{ textAlign: "center" }}>
-                  <button
-                    type="button"
+                  <a
+                    href="https://kauth.kakao.com/oauth/authorize?client_id=71100263fd4bab7558fb465089e72859&redirect_uri=http://localhost:9000/mechelin/klogin&response_type=code"
                     className="btn"
+                    target="_blank"
+                    onClick={this.kUserLogin.bind(this)}
                     style={{
                       borderRadius: "100%",
                       border: "1px solid lightgray",
@@ -251,11 +275,11 @@ class Login extends Component {
                         textAlign: "center",
                         width: "28px",
                         height: "28px",
-                        margin: "3.5px 0 0 -1px",
+                        margin: "5px 0 0 -1px",
                       }}
                       alt=""
                     />
-                  </button>
+                  </a>
                   &nbsp;&nbsp;
                   <NavLink to="/signup">
                     <button

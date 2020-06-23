@@ -6,12 +6,21 @@ import "react-quill/dist/quill.snow.css";
 //import e from "cors";
 import StarRate from "./StarRate";
 import WriteFormMap from "components/map/WriteFormMap";
-import Axios from "axios";
-import { Link } from "react-router-dom";
+import Axios from "util/axios";
+import {
+  useHistory,
+  withRouter,
+  Route,
+  BrowserRouter,
+  Redirect,
+} from "react-router-dom";
 
 Quill.register("modules/imageUpload", ImageUpload);
 
 class FullMap extends React.Component {
+  constructor(props) {
+    super();
+  }
   state = {
     section: false,
     text: "",
@@ -28,6 +37,7 @@ class FullMap extends React.Component {
     category: "",
     content: "",
     front_image: null,
+    imageId: [],
   };
 
   modules = {
@@ -52,7 +62,9 @@ class FullMap extends React.Component {
       // handlers: { 'image' : this.handleImage }
     },
     imageUpload: {
-      url: "http://192.168.0.5:3000/images", // server url
+      url:
+        "http://localhost:9000/mechelin/image/add?id=" +
+        sessionStorage.getItem("userId"), // server url
       method: "POST", // change query method, default 'POST'
       name: "images", // 아래 설정으로 image upload form의 key 값을 변경할 수 있다.
       headers: {
@@ -61,7 +73,11 @@ class FullMap extends React.Component {
       },
       callbackOK: (serverResponse, next) => {
         // 성공하면 리턴되는 함수
-        next(serverResponse);
+        next(serverResponse.data);
+        const { imageId } = this.state;
+        this.setState({
+          imageId: imageId.concat(serverResponse.image_id),
+        });
       },
       callbackKO: (serverError) => {
         // 실패하면 리턴되는 함수
@@ -71,6 +87,7 @@ class FullMap extends React.Component {
       // optional
       // add callback when a image have been chosen
       checkBeforeSend: (file, next) => {
+        console.log("ceckbeforesend");
         console.log(file);
         next(file); // go back to component and send to the server
       },
@@ -79,8 +96,8 @@ class FullMap extends React.Component {
       // toggle to add extra line breaks when pasting HTML:
       matchVisual: false,
     },
-    // imageDrop: true, // imageDrop 등록
-    // imageResize: {} // imageResize 등록
+    //imageDrop: true, // imageDrop 등록
+    //imageResize: {}, // imageResize 등록
   };
 
   formats = [
@@ -167,34 +184,34 @@ class FullMap extends React.Component {
   onSubmitReview = (e) => {
     e.preventDefault();
     //데이터 유효성 검사
-    if (this.state.subject === "") {
-      alert("제목을 입력해주세요.");
-      return false;
-    }
-    if (this.state.content === "") {
-      alert("내용을 입력해주세요.");
-      return false;
-    }
-    if (this.state.category === "") {
-      alert("카테고리를 선택해주세요.");
-      return false;
-    }
-    if (this.state.starScore === 0) {
-      alert("맛집 평가를 해주세요.");
-      return false;
-    }
-    if (this.state.x === 0 && this.state.y === 0) {
-      alert("맛집을 등록해주세요.");
-      return false;
-    }
-    if (this.state.placeName === "") {
-      alert("상호명을 입력해주세요.");
-      return false;
-    }
+    // if (this.state.subject === "") {
+    //   alert("제목을 입력해주세요.");
+    //   return false;
+    // }
+    // if (this.state.content === "") {
+    //   alert("내용을 입력해주세요.");
+    //   return false;
+    // }
+    // if (this.state.category === "") {
+    //   alert("카테고리를 선택해주세요.");
+    //   return false;
+    // }
+    // if (this.state.starScore === 0) {
+    //   alert("맛집 평가를 해주세요.");
+    //   return false;
+    // }
+    // if (this.state.x === 0 && this.state.y === 0) {
+    //   alert("맛집을 등록해주세요.");
+    //   return false;
+    // }
+    // if (this.state.placeName === "") {
+    //   alert("상호명을 입력해주세요.");
+    //   return false;
+    // }
 
     const url = "http://localhost:9000/mechelin/post/add";
     Axios.post(url, {
-      user_id: 5,
+      user_id: sessionStorage.getItem("userId"),
       latitude_x: this.state.x,
       longitude_y: this.state.y,
       name: this.state.placeName,
@@ -204,9 +221,9 @@ class FullMap extends React.Component {
       category: this.state.category,
       rating: this.state.starScore,
       front_image: this.state.front_image,
+      image_id: this.state.imageId,
     })
       .then((response) => {
-        console.log("데이터 주고받기 완료");
         // 리뷰글 등록후 state값 초기화
         this.setState({
           x: "",
@@ -218,11 +235,13 @@ class FullMap extends React.Component {
           category: "",
           starScore: 0,
           front_image: null,
+          imageId: [],
         });
         const id = response.data.id;
         const userPlaceId = response.data.user_place_id;
-        console.log(response.data.user_place_id);
-        this.props.history.push(`/review/${userPlaceId}`);
+
+        this.setState({ section: false });
+        this.props.history.push(`/mechelin/review/${userPlaceId}`);
       })
       .catch((error) => {
         console.log(error);
@@ -272,170 +291,169 @@ class FullMap extends React.Component {
               transform: "translateX(-50%)",
             }}
           >
-            <form onSubmit={this.onSubmitReview.bind(this)}>
-              <h3 style={{ margin: "3vh 2vw" }}>리뷰 작성</h3>
-              <hr
+            <h3 style={{ margin: "3vh 2vw" }}>리뷰 작성</h3>
+            <hr
+              style={{
+                border: "1px solid rgba(0,0,0,.1)",
+                marginBottom: "4.5vh",
+              }}
+            />
+            <div
+              className="formInner"
+              style={{
+                overflowY: "auto",
+                marginLeft: "-1vw",
+                width: "45vw",
+                height: "60vh",
+                boxShadow: "none",
+                margin: "1vh auto 3vh",
+                paddingRight: "2vw",
+              }}
+            >
+              <input
+                className="form-control"
+                name="subject"
                 style={{
-                  border: "1px solid rgba(0,0,0,.1)",
-                  marginBottom: "4.5vh",
+                  marginLeft: "0.15vw",
+                  width: "20vw",
+                  height: "5vh",
+                  float: "left",
                 }}
+                type="text"
+                placeholder="제목"
+                onChange={this.handleSubject.bind(this)}
               />
-              <div
-                className="formInner"
+              <select
+                className="form-control"
+                name="category"
                 style={{
-                  overflowY: "auto",
-                  marginLeft: "-1vw",
-                  width: "45vw",
-                  height: "60vh",
-                  boxShadow: "none",
-                  margin: "1vh auto 3vh",
-                  paddingRight: "2vw",
+                  marginLeft: "1.2vw",
+                  width: "10vw",
+                  height: "5vh",
+                  float: "left",
+                  fontSize: "12px",
+                  paddingLeft: "3px",
+                  paddingRight: "3px",
+                }}
+                onChange={this.handleCategory.bind(this)}
+              >
+                <option selected disabled hidden>
+                  카테고리
+                </option>
+                <option>한식</option>
+                <option>중식</option>
+                <option>양식</option>
+                <option>일식</option>
+              </select>
+              <div
+                className="rate"
+                style={{
+                  textAlign: "center",
+                  width: "10vw",
+                  float: "left",
+                  height: "5vh",
+                  marginTop: "0.5vh",
+                  marginLeft: "0.5vw",
                 }}
               >
-                <input
-                  className="form-control"
-                  name="subject"
-                  style={{
-                    marginLeft: "0.15vw",
-                    width: "20vw",
-                    height: "5vh",
-                    float: "left",
-                  }}
-                  type="text"
-                  placeholder="제목"
-                  onChange={this.handleSubject.bind(this)}
-                />
-                <select
-                  className="form-control"
-                  name="category"
-                  style={{
-                    marginLeft: "1.2vw",
-                    width: "10vw",
-                    height: "5vh",
-                    float: "left",
-                    fontSize: "12px",
-                    paddingLeft: "3px",
-                    paddingRight: "3px",
-                  }}
-                  onChange={this.handleCategory.bind(this)}
-                >
-                  <option selected disabled hidden>
-                    카테고리
-                  </option>
-                  <option>한식</option>
-                  <option>중식</option>
-                  <option>양식</option>
-                  <option>일식</option>
-                </select>
                 <div
-                  className="rate"
+                  className="star"
                   style={{
-                    textAlign: "center",
-                    width: "10vw",
-                    float: "left",
-                    height: "5vh",
-                    marginTop: "0.5vh",
-                    marginLeft: "0.5vw",
+                    clear: "both",
+                    display: "inline-block",
+                    width: "7vw",
                   }}
                 >
-                  <div
-                    className="star"
-                    style={{
-                      clear: "both",
-                      display: "inline-block",
-                      width: "7vw",
-                    }}
-                  >
-                    <StarRate
-                      onMouseOver={this.onMouseOver.bind(this)}
-                      onChange={this.handleChange.bind(this)}
-                      sIdx={this.state.sIdx}
-                      rating={this.state.rating}
-                      cacheIdx={this.state.cacheIdx}
-                      cacheRating={this.state.cacheRating}
-                      score={this.state.score}
-                    />
-                  </div>
-                  <div
-                    style={{
-                      width: "2vw",
-                      lineHeight: "5vh",
-                      display: "inline-block",
-                      fontSize: "1.5em",
-                    }}
-                  >
-                    {this.state.starScore === 0
-                      ? this.state.starScore
-                      : this.state.starScore % 1 === 0
-                      ? `${this.state.starScore}.0`
-                      : this.state.starScore}
-                  </div>
-                </div>
-                <br />
-                <div
-                  className="text-editor"
-                  style={{ height: "53vh", marginTop: "6vh", clear: "both" }}
-                >
-                  <ReactQuill
-                    theme="snow"
-                    ref={(el) => (this.quillRef = el)}
-                    name="content"
-                    value={this.state.content} // state 값
-                    onChange={this.changeEditor.bind(this)}
-                    modules={this.modules}
-                    formats={this.formats}
-                    style={{
-                      margin: "0 auto",
-                      width: "41.5vw",
-                      height: "40vh",
-                    }}
+                  <StarRate
+                    onMouseOver={this.onMouseOver.bind(this)}
+                    onChange={this.handleChange.bind(this)}
+                    sIdx={this.state.sIdx}
+                    rating={this.state.rating}
+                    cacheIdx={this.state.cacheIdx}
+                    cacheRating={this.state.cacheRating}
+                    score={this.state.score}
                   />
                 </div>
                 <div
-                  className="map"
                   style={{
-                    margin: "0 auto 3vh",
-                    width: "41.5vw",
-                    height: "50vh",
-                    border: "0px solid #999",
+                    width: "2vw",
+                    lineHeight: "5vh",
+                    display: "inline-block",
+                    fontSize: "1.5em",
                   }}
                 >
-                  <WriteFormMap mapData={this.mapData.bind(this)} />
+                  {this.state.starScore === 0
+                    ? this.state.starScore
+                    : this.state.starScore % 1 === 0
+                    ? `${this.state.starScore}.0`
+                    : this.state.starScore}
                 </div>
               </div>
+              <br />
+              <div
+                className="text-editor"
+                style={{ height: "53vh", marginTop: "6vh", clear: "both" }}
+              >
+                <ReactQuill
+                  theme="snow"
+                  ref={(el) => (this.quillRef = el)}
+                  name="content"
+                  value={this.state.content} // state 값
+                  onChange={this.changeEditor.bind(this)}
+                  modules={this.modules}
+                  formats={this.formats}
+                  style={{
+                    margin: "0 auto",
+                    width: "41.5vw",
+                    height: "40vh",
+                  }}
+                />
+              </div>
+              <div
+                className="map"
+                style={{
+                  margin: "0 auto 3vh",
+                  width: "41.5vw",
+                  height: "50vh",
+                  border: "0px solid #999",
+                }}
+              >
+                <WriteFormMap mapData={this.mapData.bind(this)} />
+              </div>
+            </div>
 
-              <button
-                type="submit"
-                className="btn btn-warning"
-                style={{
-                  clear: "both",
-                  width: "10vw",
-                  height: "5vh",
-                  color: "white",
-                  marginLeft: "12vw",
-                }}
-              >
-                등록하기
-              </button>
-              <button
-                type="reset"
-                className="btn btn-warning"
-                style={{
-                  clear: "both",
-                  width: "10vw",
-                  height: "5vh ",
-                  color: "white",
-                  marginLeft: "4vw",
-                }}
-                onClick={() => {
-                  this.setState({
-                    section: false,
-                  });
-                }}
-              >
-                취소
-              </button>
-            </form>
+            <button
+              type="button"
+              className="btn btn-warning"
+              style={{
+                clear: "both",
+                width: "10vw",
+                height: "5vh",
+                color: "white",
+                marginLeft: "12vw",
+              }}
+              onClick={this.onSubmitReview}
+            >
+              등록하기
+            </button>
+            <button
+              type="reset"
+              className="btn btn-warning"
+              style={{
+                clear: "both",
+                width: "10vw",
+                height: "5vh ",
+                color: "white",
+                marginLeft: "4vw",
+              }}
+              onClick={() => {
+                this.setState({
+                  section: false,
+                });
+              }}
+            >
+              취소
+            </button>
           </section>
         ) : (
           ""
