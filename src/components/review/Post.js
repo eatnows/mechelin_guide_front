@@ -5,7 +5,7 @@ import Axios from "util/axios";
 const fakeFetch = (delay = 1000) =>
   new Promise((res) => setTimeout(res, delay));
 
-const ListItem = ({ contact, i, likesChange }) => (
+const ListItem = ({ contact, i, likesChange, deleteBtn }) => (
   <div key={i}>
     <table
       style={{
@@ -17,7 +17,11 @@ const ListItem = ({ contact, i, likesChange }) => (
       <thead>
         <tr>
           <td colSpan="2">수정</td>
-          <td>삭제</td>
+          <td>
+            <span onClick={deleteBtn} postId={contact.id}>
+              삭제
+            </span>
+          </td>
         </tr>
       </thead>
       <tbody>
@@ -28,7 +32,7 @@ const ListItem = ({ contact, i, likesChange }) => (
 
           <td>작성일 : {contact.created_at}</td>
 
-          <td>{i}번째 리뷰글</td>
+          <td>{contact.post_count - i}번째 리뷰글</td>
           <td>평점 {contact.rating}</td>
         </tr>
         <tr>
@@ -150,6 +154,24 @@ const Post = (props) => {
         console.log(error);
       });
   };
+  /*
+   * 삭제 버튼을 눌렀을시 실행되는 메소드
+   */
+  const onClickDelete = (e) => {
+    const postId = e.target.getAttribute("postId");
+    const url = `/post/delete/${postId}/${props.userPlaceId}`;
+    let check = window.confirm("정말 삭제하시겠습니까?");
+    if (check) {
+      Axios.put(url)
+        .then((response) => {
+          // 새로고침을 하지 않고 화면에 바로 반영할 수 있게 메소드 재활용
+          onClickLikesRender();
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    }
+  };
 
   return (
     <div
@@ -163,7 +185,14 @@ const Post = (props) => {
       }}
     >
       {[...result].map((contact, i) => {
-        return <ListItem contact={contact} i={i} likesChange={onClickLikes} />;
+        return (
+          <ListItem
+            contact={contact}
+            i={i}
+            likesChange={onClickLikes}
+            deleteBtn={onClickDelete}
+          />
+        );
       })}
       <div ref={setRef} className="Loading">
         {isLoading && "Loading..."}

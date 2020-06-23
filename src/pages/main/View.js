@@ -1,5 +1,5 @@
 import React from "react";
-import { NavLink, Route } from "react-router-dom";
+import { NavLink, Route, BrowserRouter } from "react-router-dom";
 import {
   FullMap,
   FAQ,
@@ -110,7 +110,7 @@ class View extends React.Component {
         </NavLink>
 
         {/* 삼항 연산자를 이용해 출력 페이지 변경 */}
-        {this.state.main ? <FullMap /> : ""}
+        {this.state.main ? <FullMap history={this.props.history} /> : ""}
         <Route path="/mechelin/faq/:userId" component={FAQ} />
         <Route path="/mechelin/qna/:userId" component={QnA} />
         <Route path="/mechelin/mypage/:userId" component={MyPage} />

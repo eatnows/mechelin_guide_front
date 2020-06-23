@@ -289,6 +289,7 @@ class ChangePwd extends React.Component {
                     type="text"
                     className="form-control"
                     placeholder="인증코드"
+                    name="userCode"
                     style={{
                       width: "250px",
                       outline: "none",
@@ -296,6 +297,7 @@ class ChangePwd extends React.Component {
                       fontWeight: "normal",
                       fontSize: "13px",
                     }}
+                    onChange={this.handleInform.bind(this)}
                   />
                   <span
                     style={{
