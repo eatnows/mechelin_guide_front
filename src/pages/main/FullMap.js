@@ -14,6 +14,7 @@ import {
   BrowserRouter,
   Redirect,
 } from "react-router-dom";
+import MainMap from "components/map/MainMap";
 
 Quill.register("modules/imageUpload", ImageUpload);
 
@@ -470,6 +471,7 @@ class FullMap extends React.Component {
               left: "90%",
               top: "0%",
               cursor: "pointer",
+              zIndex: "333",
             }}
           >
             <li
@@ -498,6 +500,7 @@ class FullMap extends React.Component {
             </li>
           </ul>
         </nav>
+        <MainMap style={{ width: "100%", height: "100%" }} />
       </div>
     );
   }
