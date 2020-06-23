@@ -1,13 +1,39 @@
 /*global kakao*/
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import "./MainMapStyle.css";
 import Info from "./Info";
+import Axios from "util/axios";
 
 const MainMap = () => {
   const [latitude, setLatitude] = useState(37.54699);
   const [longitude, setLongitude] = useState(127.09598);
   const [map, setMap] = useState("");
   const [overlay, setOverlay] = useState("");
+  const [userId, setUserId] = useState("");
+  const [myLatitude, setMyLatitude] = useState([]);
+  const [myLongitude, setMyLongitude] = useState([]);
+  const [myPlaceName, setMyPlaceName] = useState([]);
+  const [myPlaceAddress, setMyPlaceAddress] = useState([]);
+  const useTest = useRef();
+  useEffect(() => {
+    console.log("시작");
+    const url = `/place/myplace?user_id=${sessionStorage.getItem("userId")}`;
+    setUserId(sessionStorage.getItem("userId"));
+    Axios.get(url)
+      .then((response) => {
+        console.log(response);
+        console.log(response.data[1]);
+        for (let i = 0; i < response.data.length; i++) {
+          myLatitude.push(response.data[i].latitude_x);
+          myLongitude.push(response.data[i].longitude_y);
+          myPlaceName.push(response.data[i].name);
+          myPlaceAddress.push(response.data[i].address);
+        }
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  }, []);
 
   useEffect(() => {
     const script = document.createElement("script");
@@ -42,13 +68,23 @@ const MainMap = () => {
           markerPosition = new kakao.maps.LatLng(37.54699, 127.09598); // 마커가 표시될 위치입니다
 
         // 마커를 생성합니다
-        let marker = new kakao.maps.Marker({
-          position: markerPosition,
-          image: markerImage, // 마커이미지 설정
-        });
-
-        // 마커가 지도 위에 표시되도록 설정합니다
-        marker.setMap(createmap);
+        // let marker = new kakao.maps.Marker({
+        //   position: markerPosition,
+        //   image: markerImage, // 마커이미지 설정
+        // });
+        let marker = [];
+        console.log(myLatitude.length);
+        /*
+         * 지도의 나의 맛집 출력
+         */
+        for (let i = 0; i < myPlaceName.length; i++) {
+          marker[i] = new kakao.maps.Marker({
+            position: new kakao.maps.LatLng(myLatitude[i], myLongitude[i]),
+            image: markerImage,
+          });
+          // 마커가 지도 위에 표시되도록 설정합니다
+          marker[i].setMap(createmap);
+        }
 
         // 커스텀 오버레이에 표시할 컨텐츠 입니다
         // 커스텀 오버레이는 아래와 같이 사용자가 자유롭게 컨텐츠를 구성하고 이벤트를 제어할 수 있기 때문에
@@ -57,8 +93,8 @@ const MainMap = () => {
           '<div class="wrap">' +
           '    <div class="info">' +
           '        <div class="title">' +
-          "            카카오 스페이스닷원" +
-          '            <div class="close" onclick="" title="닫기"></div>' +
+          myPlaceName[2] +
+          '            <div class="close" onclick="console.log(1)" title="닫기"></div>' +
           "        </div>" +
           '        <div class="body">' +
           '            <div class="img">' +
@@ -75,20 +111,23 @@ const MainMap = () => {
 
         // 마커 위에 커스텀오버레이를 표시합니다
         // 마커를 중심으로 커스텀 오버레이를 표시하기위해 CSS를 이용해 위치를 설정했습니다
-        var overlay = new kakao.maps.CustomOverlay({
-          content: "<Info />",
-          map: createmap,
-          position: marker.getPosition(),
-          yAnchor: 1,
-        });
-        // setOverlay(
-        //   new kakao.maps.CustomOverlay({
-        //     content: content,
-        //     map: createmap,
-        //     position: marker.getPosition(),
-        //     yAnchor: 0,
-        //   })
-        // );
+        const aa = useRef.current;
+        console.log(useRef.current);
+        let overlay = [];
+        for (let i = 0; i < myPlaceName.length; i++) {
+          overlay[i] = new kakao.maps.CustomOverlay({
+            content: content,
+            map: createmap,
+            position: marker[i].getPosition(),
+            yAnchor: 1,
+          });
+        }
+        // var overlay = new kakao.maps.CustomOverlay({
+        //   content: content,
+        //   map: createmap,
+        //   position: marker.getPosition(),
+        //   yAnchor: 1,
+        // });
 
         // 마커를 클릭했을 때 커스텀 오버레이를 표시합니다
         kakao.maps.event.addListener(marker, "click", function () {
@@ -106,7 +145,9 @@ const MainMap = () => {
 
   return (
     <div>
-      {/* <Info closeOverlay={closeOverlay} /> */}
+      <div ref={useTest}>
+        <Info closeOverlay={closeOverlay} />
+      </div>
       <div
         id="map"
         style={{ width: "100%", height: "100vh", marginTop: "-10vh" }}
