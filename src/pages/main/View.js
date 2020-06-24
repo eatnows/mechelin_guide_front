@@ -13,7 +13,6 @@ import {
   MyList,
 } from "pages/index.js";
 import "components/css/mainStyle.css";
-import { MDCTextField } from "@material/textfield";
 
 //const textField = new MDCTextField(document.querySelector(".mdc-text-field"));
 class View extends React.Component {
@@ -26,7 +25,6 @@ class View extends React.Component {
     search: "",
     lock: true,
     mypage: false,
-    bottomMenu: false,
   };
   componentWillMount() {
     if (sessionStorage.getItem("userId") === null) {
@@ -66,17 +64,7 @@ class View extends React.Component {
       });
     }
   };
-  showBottomMenu = () => {
-    if (!this.state.bottomMenu) {
-      this.setState({
-        bottomMenu: true,
-      });
-    } else {
-      this.setState({
-        bottomMenu: false,
-      });
-    }
-  };
+
   changeInput = (e) => {
     this.setState({
       [e.target.name]: e.target.value,
@@ -85,12 +73,23 @@ class View extends React.Component {
   render() {
     return (
       <div>
+        {/*메뉴화면 숨기기 위해서 배경 넣어줌 */}
+        <div
+          className="background"
+          style={{
+            width: "100vw",
+            height: "100vh",
+            zIndex: "-1",
+            backgroundColor: "white",
+            position: "absolute",
+          }}
+        ></div>
+
+        {/*로고*/}
         <NavLink to={"/mechelin/" + this.state.userId}>
           <div
             className="logo"
             style={{
-              margin: "5vh 0 0 5vw",
-              float: "left",
               width: "100px",
               height: "100px",
               border: "1px solid #999",
@@ -98,9 +97,14 @@ class View extends React.Component {
               background: "white",
               borderRadius: "50%",
               lineHeight: "100px",
+              zIndex: "1",
+              position: "fixed",
+              left: "2%",
+              top: "4%",
             }}
             onClick={() => {
-              this.setState({ main: true });
+              localStorage.removeItem("showMenu");
+              this.setState({ main: true, bar: false });
             }}
           >
             로고 {/* <img src={} alt=""/> */}
@@ -108,7 +112,11 @@ class View extends React.Component {
         </NavLink>
 
         {/* 삼항 연산자를 이용해 출력 페이지 변경 */}
-        {this.state.main ? <FullMap history={this.props.history} /> : ""}
+        {this.state.main ? (
+          <FullMap history={this.props.history} bar={this.state.bar} />
+        ) : (
+          ""
+        )}
         <Route path="/mechelin/faq/:userId" component={FAQ} />
         <Route path="/mechelin/qna/:userId" component={QnA} />
         <Route path="/mechelin/mypage/:userId" component={MyPage} />
@@ -131,75 +139,35 @@ class View extends React.Component {
             textAlign: "center",
             borderRadius: "50%",
             cursor: "pointer",
-            zIndex: "9999",
+            zIndex: "1",
             position: "fixed",
           }}
         ></div>
-        {/*하단 메뉴바 */}
-        <div
-          style={{
-            opacity: this.state.bar ? "0" : "1",
-            display: this.state.main ? "block" : "none",
-            transition: "all 1s ease 0.5s",
-            cursor: "pointer",
-          }}
-        >
-          <div
-            className="menuBall xi-caret-up"
-            onClick={this.showBottomMenu.bind(this)}
-          ></div>
-          <div className="subMenuBall">
-            <div
-              className="sub1"
-              style={{
-                bottom: this.state.bottomMenu ? "1.5%" : "-20%",
-                left: this.state.bottomMenu ? "37%" : "50%",
-              }}
-            >
-              필터
-            </div>
-            <div
-              className="sub2"
-              style={{
-                bottom: this.state.bottomMenu ? "12.5%" : "-20%",
-                left: this.state.bottomMenu ? "43.1%" : "50%",
-              }}
-            >
-              리뷰 등록
-            </div>
-            <div
-              className="sub3"
-              style={{
-                bottom: this.state.bottomMenu ? "12.5%" : "-20%",
-                right: this.state.bottomMenu ? "43.1%" : "50%",
-              }}
-            >
-              DM
-            </div>
-            <div
-              className="sub4"
-              style={{
-                bottom: this.state.bottomMenu ? "1.5%" : "-20%",
-                right: this.state.bottomMenu ? "37%" : "50%",
-              }}
-            >
-              친구 추가
-            </div>
-          </div>
-        </div>
 
         {/* 메뉴 화면 */}
-        <section style={{ zIndex: "10" }}>
-          {/* 배경설정 */}
-          <div className={this.state.bar ? "barSection" : "defaultBar"}></div>
+        <section>
+          {/* 배경 설정 */}
+          <div
+            className={this.state.bar ? "barSection" : "defaultBar"}
+            style={{
+              boxShadow:
+                !this.state.bar && this.state.main
+                  ? "3px 3px 10px #999"
+                  : "none",
+              zIndex: "0",
+            }}
+          ></div>
+
+          {/*메뉴 구성 요소 */}
           <div
             className="inner"
             style={{
-              display: this.state.bar ? "block" : "none",
               opacity: this.state.bar ? "1" : "0",
-              transition: "all 0.3s ease .4s",
+              zIndex: this.state.bar ? "2" : "-2",
+              transition: this.state.bar ? "all 0.3s ease .4s" : "all 1s",
               position: "absolute",
               left: "50%",
+              top: "0%",
               transform: "translate(-50%)",
             }}
           >
@@ -242,7 +210,7 @@ class View extends React.Component {
                     this.setState({ main: false });
                   }}
                   style={{
-                    margin: "-2px 0 0 -6px",
+                    margin: "-1px 0 0 -6px",
                     display: "inline-block",
                     width: "2.5vw",
                     height: "5vh",
@@ -252,6 +220,8 @@ class View extends React.Component {
                     fontSize: "20px",
                   }}
                 ></button>
+
+                {/*각 페이지 이동 버튼 */}
               </NavLink>
             </div>
             <ul
@@ -281,13 +251,15 @@ class View extends React.Component {
               </NavLink>
             </ul>
 
+            {/*마이페이지 하위 메뉴 */}
             <ul
               className="mypage"
               style={{
                 position: "fixed",
-                top: "29%",
+                top: "28%",
                 right: "-25%",
                 opacity: this.state.mypage ? "1" : "0",
+                pointerEvents: this.state.mypage ? "all" : "none",
                 transition: "all 1s",
               }}
             >
@@ -302,6 +274,7 @@ class View extends React.Component {
               </NavLink>
             </ul>
 
+            {/*아래 링크 */}
             <div
               className="bottomMenu"
               style={{
@@ -349,6 +322,7 @@ class View extends React.Component {
                 </span>
               </NavLink>
             </div>
+
             {/* 로그아웃 */}
             <NavLink to="/">
               <div

@@ -17,7 +17,6 @@
 /*상단 메뉴바*/
 /*메뉴화면 여는 메뉴 바*/
 .openBar {
-  background-color: rgba(255, 255, 255, 0.3);
   color: rgba(245, 145, 45);
   height: 6vh;
   width: 6vh;
@@ -110,14 +109,14 @@
 /*로그아웃 버튼*/
 .lock {
   cursor: pointer;
-  transition: all 1s;
+  transition: all 0.5s;
 }
 .lock:hover {
   color: rgba(245, 145, 45);
 }
 .unlock {
   cursor: pointer;
-  transition: all 1s;
+  transition: all 0.5s;
 }
 .unlock:hover {
   color: rgba(245, 145, 45);
@@ -127,51 +126,53 @@
 .menuBall {
   width: 10vw;
   height: 10vw;
-  padding-top: 1vh;
+  padding-top: 1.5vh;
   text-align: center;
-  color: white;
-  background-color: rgba(245, 145, 45);
+  color: rgba(255, 255, 255);
+  font-weight: normal;
+  background-color: rgba(245, 145, 45, 0.9);
   border-radius: 50%;
   position: fixed;
   bottom: -15%;
   left: 50%;
   transform: translateX(-50%);
+  font-size: 35px;
   z-index: 1;
-  font-size: 20px;
+  box-shadow: 3px 3px 10px #999;
 }
 .menuBall:hover {
-  animation: upArrow 3s;
+  animation: showHome 5s;
 }
-@keyframes upArrow {
+@keyframes showHome {
   10% {
-    padding-top: 2vh;
+    color: transparent;
   }
   20% {
-    padding-top: 1vh;
+    color: rgba(255, 255, 255);
   }
   30% {
-    padding-top: 2vh;
+    color: transparent;
   }
   40% {
-    padding-top: 1vh;
+    color: rgba(255, 255, 255);
   }
   50% {
-    padding-top: 2vh;
+    color: transparent;
   }
   60% {
-    padding-top: 1vh;
+    color: rgba(255, 255, 255);
   }
   70% {
-    padding-top: 2vh;
+    color: transparent;
   }
   80% {
-    padding-top: 1vh;
+    color: rgba(255, 255, 255);
   }
   90% {
-    padding-top: 2vh;
+    color: transparent;
   }
   100% {
-    padding-top: 1vh;
+    color: rgba(255, 255, 255);
   }
 }
 
@@ -179,12 +180,14 @@
   width: 5vw;
   height: 5vw;
   text-align: center;
-  color: white;
-  background-color: rgba(245, 145, 45);
+  background-color: rgba(255, 255, 255, 0.9);
+  color: #999;
+  box-shadow: 3px 3px 10px #999;
   border-radius: 50%;
   position: fixed;
   z-index: 0.5;
   line-height: 5vw;
-  font-family: "NEXON Lv2 Gothic OTF Light";
-  transition: all 1s;
+  font-family: "NEXON Lv2 Gothic Bold";
+  transition: all 0.7s;
+  font-size: 15px;
 }
