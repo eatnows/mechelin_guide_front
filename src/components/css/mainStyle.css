@@ -7,6 +7,13 @@
   font-style: normal;
 }
 
+@font-face {
+  font-family: "NEXON Lv1 Gothic OTF Light";
+  src: url("https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_20-04@2.1/NEXON Lv1 Gothic OTF Light.woff")
+    format("woff");
+  font-weight: normal;
+  font-style: normal;
+}
 /*상단 메뉴바*/
 /*메뉴화면 여는 메뉴 바*/
 .openBar {
@@ -16,7 +23,7 @@
   width: 6vh;
   line-height: 6vh;
   transition: all 1s;
-  top: 7.5%;
+  top: 7%;
   right: 5%;
 }
 .openBar::before {
@@ -33,7 +40,7 @@
   width: 6vh;
   line-height: 6vh;
   transition: all 1s;
-  top: 7.5%;
+  top: 7%;
   right: 5%;
 }
 .closeBar:hover {
@@ -43,10 +50,10 @@
   transform: rotateZ(450deg);
   font-size: 2em;
   transition: all 1.5s;
-  line-height: 8vh;
-  height: 8vh;
-  width: 8vh;
-  top: 7%;
+  line-height: 7vh;
+  height: 7vh;
+  width: 7vh;
+  top: 6.5%;
   right: 4.5%;
 }
 
@@ -65,13 +72,17 @@
   height: 6vh;
   width: 6vh;
   position: absolute;
-  top: 7.5%;
+  top: 7%;
   right: 5%;
   border-radius: 50%;
   transition: all 1s ease 0.4s;
   background-color: rgba(255, 255, 255, 0.9);
 }
 
+/*메뉴화면 안의 검색창*/
+.search:focus {
+  outline: none;
+}
 /*메뉴화면 안의 메뉴 버튼*/
 .inner .menu li {
   font-family: "NEXON Lv2 Gothic Bold";
@@ -89,6 +100,11 @@
 }
 .inner .mypage li:hover {
   color: rgba(245, 145, 45, 0.8);
+}
+
+/*하단 링크*/
+.bottomMenu span {
+  font-family: "Nanum Gothic Coding";
 }
 
 /*로그아웃 버튼*/
@@ -120,17 +136,55 @@
   bottom: -15%;
   left: 50%;
   transform: translateX(-50%);
-  cursor: pointer;
   z-index: 1;
+  font-size: 20px;
 }
+.menuBall:hover {
+  animation: upArrow 3s;
+}
+@keyframes upArrow {
+  10% {
+    padding-top: 2vh;
+  }
+  20% {
+    padding-top: 1vh;
+  }
+  30% {
+    padding-top: 2vh;
+  }
+  40% {
+    padding-top: 1vh;
+  }
+  50% {
+    padding-top: 2vh;
+  }
+  60% {
+    padding-top: 1vh;
+  }
+  70% {
+    padding-top: 2vh;
+  }
+  80% {
+    padding-top: 1vh;
+  }
+  90% {
+    padding-top: 2vh;
+  }
+  100% {
+    padding-top: 1vh;
+  }
+}
+
 .subMenuBall div {
-  width: 7vw;
-  height: 7vw;
+  width: 5vw;
+  height: 5vw;
   text-align: center;
   color: white;
   background-color: rgba(245, 145, 45);
   border-radius: 50%;
   position: fixed;
-  cursor: pointer;
-  z-index: 1;
+  z-index: 0.5;
+  line-height: 5vw;
+  font-family: "NEXON Lv2 Gothic OTF Light";
+  transition: all 1s;
 }

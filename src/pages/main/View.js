@@ -23,33 +23,20 @@ class View extends React.Component {
     bar: false,
     userId: sessionStorage.getItem("userId"),
     name: "",
-    displayLabel: true,
-    outline: false,
     search: "",
     lock: true,
     mypage: false,
+    bottomMenu: false,
   };
   componentWillMount() {
     if (sessionStorage.getItem("userId") === null) {
       this.props.history.push("/");
     }
   }
-  clickInput = () => {
-    if (!this.state.outline) {
-      this.setState({
-        outline: true,
-        displayLabel: false,
-      });
-    } else {
-      this.setState({
-        outline: false,
-        displayLabel: true,
-      });
-    }
-  };
+
   showMenu = () => {
     if (this.state.bar) {
-      this.setState({ bar: false });
+      this.setState({ bar: false, search: "" });
     } else {
       this.setState({ bar: true });
     }
@@ -76,6 +63,17 @@ class View extends React.Component {
     } else {
       this.setState({
         mypage: false,
+      });
+    }
+  };
+  showBottomMenu = () => {
+    if (!this.state.bottomMenu) {
+      this.setState({
+        bottomMenu: true,
+      });
+    } else {
+      this.setState({
+        bottomMenu: false,
       });
     }
   };
@@ -141,17 +139,55 @@ class View extends React.Component {
         <div
           style={{
             opacity: this.state.bar ? "0" : "1",
+            display: this.state.main ? "block" : "none",
             transition: "all 1s ease 0.5s",
+            cursor: "pointer",
           }}
         >
-          <div className="menuBall xi-caret-up xi-2x"></div>
+          <div
+            className="menuBall xi-caret-up"
+            onClick={this.showBottomMenu.bind(this)}
+          ></div>
           <div className="subMenuBall">
-            <div>필터</div>
-            <div>리뷰 등록</div>
-            <div>DM</div>
-            <div>친구 추가</div>
+            <div
+              className="sub1"
+              style={{
+                bottom: this.state.bottomMenu ? "1.5%" : "-20%",
+                left: this.state.bottomMenu ? "37%" : "50%",
+              }}
+            >
+              필터
+            </div>
+            <div
+              className="sub2"
+              style={{
+                bottom: this.state.bottomMenu ? "12.5%" : "-20%",
+                left: this.state.bottomMenu ? "43.1%" : "50%",
+              }}
+            >
+              리뷰 등록
+            </div>
+            <div
+              className="sub3"
+              style={{
+                bottom: this.state.bottomMenu ? "12.5%" : "-20%",
+                right: this.state.bottomMenu ? "43.1%" : "50%",
+              }}
+            >
+              DM
+            </div>
+            <div
+              className="sub4"
+              style={{
+                bottom: this.state.bottomMenu ? "1.5%" : "-20%",
+                right: this.state.bottomMenu ? "37%" : "50%",
+              }}
+            >
+              친구 추가
+            </div>
           </div>
         </div>
+
         {/* 메뉴 화면 */}
         <section style={{ zIndex: "10" }}>
           {/* 배경설정 */}
@@ -159,6 +195,7 @@ class View extends React.Component {
           <div
             className="inner"
             style={{
+              display: this.state.bar ? "block" : "none",
               opacity: this.state.bar ? "1" : "0",
               transition: "all 0.3s ease .4s",
               position: "absolute",
@@ -170,52 +207,33 @@ class View extends React.Component {
             <div
               className="searchBar"
               style={{
-                margin: "7vh auto 5vh",
+                margin: "7vh auto 5vh ",
                 lineHeight: "5vh",
                 height: "5vh",
                 width: "24vw",
+                paddingLeft: "6px",
               }}
             >
               {" "}
-              <label
-                class={
-                  this.state.outline
-                    ? "mdc-text-field mdc-text-field--outlined outline"
-                    : "mdc-text-field mdc-text-field--outlined"
-                }
+              <input
+                value={this.state.search}
+                placeholder="검색"
+                className="search"
+                name="search"
+                maxLength="100"
+                onChange={this.changeInput.bind(this)}
                 style={{
+                  fontFamily: "Nanum Gothic Coding",
+                  fontWeight: "normal",
                   display: "inline-block",
                   height: "5vh",
                   width: "20vw",
+                  border: "2px solid rgba(245, 145, 45)",
+                  borderRadius: "5px",
+                  padding: "0 13px 0 10px",
+                  marginLeft: "6px",
                 }}
-              >
-                <input
-                  type="text"
-                  class="mdc-text-field__input"
-                  aria-labelledby="my-label-id"
-                  name="search"
-                  onFocus={this.clickInput.bind(this)}
-                  onBlur={this.clickInput.bind(this)}
-                  onChange={this.changeInput.bind(this)}
-                />
-                <span class="mdc-notched-outline ">
-                  <span class="mdc-notched-outline__leading"></span>
-                  <span class="mdc-notched-outline__notch">
-                    {this.state.displayLabel ? (
-                      <span
-                        class="mdc-floating-label"
-                        id="my-label-id"
-                        style={{ fontSize: "10pt", lineHeight: "5vh" }}
-                      >
-                        검색{" "}
-                      </span>
-                    ) : (
-                      ""
-                    )}
-                  </span>
-                  <span class="mdc-notched-outline__trailing"></span>
-                </span>
-              </label>
+              ></input>
               <NavLink to={"/mechelin/result/" + this.state.userId}>
                 <button
                   type="button"
@@ -224,10 +242,11 @@ class View extends React.Component {
                     this.setState({ main: false });
                   }}
                   style={{
+                    margin: "-2px 0 0 -6px",
                     display: "inline-block",
-                    width: "3vw",
+                    width: "2.5vw",
                     height: "5vh",
-                    padding: 0,
+                    padding: "0",
                     backgroundColor: "rgba(245,145,45)",
                     color: "white",
                     fontSize: "20px",
