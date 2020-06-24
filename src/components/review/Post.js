@@ -1,65 +1,108 @@
 import React, { useState, useEffect } from "react";
 import useIntersect from "./useIntersect";
-import Axios from "util/axios";
+import Axios from "axios";
+import Comment from "../../pages/post/Comment";
+import e from "cors";
 
 const fakeFetch = (delay = 1000) =>
   new Promise((res) => setTimeout(res, delay));
 
-const ListItem = ({ contact, i, likesChange, deleteBtn }) => (
-  <div key={i}>
-    <table
-      style={{
-        width: "600px",
-        height: "500px",
-        border: "1px solid black",
-      }}
-    >
-      <thead>
-        <tr>
-          <td colSpan="2">수정</td>
-          <td>
-            <span onClick={deleteBtn} postId={contact.id}>
-              삭제
-            </span>
-          </td>
-        </tr>
-      </thead>
-      <tbody>
-        <tr>
-          <td>프로필 사진</td>
+const ListItem = ({ contact, i, likesChange }) => {
+  const [newComment, setNewComment] = useState("");
 
-          <td>닉네임 : {contact.nickname}</td>
+  const commentInsert = (postId, userId) => {
+    const url = `http://localhost:9000/mechelin/post/insertcomm`;
+    Axios.post(url, {
+      user_id: userId,
+      post_id: postId,
+      content: newComment,
+    })
+      .then((response) => {
+        console.log(response.data);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  };
 
-          <td>작성일 : {contact.created_at}</td>
+  return (
+    <div key={i}>
+      <table
+        style={{
+          width: "600px",
+          height: "500px",
+          border: "1px solid black",
+        }}
+      >
+        <thead>
+          <tr>
+            <td colSpan="2">수정</td>
+            <td>삭제</td>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>프로필 사진</td>
 
-          <td>{contact.post_count - i}번째 리뷰글</td>
-          <td>평점 {contact.rating}</td>
-        </tr>
-        <tr>
-          <td colSpan="3">제목 : {contact.subject}</td>
-        </tr>
-        <tr>
-          <td>
-            내용 :{" "}
-            <div dangerouslySetInnerHTML={{ __html: contact.content }}></div>
-          </td>
-        </tr>
-      </tbody>
-      <tfoot>
-        <tr>
-          <td colSpan="3">
-            <button type="button" onClick={likesChange} postId={contact.id}>
-              공감
-              <br />
-              <span>{contact.likes}</span>
-            </button>
-          </td>
-        </tr>
-      </tfoot>
-    </table>
-    <br />
-  </div>
-);
+            <td>닉네임 : {contact.nickname}</td>
+
+            <td>작성일 : {contact.created_at}</td>
+
+            <td>{i}번째 리뷰글</td>
+            <td>평점 {contact.rating}</td>
+          </tr>
+          <tr>
+            <td colSpan="3">제목 : {contact.subject}</td>
+          </tr>
+          <tr>
+            <td>
+              내용 :{" "}
+              <div dangerouslySetInnerHTML={{ __html: contact.content }}></div>
+            </td>
+          </tr>
+        </tbody>
+        <tfoot>
+          <tr>
+            <td colSpan="3">
+              <button type="button" onClick={likesChange} postId={contact.id}>
+                공감
+                <br />
+                <span>{contact.likes}</span>
+              </button>
+            </td>
+          </tr>
+          <tr>
+            <td colSpan="5">
+              {/* 댓글 영역 import */}
+              <Comment postId={contact.id} userId={contact.user_id} />
+            </td>
+          </tr>
+          {/* 새 댓글 작성 영역 */}
+          <tr>
+            <td>
+              <img alt="" />
+              프로필사진
+            </td>
+            <td colSpan="3">
+              <input
+                type="text"
+                value={newComment}
+                onInput={(e) => setNewComment(e.target.value)}
+              />
+              <button
+                type="button"
+                onClick={() => commentInsert(contact.id, contact.user_id)}
+              >
+                작성
+              </button>
+            </td>
+          </tr>
+        </tfoot>
+      </table>
+      <br />
+    </div>
+  );
+};
 
 let item = 3;
 let dataLength = 0;
@@ -74,7 +117,7 @@ const Post = (props) => {
   console.log("state구역");
   /* fake async fetch */
   const fetchItems = async () => {
-    const url = `/post/review?user_place_id=${props.userPlaceId}&row=${item}`;
+    const url = `http://localhost:9000/mechelin/post/review?user_place_id=${props.userPlaceId}&row=${item}`;
     Axios.get(url)
       .then((response) => {
         console.log(response.data);
@@ -124,9 +167,9 @@ const Post = (props) => {
    * 공감 버튼 클릭시 실행되는 메소드
    */
   const onClickLikes = (e) => {
-    const url = `/likes/post`;
+    const url = `http://localhost:9000/mechelin/likes/post`;
     Axios.post(url, {
-      user_id: sessionStorage.getItem("userId"),
+      user_id: "5",
       post_id: e.target.getAttribute("postId"),
     })
       .then((response) => {
@@ -144,7 +187,7 @@ const Post = (props) => {
     console.log(item);
     item = dataLength;
     console.log(item);
-    const url = `/post/review?user_place_id=${props.userPlaceId}&row=${item}`;
+    const url = `http://localhost:9000/mechelin/post/review?user_place_id=${props.userPlaceId}&row=${item}`;
     Axios.get(url)
       .then((response) => {
         setResult(response.data);
@@ -153,24 +196,6 @@ const Post = (props) => {
       .catch((error) => {
         console.log(error);
       });
-  };
-  /*
-   * 삭제 버튼을 눌렀을시 실행되는 메소드
-   */
-  const onClickDelete = (e) => {
-    const postId = e.target.getAttribute("postId");
-    const url = `/post/delete/${postId}/${props.userPlaceId}`;
-    let check = window.confirm("정말 삭제하시겠습니까?");
-    if (check) {
-      Axios.put(url)
-        .then((response) => {
-          // 새로고침을 하지 않고 화면에 바로 반영할 수 있게 메소드 재활용
-          onClickLikesRender();
-        })
-        .catch((error) => {
-          console.log(error);
-        });
-    }
   };
 
   return (
@@ -185,14 +210,7 @@ const Post = (props) => {
       }}
     >
       {[...result].map((contact, i) => {
-        return (
-          <ListItem
-            contact={contact}
-            i={i}
-            likesChange={onClickLikes}
-            deleteBtn={onClickDelete}
-          />
-        );
+        return <ListItem contact={contact} i={i} likesChange={onClickLikes} />;
       })}
       <div ref={setRef} className="Loading">
         {isLoading && "Loading..."}
