@@ -19,6 +19,8 @@ import filter from "images/filter2.png";
 import friend from "images/friend2.png";
 import message from "images/messag2.png";
 import review from "images/review2.png";
+import MainMap from "components/map/MainMap";
+
 Quill.register("modules/imageUpload", ImageUpload);
 
 class FullMap extends React.Component {
