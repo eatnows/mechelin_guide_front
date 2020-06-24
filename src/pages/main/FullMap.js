@@ -266,85 +266,72 @@ class FullMap extends React.Component {
   render() {
     return (
       <div>
-        <div>
-          <img
-            src={map}
+        <MainMap />
+        {/*하단 메뉴바 */}
+        <div style={{ cursor: "pointer" }}>
+          <div
+            className="menuBall xi-home-o xi-3x"
+            onClick={this.showBottomMenu.bind(this)}
             style={{
-              position: "absolute",
-              left: "0",
-              top: "0",
-              width: "100vw",
-              height: "100vh",
-              zIndex: "0",
+              zIndex: this.props.bar ? "-2" : "2",
+              transition: this.props.bar ? "all 1s" : "all 1s ease 0.5s",
             }}
-            alt=""
-          />
-          {/*하단 메뉴바 */}
-          <div style={{ cursor: "pointer" }}>
+          ></div>
+          <div className="subMenuBall">
             <div
-              className="menuBall xi-home-o xi-3x"
-              onClick={this.showBottomMenu.bind(this)}
+              className="filter"
               style={{
-                zIndex: this.props.bar ? "-2" : "2",
-                transition: this.props.bar ? "all 1s" : "all 1s ease 0.5s",
+                bottom: this.state.bottomMenu ? "1.5%" : "-20%",
+                left: this.state.bottomMenu ? "37%" : "50%",
               }}
-            ></div>
-            <div className="subMenuBall">
-              <div
-                className="filter"
-                style={{
-                  bottom: this.state.bottomMenu ? "1.5%" : "-20%",
-                  left: this.state.bottomMenu ? "37%" : "50%",
-                }}
-              >
-                <img src={filter} width="30px" height="20px" alt="" />
-              </div>
-              <div
-                className="review"
-                onClick={this.showReviewForm.bind(this)}
-                style={{
-                  bottom: this.state.bottomMenu ? "12.5%" : "-20%",
-                  left: this.state.bottomMenu ? "43.1%" : "50%",
-                }}
-              >
-                <img
-                  style={{ marginLeft: "5px" }}
-                  src={review}
-                  width="32px"
-                  height="32px"
-                  alt=""
-                />
-              </div>
-              <div
-                className="message"
-                style={{
-                  bottom: this.state.bottomMenu ? "12.5%" : "-20%",
-                  right: this.state.bottomMenu ? "43.1%" : "50%",
-                }}
-              >
-                <img
-                  style={{ marginLeft: "1px" }}
-                  src={message}
-                  width="30px"
-                  height="27px"
-                  alt=""
-                />
-              </div>
-              <div
-                className="friend"
-                style={{
-                  bottom: this.state.bottomMenu ? "1.5%" : "-20%",
-                  right: this.state.bottomMenu ? "37%" : "50%",
-                }}
-              >
-                <img
-                  style={{ marginLeft: "5px" }}
-                  src={friend}
-                  width="30px"
-                  height="30px"
-                  alt=""
-                />
-              </div>
+            >
+              <img src={filter} width="30px" height="20px" alt="" />
+            </div>
+            <div
+              className="review"
+              onClick={this.showReviewForm.bind(this)}
+              style={{
+                bottom: this.state.bottomMenu ? "12.5%" : "-20%",
+                left: this.state.bottomMenu ? "43.1%" : "50%",
+              }}
+            >
+              <img
+                style={{ marginLeft: "5px" }}
+                src={review}
+                width="32px"
+                height="32px"
+                alt=""
+              />
+            </div>
+            <div
+              className="message"
+              style={{
+                bottom: this.state.bottomMenu ? "12.5%" : "-20%",
+                right: this.state.bottomMenu ? "43.1%" : "50%",
+              }}
+            >
+              <img
+                style={{ marginLeft: "1px" }}
+                src={message}
+                width="30px"
+                height="27px"
+                alt=""
+              />
+            </div>
+            <div
+              className="friend"
+              style={{
+                bottom: this.state.bottomMenu ? "1.5%" : "-20%",
+                right: this.state.bottomMenu ? "37%" : "50%",
+              }}
+            >
+              <img
+                style={{ marginLeft: "5px" }}
+                src={friend}
+                width="30px"
+                height="30px"
+                alt=""
+              />
             </div>
           </div>
         </div>

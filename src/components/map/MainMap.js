@@ -1,7 +1,6 @@
 /*global kakao*/
 import React, { useEffect, useState, useRef, useCallback } from "react";
 import "./MainMapStyle.css";
-import Info from "./Info";
 import Axios from "util/axios";
 
 //let closeBtn;
@@ -50,7 +49,7 @@ const MainMap = () => {
           mySubject.push(response.data[i].subject);
           myContent.push(response.data[i].content);
           myRating.push(response.data[i].rating);
-          myFrontImg.push(response.data[i].myFrontImg);
+          myFrontImg.push(response.data[i].front_image);
         }
       })
       .catch((error) => {
@@ -99,8 +98,14 @@ const MainMap = () => {
         let marker = [];
         let content = [];
         let closeBtn = [];
-        let allBtn = [];
+        let allTag = [];
+        let wrap = [];
+        let info = [];
+        let titleTag = [];
+        let closeTag = [];
         console.log(myLatitude.length);
+        // 이미지 태그 제거
+        let imgTag = /<IMG(.*?)>/gi;
         /*
          * 지도의 나의 맛집 출력
          */
@@ -113,11 +118,24 @@ const MainMap = () => {
           marker[i].setMap(createmap);
 
           // 오버레이에 들어갈 내용 만들기
-
-          allBtn[i] = document.createElement("div");
-          allBtn[i].insertAdjacentHTML("afterbegin", closeBtn[i]);
           closeBtn[i] = document.createElement("div");
+          closeBtn[i].setAttribute("className", "close");
+          closeBtn[i].insertAdjacentText("afterbegin", "X");
+          allTag[i] = document.createElement("div");
+          allTag[i].insertAdjacentHTML("afterbegin", closeBtn[i]);
+          // titleTag[i] = document.createElement("div");
+          // titleTag[i].setAttribute("className", "title");
+          // titleTag[i].setAttribute("value", myPlaceName[i]);
+          // titleTag[i].insertAdjacentHTML("beforeend", closeTag[i]);
+          // info[i] = document.createElement("div");
+          // info[i].setAttribute("className", "info");
+          // info[i].insertAdjacentHTML("afterbegin", titleTag[i]);
+          // wrap[i] = document.createElement("div");
+          // wrap[i].setAttribute("className", "wrap");
+          // wrap[i].insertAdjacentHTML("afterbegin", info[i]);
+          // allTag[i].insertAdjacentHTML("afterbegin", wrap[i]);
           document.body.appendChild(closeBtn[i]);
+
           closeBtn[i].setAttribute("style", "width: 10px; height: 10px;");
           content[i] =
             '<div class="wrap">' +
@@ -130,14 +148,15 @@ const MainMap = () => {
             '            <div class="img">' +
             '                <img src="' +
             myFrontImg[i] +
-            '" width="73" height="70">' +
+            '" width="73px" height="70px">' +
             "           </div>" +
             '            <div class="desc">' +
             '                <div class="ellipsis">' +
             mySubject[i] +
             "</div>" +
             '                <div class="jibun ellipsis">' +
-            myContent[i] +
+            myContent[i].replace(imgTag, "").substring(0, 15) +
+            "..." +
             "</div>" +
             '                <div onClick="location.href=http://localhost:3000/mechelin/review/7">더보기</div>' +
             "            </div>" +
@@ -205,20 +224,11 @@ const MainMap = () => {
     //closeBtn.value = "닫기";
   }, []);
 
-  // 커스텀 오버레이를 닫기 위해 호출되는 함수입니다
-  const closeOverlay = () => {
-    //overlay.setMap(null);
-    console.log("dsfsdfsdf");
-  };
-
   return (
     <div>
-      <div ref={useTest}>
-        <Info closeOverlay={closeOverlay} />
-      </div>
       <div
         id="map"
-        style={{ width: "100%", height: "100vh", marginTop: "-10vh" }}
+        style={{ width: "100%", height: "100vh", zIndex: "0" }}
       ></div>
     </div>
   );
