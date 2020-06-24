@@ -4,9 +4,10 @@ import "./MainMapStyle.css";
 import Info from "./Info";
 import Axios from "util/axios";
 
+//let closeBtn;
 const MainMap = () => {
-  const [latitude, setLatitude] = useState(37.54699);
-  const [longitude, setLongitude] = useState(127.09598);
+  const [latitude, setLatitude] = useState(37.49879629938368);
+  const [longitude, setLongitude] = useState(127.03168720284643);
   const [map, setMap] = useState("");
   const [overlay, setOverlay] = useState("");
   const [userId, setUserId] = useState("");
@@ -15,6 +16,8 @@ const MainMap = () => {
   const [myPlaceName, setMyPlaceName] = useState([]);
   const [myPlaceAddress, setMyPlaceAddress] = useState([]);
   const useTest = useRef();
+  const [isOpen, setIsOpen] = useState(true);
+  //const [closeBtn, setCloseBtn] = useState();
   useEffect(() => {
     console.log("시작");
     const url = `/place/myplace?user_id=${sessionStorage.getItem("userId")}`;
@@ -37,6 +40,7 @@ const MainMap = () => {
 
   useEffect(() => {
     const script = document.createElement("script");
+
     script.async = true;
     script.src =
       "https://dapi.kakao.com/v2/maps/sdk.js?appkey=본인앱키&autoload=false&libraries=services,clusterer,drawing";
@@ -46,7 +50,7 @@ const MainMap = () => {
         let mapContainer = document.getElementById("map");
         let mapOption = {
           center: new kakao.maps.LatLng(latitude, longitude),
-          level: 3,
+          level: 4,
         };
         // 지도를 생성합니다
         const createmap = new kakao.maps.Map(mapContainer, mapOption);
@@ -73,6 +77,8 @@ const MainMap = () => {
         //   image: markerImage, // 마커이미지 설정
         // });
         let marker = [];
+        let content = [];
+        let closeBtn = [];
         console.log(myLatitude.length);
         /*
          * 지도의 나의 맛집 출력
@@ -84,42 +90,60 @@ const MainMap = () => {
           });
           // 마커가 지도 위에 표시되도록 설정합니다
           marker[i].setMap(createmap);
+
+          // 오버레이에 들어갈 내용 만들기
+          closeBtn[i] = document.createElement("div");
+          document.body.appendChild(closeBtn[i]);
+          closeBtn[i].setAttribute("style", "width: 10px; height: 10px;");
+
+          content[i] =
+            '<div class="wrap">' +
+            '    <div class="info">' +
+            '        <div class="title">' +
+            myPlaceName[i] +
+            '            <div class="close" title="닫기"></div>' +
+            "        </div>" +
+            '        <div class="body">' +
+            '            <div class="img">' +
+            '                <img src="https://cfile181.uf.daum.net/image/250649365602043421936D" width="73" height="70">' +
+            "           </div>" +
+            '            <div class="desc">' +
+            '                <div class="ellipsis">제주특별자치도 제주시 첨단로 242</div>' +
+            '                <div class="jibun ellipsis">(우) 63309 (지번) 영평동 2181</div>' +
+            '                <div onClick="">더보기</div>' +
+            "            </div>" +
+            "        </div>" +
+            "    </div>" +
+            "</div>";
         }
 
         // 커스텀 오버레이에 표시할 컨텐츠 입니다
         // 커스텀 오버레이는 아래와 같이 사용자가 자유롭게 컨텐츠를 구성하고 이벤트를 제어할 수 있기 때문에
         // 별도의 이벤트 메소드를 제공하지 않습니다
-        var content =
-          '<div class="wrap">' +
-          '    <div class="info">' +
-          '        <div class="title">' +
-          myPlaceName[2] +
-          '            <div class="close" onclick="console.log(1)" title="닫기"></div>' +
-          "        </div>" +
-          '        <div class="body">' +
-          '            <div class="img">' +
-          '                <img src="https://cfile181.uf.daum.net/image/250649365602043421936D" width="73" height="70">' +
-          "           </div>" +
-          '            <div class="desc">' +
-          '                <div class="ellipsis">제주특별자치도 제주시 첨단로 242</div>' +
-          '                <div class="jibun ellipsis">(우) 63309 (지번) 영평동 2181</div>' +
-          '                <div><a href="https://www.kakaocorp.com/main" target="_blank" class="link">홈페이지</a></div>' +
-          "            </div>" +
-          "        </div>" +
-          "    </div>" +
-          "</div>";
+
+        //setCloseBtn(document.createElement("div"));
 
         // 마커 위에 커스텀오버레이를 표시합니다
         // 마커를 중심으로 커스텀 오버레이를 표시하기위해 CSS를 이용해 위치를 설정했습니다
-        const aa = useRef.current;
-        console.log(useRef.current);
+
         let overlay = [];
         for (let i = 0; i < myPlaceName.length; i++) {
+          closeBtn[i].insertAdjacentHTML("afterbegin", content[i]);
           overlay[i] = new kakao.maps.CustomOverlay({
-            content: content,
-            map: createmap,
+            content: closeBtn[i],
+            map: null,
             position: marker[i].getPosition(),
-            yAnchor: 1,
+          });
+
+          // 오버레이를 클릭했을때 오버레이 삭제
+          closeBtn[i].onclick = () => {
+            overlay[i].setMap(null);
+          };
+
+          //마커를 클릭했을 때 커스텀 오버레이를 표시합니다
+          kakao.maps.event.addListener(marker[i], "click", function () {
+            overlay[i].setMap(createmap);
+            console.log("hhh");
           });
         }
         // var overlay = new kakao.maps.CustomOverlay({
@@ -128,18 +152,15 @@ const MainMap = () => {
         //   position: marker.getPosition(),
         //   yAnchor: 1,
         // });
-
-        // 마커를 클릭했을 때 커스텀 오버레이를 표시합니다
-        kakao.maps.event.addListener(marker, "click", function () {
-          overlay.setMap(map);
-        });
       });
     };
+
+    //closeBtn.value = "닫기";
   }, []);
 
   // 커스텀 오버레이를 닫기 위해 호출되는 함수입니다
   const closeOverlay = () => {
-    overlay.setMap(null);
+    //overlay.setMap(null);
     console.log("dsfsdfsdf");
   };
 
