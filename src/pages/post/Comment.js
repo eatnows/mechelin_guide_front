@@ -1,60 +1,84 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 
-class Comment extends React.Component {
-  state = { time: "" };
-  componentWillMount() {
-    this.nowTime();
-  }
-  nowTime = () => {
-    // parse a date in yyyy-mm-dd format
-    const parseDate = (input) => {
-      var parts = input.match(/(\d+)/g);
-      // new Date(year, month [, date [, hours[, minutes[, seconds[, ms]]]]])
-      var createAt = new Date(
-        parts[0],
-        parts[1] - 1,
-        parts[2],
-        parts[3],
-        parts[4]
-      ); // months are 0-based
-      return createAt;
-    };
+import Axios from "axios";
+import SingleComment from "./SingleComment";
 
-    let now = new Date();
-    let createAt = parseDate("2020-05-04 04:45");
-    let timeDiff = now.getTime() - createAt.getTime();
-    timeDiff /= 1000 * 60;
+/*
+  댓글 영역
+*/
+const Comment = ({ postId, userId }) => {
+  const [list, setList] = useState([]);
 
-    let simpleTime = "";
-    if (timeDiff < 1) {
-      simpleTime = "방금 전";
-    } else if (timeDiff < 60) {
-      simpleTime = parseInt(timeDiff) + "분 전";
-    } else if (timeDiff < 60 * 24) {
-      simpleTime = parseInt(timeDiff / 60) + "시간 전";
-    } else if (timeDiff < 60 * 24 * 30) {
-      simpleTime = parseInt(timeDiff / (60 * 24)) + "일 전";
-    } else if (timeDiff < 60 * 24 * 30 * 12) {
-      simpleTime = parseInt(timeDiff / (60 * 24 * 30)) + "달 전";
-    } else {
-      simpleTime = parseInt(timeDiff / (60 * 24 * 30 * 12)) + "년 전";
-    }
-    this.setState({
-      time: simpleTime,
-    });
+  /*
+    componentWillMount
+  */
+  useEffect(() => {
+    // 출력
+    commentList();
+  }, []);
+
+  /*
+    댓글 list 갱신 (재출력)
+  */
+  const commentList = () => {
+    const url = `http://localhost:9000/mechelin/comment/getcomments?post_id=${postId}`;
+    Axios.get(url)
+      .then((response) => {
+        setList(response.data);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
   };
-  render() {
-    return (
-      <div>
-        <form>
-          <table>
-            <tr>
-              <td>댓글출력</td>
-            </tr>
-          </table>
-        </form>
-      </div>
-    );
-  }
-}
+
+  /*
+    댓글 좋아요 클릭 시 실행(SingleComment 와 바인드)
+  */
+  const onCommentLike = (e) => {
+    const url = `http://localhost:9000/mechelin/likes/upcommlike`;
+    Axios.post(url, {
+      comment_id: e.target.getAttribute("commentId"),
+      user_id: e.target.getAttribute("userId"),
+    })
+      .then((response) => {
+        // 재출력
+        commentList();
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  };
+  /*
+    댓글 삭제 클릭 시 실행(SingleComment 와 바인드)
+  */
+  const onCommentDelete = (e) => {
+    const url =
+      `http://localhost:9000/mechelin/comment/deletecomm` +
+      `?comment_id=${e.target.getAttribute("commentId")}`;
+    Axios.get(url)
+      .then((response) => {
+        // 재출력
+        commentList();
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  };
+
+  return (
+    <div>
+      {/* 단일 댓글 하나씩 import */}
+      {[...list].map((item, i) => {
+        return (
+          <SingleComment
+            item={item}
+            i={i}
+            cLikeChange={onCommentLike}
+            cDeleteChange={onCommentDelete}
+          />
+        );
+      })}
+    </div>
+  );
+};
 export default Comment;

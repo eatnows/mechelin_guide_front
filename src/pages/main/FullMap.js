@@ -7,6 +7,7 @@ import "react-quill/dist/quill.snow.css";
 import StarRate from "./StarRate";
 import WriteFormMap from "components/map/WriteFormMap";
 import Axios from "util/axios";
+import map from "images/map.PNG";
 import {
   useHistory,
   withRouter,
@@ -14,6 +15,11 @@ import {
   BrowserRouter,
   Redirect,
 } from "react-router-dom";
+import filter from "images/filter2.png";
+import friend from "images/friend2.png";
+import message from "images/messag2.png";
+import review from "images/review2.png";
+import MainMap from "components/map/MainMap";
 
 Quill.register("modules/imageUpload", ImageUpload);
 
@@ -38,6 +44,7 @@ class FullMap extends React.Component {
     content: "",
     front_image: null,
     imageId: [],
+    bottomMenu: false,
   };
 
   modules = {
@@ -150,6 +157,17 @@ class FullMap extends React.Component {
       starScore: s,
     });
   };
+  showBottomMenu = () => {
+    if (!this.state.bottomMenu) {
+      this.setState({
+        bottomMenu: true,
+      });
+    } else {
+      this.setState({
+        bottomMenu: false,
+      });
+    }
+  };
   /*
    * 리뷰작성 폼 지도에서 넘어온 데이터
    */
@@ -163,19 +181,16 @@ class FullMap extends React.Component {
     });
   };
   /*
-   * 카테고리 변경했을때 실행
+   * value 변경시 스테이트 값 변경
    */
-  handleCategory = (e) => {
+  changeState = (e) => {
     this.setState({
-      category: e.target.value,
+      [e.target.name]: e.target.value,
     });
   };
-  /*
-   * 제목에 기입했을때 실행
-   */
-  handleSubject = (e) => {
+  showReviewForm = () => {
     this.setState({
-      subject: e.target.value,
+      section: true,
     });
   };
   /*
@@ -249,29 +264,103 @@ class FullMap extends React.Component {
   };
 
   render() {
-    const seroStyle = {
-      width: "5vw",
-      height: "10vh",
-      borderBottom: "1px solid white",
-      lineHeight: "10vh",
-      color: "white",
-      fontWeight: "normal",
-      fontSize: "15px",
-      textAlign: "center",
-    };
-
     return (
       <div>
+        <div>
+          <img
+            src={map}
+            style={{
+              position: "absolute",
+              left: "0",
+              top: "0",
+              width: "100vw",
+              height: "100vh",
+              zIndex: "0",
+            }}
+            alt=""
+          />
+          {/*하단 메뉴바 */}
+          <div style={{ cursor: "pointer" }}>
+            <div
+              className="menuBall xi-home-o xi-3x"
+              onClick={this.showBottomMenu.bind(this)}
+              style={{
+                zIndex: this.props.bar ? "-2" : "2",
+                transition: this.props.bar ? "all 1s" : "all 1s ease 0.5s",
+              }}
+            ></div>
+            <div className="subMenuBall">
+              <div
+                className="filter"
+                style={{
+                  bottom: this.state.bottomMenu ? "1.5%" : "-20%",
+                  left: this.state.bottomMenu ? "37%" : "50%",
+                }}
+              >
+                <img src={filter} width="30px" height="20px" alt="" />
+              </div>
+              <div
+                className="review"
+                onClick={this.showReviewForm.bind(this)}
+                style={{
+                  bottom: this.state.bottomMenu ? "12.5%" : "-20%",
+                  left: this.state.bottomMenu ? "43.1%" : "50%",
+                }}
+              >
+                <img
+                  style={{ marginLeft: "5px" }}
+                  src={review}
+                  width="32px"
+                  height="32px"
+                  alt=""
+                />
+              </div>
+              <div
+                className="message"
+                style={{
+                  bottom: this.state.bottomMenu ? "12.5%" : "-20%",
+                  right: this.state.bottomMenu ? "43.1%" : "50%",
+                }}
+              >
+                <img
+                  style={{ marginLeft: "1px" }}
+                  src={message}
+                  width="30px"
+                  height="27px"
+                  alt=""
+                />
+              </div>
+              <div
+                className="friend"
+                style={{
+                  bottom: this.state.bottomMenu ? "1.5%" : "-20%",
+                  right: this.state.bottomMenu ? "37%" : "50%",
+                }}
+              >
+                <img
+                  style={{ marginLeft: "5px" }}
+                  src={friend}
+                  width="30px"
+                  height="30px"
+                  alt=""
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+        {/* 백그라운드(섹션이 열렸을 때 배경 까맣게 해주는 것) */}
         <div
           className="background"
           style={{
             width: "100vw",
             height: "100vh",
             position: "absolute",
-            zIndex: "2",
+            zIndex: this.state.section ? "2" : "0",
             opacity: "0.7",
             backgroundColor: this.state.section ? "black" : "none",
             display: this.state.section ? "block" : "none",
+            top: "0",
+            left: "0",
           }}
         ></div>
         {this.state.section ? (
@@ -291,7 +380,11 @@ class FullMap extends React.Component {
               transform: "translateX(-50%)",
             }}
           >
-            <h3 style={{ margin: "3vh 2vw" }}>리뷰 작성</h3>
+            <h3
+              style={{ margin: "3vh 2vw", fontFamily: "Nanum Gothic Coding" }}
+            >
+              리뷰 작성
+            </h3>
             <hr
               style={{
                 border: "1px solid rgba(0,0,0,.1)",
@@ -321,7 +414,7 @@ class FullMap extends React.Component {
                 }}
                 type="text"
                 placeholder="제목"
-                onChange={this.handleSubject.bind(this)}
+                onChange={this.changeState.bind(this)}
               />
               <select
                 className="form-control"
@@ -335,7 +428,7 @@ class FullMap extends React.Component {
                   paddingLeft: "3px",
                   paddingRight: "3px",
                 }}
-                onChange={this.handleCategory.bind(this)}
+                onChange={this.changeState.bind(this)}
               >
                 <option selected disabled hidden>
                   카테고리
@@ -380,6 +473,7 @@ class FullMap extends React.Component {
                     lineHeight: "5vh",
                     display: "inline-block",
                     fontSize: "1.5em",
+                    fontFamily: "Nanum Gothic Coding",
                   }}
                 >
                   {this.state.starScore === 0
@@ -458,46 +552,6 @@ class FullMap extends React.Component {
         ) : (
           ""
         )}{" "}
-        <nav style={{ float: "right" }}>
-          <ul
-            style={{
-              width: "5vw",
-              height: "30vh",
-              backgroundColor: "rgba(245,145,45)",
-              borderRadius: "10px",
-              transform: "translate(50%,95%)",
-              position: "absolute",
-              left: "90%",
-              top: "0%",
-              cursor: "pointer",
-            }}
-          >
-            <li
-              style={seroStyle}
-              onClick={() => {
-                this.setState({ idx: 3 });
-              }}
-            >
-              필터
-            </li>
-            <li
-              style={seroStyle}
-              onClick={() => {
-                this.setState({ section: true });
-              }}
-            >
-              리뷰 작성
-            </li>
-            <li
-              style={seroStyle}
-              onClick={() => {
-                this.setState({ idx: 5 });
-              }}
-            >
-              DM
-            </li>
-          </ul>
-        </nav>
       </div>
     );
   }
