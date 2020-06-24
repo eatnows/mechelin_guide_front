@@ -1,5 +1,5 @@
 /*global kakao*/
-import React, { useEffect, useState, useRef } from "react";
+import React, { useEffect, useState, useRef, useCallback } from "react";
 import "./MainMapStyle.css";
 import Info from "./Info";
 import Axios from "util/axios";
@@ -15,22 +15,42 @@ const MainMap = () => {
   const [myLongitude, setMyLongitude] = useState([]);
   const [myPlaceName, setMyPlaceName] = useState([]);
   const [myPlaceAddress, setMyPlaceAddress] = useState([]);
+  const [mySubject, setMySubject] = useState([]);
+  const [myContent, setMyContent] = useState([]);
+  const [myRating, setMyRating] = useState([]);
+  const [myFrontImg, setMyFrontImg] = useState([]);
+  const [myUPId, setMyUPId] = useState([]);
   const useTest = useRef();
   const [isOpen, setIsOpen] = useState(true);
+  // 마커에서 맛집 정보 출력할때 필요한 변수들
+  const [subject, setSubject] = useState("");
+  const [content, setContent] = useState("");
+  const [rating, setRating] = useState("");
+  const [postCount, setPostCount] = useState("");
+  const [placeName, setPlaceName] = useState("");
+  // 리뷰글로 넘어갈때 필요한 변수
+  const [UPId, setUPid] = useState("");
+
   //const [closeBtn, setCloseBtn] = useState();
   useEffect(() => {
-    console.log("시작");
     const url = `/place/myplace?user_id=${sessionStorage.getItem("userId")}`;
     setUserId(sessionStorage.getItem("userId"));
     Axios.get(url)
       .then((response) => {
         console.log(response);
-        console.log(response.data[1]);
+        console.log(`data`);
+        console.log(response.data);
+        console.log(`data`);
         for (let i = 0; i < response.data.length; i++) {
           myLatitude.push(response.data[i].latitude_x);
           myLongitude.push(response.data[i].longitude_y);
           myPlaceName.push(response.data[i].name);
           myPlaceAddress.push(response.data[i].address);
+          myUPId.push(response.data[i].user_place_id);
+          mySubject.push(response.data[i].subject);
+          myContent.push(response.data[i].content);
+          myRating.push(response.data[i].rating);
+          myFrontImg.push(response.data[i].myFrontImg);
         }
       })
       .catch((error) => {
@@ -79,6 +99,7 @@ const MainMap = () => {
         let marker = [];
         let content = [];
         let closeBtn = [];
+        let allBtn = [];
         console.log(myLatitude.length);
         /*
          * 지도의 나의 맛집 출력
@@ -92,10 +113,12 @@ const MainMap = () => {
           marker[i].setMap(createmap);
 
           // 오버레이에 들어갈 내용 만들기
+
+          allBtn[i] = document.createElement("div");
+          allBtn[i].insertAdjacentHTML("afterbegin", closeBtn[i]);
           closeBtn[i] = document.createElement("div");
           document.body.appendChild(closeBtn[i]);
           closeBtn[i].setAttribute("style", "width: 10px; height: 10px;");
-
           content[i] =
             '<div class="wrap">' +
             '    <div class="info">' +
@@ -105,12 +128,18 @@ const MainMap = () => {
             "        </div>" +
             '        <div class="body">' +
             '            <div class="img">' +
-            '                <img src="https://cfile181.uf.daum.net/image/250649365602043421936D" width="73" height="70">' +
+            '                <img src="' +
+            myFrontImg[i] +
+            '" width="73" height="70">' +
             "           </div>" +
             '            <div class="desc">' +
-            '                <div class="ellipsis">제주특별자치도 제주시 첨단로 242</div>' +
-            '                <div class="jibun ellipsis">(우) 63309 (지번) 영평동 2181</div>' +
-            '                <div onClick="">더보기</div>' +
+            '                <div class="ellipsis">' +
+            mySubject[i] +
+            "</div>" +
+            '                <div class="jibun ellipsis">' +
+            myContent[i] +
+            "</div>" +
+            '                <div onClick="location.href=http://localhost:3000/mechelin/review/7">더보기</div>' +
             "            </div>" +
             "        </div>" +
             "    </div>" +
@@ -142,8 +171,26 @@ const MainMap = () => {
 
           //마커를 클릭했을 때 커스텀 오버레이를 표시합니다
           kakao.maps.event.addListener(marker[i], "click", function () {
+            // 오버레이를 표시하기전에 열려있던 오버레이를 닫음
+            overlay[i].setMap(null);
+            // 오버레이 표시
             overlay[i].setMap(createmap);
-            console.log("hhh");
+            console.log("실행");
+            console.log(myUPId[i]);
+            const url = `/post/review?user_place_id=${myUPId[i]}&row=1`;
+            Axios.get(url)
+              .then((res) => {
+                console.log(res.data);
+                setSubject((prev) => ({ subject: res.data.subject }));
+                setContent(res.data.content);
+                setRating(res.data.rating);
+                setPostCount(res.data.post_count);
+                setUPid(res.data.user_place_id);
+                setPlaceName(res.data.name);
+              })
+              .catch((error) => {
+                console.log(error);
+              });
           });
         }
         // var overlay = new kakao.maps.CustomOverlay({
