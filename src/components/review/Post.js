@@ -8,22 +8,13 @@ const fakeFetch = (delay = 1000) =>
   new Promise((res) => setTimeout(res, delay));
 
 const ListItem = ({ contact, i, likesChange }) => {
-  const [newComment, setNewComment] = useState("");
+  const [showBtn, setShowBtn] = useState(false);
 
-  const commentInsert = (postId, userId) => {
-    const url = `http://localhost:9000/mechelin/post/insertcomm`;
-    Axios.post(url, {
-      user_id: userId,
-      post_id: postId,
-      content: newComment,
-    })
-      .then((response) => {
-        console.log(response.data);
-      })
-      .catch((error) => {
-        console.log(error);
-      });
-  };
+  useEffect(() => {
+    if (contact.user_id === sessionStorage.getItem("userId")) {
+      setShowBtn(true);
+    }
+  }, []);
 
   return (
     <div key={i}>
@@ -35,10 +26,14 @@ const ListItem = ({ contact, i, likesChange }) => {
         }}
       >
         <thead>
-          <tr>
-            <td colSpan="2">수정</td>
-            <td>삭제</td>
-          </tr>
+          {showBtn ? (
+            <tr>
+              <td colSpan="2">수정</td>
+              <td>삭제</td>
+            </tr>
+          ) : (
+            ""
+          )}
         </thead>
         <tbody>
           <tr>
@@ -74,27 +69,7 @@ const ListItem = ({ contact, i, likesChange }) => {
           <tr>
             <td colSpan="5">
               {/* 댓글 영역 import */}
-              <Comment postId={contact.id} userId={contact.user_id} />
-            </td>
-          </tr>
-          {/* 새 댓글 작성 영역 */}
-          <tr>
-            <td>
-              <img alt="" />
-              프로필사진
-            </td>
-            <td colSpan="3">
-              <input
-                type="text"
-                value={newComment}
-                onInput={(e) => setNewComment(e.target.value)}
-              />
-              <button
-                type="button"
-                onClick={() => commentInsert(contact.id, contact.user_id)}
-              >
-                작성
-              </button>
+              <Comment postId={contact.id} />
             </td>
           </tr>
         </tfoot>
@@ -169,7 +144,7 @@ const Post = (props) => {
   const onClickLikes = (e) => {
     const url = `http://localhost:9000/mechelin/likes/post`;
     Axios.post(url, {
-      user_id: "5",
+      user_id: sessionStorage.getItem("userId"),
       post_id: e.target.getAttribute("postId"),
     })
       .then((response) => {
