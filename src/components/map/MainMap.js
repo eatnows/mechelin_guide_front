@@ -4,7 +4,7 @@ import "./MainMapStyle.css";
 import Axios from "util/axios";
 
 //let closeBtn;
-const MainMap = () => {
+const MainMap = (props) => {
   const [latitude, setLatitude] = useState(37.49879629938368);
   const [longitude, setLongitude] = useState(127.03168720284643);
   const [map, setMap] = useState("");
@@ -97,13 +97,8 @@ const MainMap = () => {
         // });
         let marker = [];
         let content = [];
-        let closeBtn = [];
-        let allTag = [];
-        let wrap = [];
-        let info = [];
-        let titleTag = [];
+        let pageBtn = [];
         let closeTag = [];
-        console.log(myLatitude.length);
         // 이미지 태그 제거
         let imgTag = /<IMG(.*?)>/gi;
         /*
@@ -116,33 +111,28 @@ const MainMap = () => {
           });
           // 마커가 지도 위에 표시되도록 설정합니다
           marker[i].setMap(createmap);
+          /*
+           * 오버레이에 들어갈 내용 만들기
+           */
+          // 이미지와 내용이 들어가는 오버레이
+          pageBtn[i] = document.createElement("div");
+          pageBtn[i].setAttribute("className", "page");
+          // 닫기버튼 오버레이
+          closeTag[i] = document.createElement("div");
+          closeTag[i].insertAdjacentHTML(
+            "afterbegin",
+            '<div class="wrapTitle"><div class="infoTitle"><div class="title2">' +
+              myPlaceName[i] +
+              '<div class="close" title="닫기"></div></div></div></div>'
+          );
 
-          // 오버레이에 들어갈 내용 만들기
-          closeBtn[i] = document.createElement("div");
-          closeBtn[i].setAttribute("className", "close");
-          closeBtn[i].insertAdjacentText("afterbegin", "X");
-          allTag[i] = document.createElement("div");
-          allTag[i].insertAdjacentHTML("afterbegin", closeBtn[i]);
-          // titleTag[i] = document.createElement("div");
-          // titleTag[i].setAttribute("className", "title");
-          // titleTag[i].setAttribute("value", myPlaceName[i]);
-          // titleTag[i].insertAdjacentHTML("beforeend", closeTag[i]);
-          // info[i] = document.createElement("div");
-          // info[i].setAttribute("className", "info");
-          // info[i].insertAdjacentHTML("afterbegin", titleTag[i]);
-          // wrap[i] = document.createElement("div");
-          // wrap[i].setAttribute("className", "wrap");
-          // wrap[i].insertAdjacentHTML("afterbegin", info[i]);
-          // allTag[i].insertAdjacentHTML("afterbegin", wrap[i]);
-          document.body.appendChild(closeBtn[i]);
+          document.body.appendChild(pageBtn[i]);
 
-          closeBtn[i].setAttribute("style", "width: 10px; height: 10px;");
+          pageBtn[i].setAttribute("style", "width: 10px; height: 10px;");
           content[i] =
             '<div class="wrap">' +
             '    <div class="info">' +
             '        <div class="title">' +
-            myPlaceName[i] +
-            '            <div class="close" title="닫기"></div>' +
             "        </div>" +
             '        <div class="body">' +
             '            <div class="img">' +
@@ -153,12 +143,15 @@ const MainMap = () => {
             '            <div class="desc">' +
             '                <div class="ellipsis">' +
             mySubject[i] +
+            "</span>" +
             "</div>" +
             '                <div class="jibun ellipsis">' +
             myContent[i].replace(imgTag, "").substring(0, 15) +
-            "..." +
             "</div>" +
-            '                <div onClick="location.href=http://localhost:3000/mechelin/review/7">더보기</div>' +
+            '                <span title="리뷰글로 이동" class="moreBtn">...더보기</span>' +
+            "<span style='float: right; margin-bottom: 20px;'>평점: " +
+            myRating[i] +
+            "점&nbsp;&nbsp;" +
             "            </div>" +
             "        </div>" +
             "    </div>" +
@@ -169,33 +162,51 @@ const MainMap = () => {
         // 커스텀 오버레이는 아래와 같이 사용자가 자유롭게 컨텐츠를 구성하고 이벤트를 제어할 수 있기 때문에
         // 별도의 이벤트 메소드를 제공하지 않습니다
 
-        //setCloseBtn(document.createElement("div"));
+        //setpageBtn(document.createElement("div"));
 
         // 마커 위에 커스텀오버레이를 표시합니다
         // 마커를 중심으로 커스텀 오버레이를 표시하기위해 CSS를 이용해 위치를 설정했습니다
 
         let overlay = [];
+        let overlay2 = [];
         for (let i = 0; i < myPlaceName.length; i++) {
-          closeBtn[i].insertAdjacentHTML("afterbegin", content[i]);
+          pageBtn[i].insertAdjacentHTML("afterbegin", content[i]);
           overlay[i] = new kakao.maps.CustomOverlay({
-            content: closeBtn[i],
+            content: pageBtn[i],
             map: null,
             position: marker[i].getPosition(),
           });
+          overlay2[i] = new kakao.maps.CustomOverlay({
+            content: closeTag[i],
+            map: null,
+            position: marker[i].getPosition(),
+            xAnchor: 0.3,
+            yAnchor: 0.91,
+          });
 
-          // 오버레이를 클릭했을때 오버레이 삭제
-          closeBtn[i].onclick = () => {
+          /*
+           * 오버레이를 클릭했을때 리뷰 페이지로 이동
+           */
+          pageBtn[i].onclick = () => {
+            //overlay[i].setMap(null);
+            props.history.push(`/mechelin/review/${myUPId[i]}`);
+          };
+
+          /*
+           * 오버레이2를 클릭했을때 오버레이 삭제
+           */
+          closeTag[i].onclick = () => {
             overlay[i].setMap(null);
+            overlay2[i].setMap(null);
           };
 
           //마커를 클릭했을 때 커스텀 오버레이를 표시합니다
           kakao.maps.event.addListener(marker[i], "click", function () {
-            // 오버레이를 표시하기전에 열려있던 오버레이를 닫음
-            overlay[i].setMap(null);
             // 오버레이 표시
             overlay[i].setMap(createmap);
-            console.log("실행");
-            console.log(myUPId[i]);
+            // 닫기버튼 오버레이 표시
+            overlay2[i].setMap(createmap);
+
             const url = `/post/review?user_place_id=${myUPId[i]}&row=1`;
             Axios.get(url)
               .then((res) => {
@@ -212,16 +223,8 @@ const MainMap = () => {
               });
           });
         }
-        // var overlay = new kakao.maps.CustomOverlay({
-        //   content: content,
-        //   map: createmap,
-        //   position: marker.getPosition(),
-        //   yAnchor: 1,
-        // });
       });
     };
-
-    //closeBtn.value = "닫기";
   }, []);
 
   return (

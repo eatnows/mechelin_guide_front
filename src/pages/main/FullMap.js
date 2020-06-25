@@ -266,7 +266,7 @@ class FullMap extends React.Component {
   render() {
     return (
       <div>
-        <MainMap />
+        <MainMap history={this.props.history} />
         {/*하단 메뉴바 */}
         <div style={{ cursor: "pointer" }}>
           <div
