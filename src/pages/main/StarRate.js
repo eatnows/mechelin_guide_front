@@ -1,5 +1,5 @@
 import React from "react";
-import "../../components/css/FullMapStyle.css";
+import "components/css/fullMapStyle.css";
 
 class StarRate extends React.Component {
   state = {

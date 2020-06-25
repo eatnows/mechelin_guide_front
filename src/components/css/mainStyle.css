@@ -14,6 +14,34 @@
   font-weight: normal;
   font-style: normal;
 }
+
+@font-face {
+  font-family: "NanumBarunGothic";
+  font-style: normal;
+  font-weight: 400;
+  src: url("//cdn.jsdelivr.net/font-nanumlight/1.0/NanumBarunGothicWeb.eot");
+  src: url("//cdn.jsdelivr.net/font-nanumlight/1.0/NanumBarunGothicWeb.eot?#iefix")
+      format("embedded-opentype"),
+    url("//cdn.jsdelivr.net/font-nanumlight/1.0/NanumBarunGothicWeb.woff")
+      format("woff"),
+    url("//cdn.jsdelivr.net/font-nanumlight/1.0/NanumBarunGothicWeb.ttf")
+      format("truetype");
+}
+@font-face {
+  font-family: "NanumBarunGothic";
+  font-style: normal;
+  font-weight: 300;
+  src: url("//cdn.jsdelivr.net/font-nanumlight/1.0/NanumBarunGothicWebLight.eot");
+  src: url("//cdn.jsdelivr.net/font-nanumlight/1.0/NanumBarunGothicWebLight.eot?#iefix")
+      format("embedded-opentype"),
+    url("//cdn.jsdelivr.net/font-nanumlight/1.0/NanumBarunGothicWebLight.woff")
+      format("woff"),
+    url("//cdn.jsdelivr.net/font-nanumlight/1.0/NanumBarunGothicWebLight.ttf")
+      format("truetype");
+}
+.nanumbarungothic * {
+  font-family: "NanumBarunGothic", sans-serif;
+}
 /*상단 메뉴바*/
 /*메뉴화면 여는 메뉴 바*/
 .openBar {
@@ -22,7 +50,7 @@
   width: 6vh;
   line-height: 6vh;
   transition: all 1s;
-  top: 7%;
+  top: 6%;
   right: 5%;
 }
 .openBar::before {
@@ -39,7 +67,7 @@
   width: 6vh;
   line-height: 6vh;
   transition: all 1s;
-  top: 7%;
+  top: 6%;
   right: 5%;
 }
 .closeBar:hover {
@@ -52,7 +80,7 @@
   line-height: 7vh;
   height: 7vh;
   width: 7vh;
-  top: 6.5%;
+  top: 5.5%;
   right: 4.5%;
 }
 
@@ -71,10 +99,10 @@
   height: 6vh;
   width: 6vh;
   position: absolute;
-  top: 7%;
+  top: 6%;
   right: 5%;
   border-radius: 50%;
-  transition: all 1s ease 0.4s;
+  transition: all 0.5s ease 0.4s;
   background-color: rgba(255, 255, 255, 0.9);
 }
 
@@ -82,22 +110,39 @@
 .search:focus {
   outline: none;
 }
+
 /*메뉴화면 안의 메뉴 버튼*/
 .inner .menu li {
   font-family: "NEXON Lv2 Gothic Bold";
-  font-size: 6vw;
-  transition: all 0.5s;
+  transition: all 1s;
 }
 .inner .menu li:hover {
   color: rgba(245, 145, 45);
 }
+
+/*마이페이지버튼 안의 하위메뉴*/
 .inner .mypage li {
-  font-family: "NEXON Lv2 Gothic Bold";
-  font-size: 3.5vw;
+  font-family: "NanumBarunGothic";
+  font-weight: 400;
+  font-size: 2.5vw;
   color: rgba(0, 0, 0, 0.7);
-  transition: all 1s;
+  transition: all 0.5s;
+  margin-top: -5vh;
 }
 .inner .mypage li:hover {
+  color: rgba(245, 145, 45, 0.8);
+}
+
+/*고객센터버튼 안의 하위메뉴*/
+.inner .cc li {
+  font-family: "NanumBarunGothic";
+  font-weight: 400;
+  font-size: 2.5vw;
+  color: rgba(0, 0, 0, 0.7);
+  transition: all 0.5s;
+  margin-top: -5vh;
+}
+.inner .cc li:hover {
   color: rgba(245, 145, 45, 0.8);
 }
 
@@ -120,74 +165,4 @@
 }
 .unlock:hover {
   color: rgba(245, 145, 45);
-}
-
-/*하단 메뉴바*/
-.menuBall {
-  width: 10vw;
-  height: 10vw;
-  padding-top: 1.5vh;
-  text-align: center;
-  color: rgba(255, 255, 255);
-  font-weight: normal;
-  background-color: rgba(245, 145, 45, 0.9);
-  border-radius: 50%;
-  position: fixed;
-  bottom: -15%;
-  left: 50%;
-  transform: translateX(-50%);
-  font-size: 35px;
-  z-index: 1;
-  box-shadow: 3px 3px 10px #999;
-}
-.menuBall:hover {
-  animation: showHome 5s;
-}
-@keyframes showHome {
-  10% {
-    color: transparent;
-  }
-  20% {
-    color: rgba(255, 255, 255);
-  }
-  30% {
-    color: transparent;
-  }
-  40% {
-    color: rgba(255, 255, 255);
-  }
-  50% {
-    color: transparent;
-  }
-  60% {
-    color: rgba(255, 255, 255);
-  }
-  70% {
-    color: transparent;
-  }
-  80% {
-    color: rgba(255, 255, 255);
-  }
-  90% {
-    color: transparent;
-  }
-  100% {
-    color: rgba(255, 255, 255);
-  }
-}
-
-.subMenuBall div {
-  width: 5vw;
-  height: 5vw;
-  text-align: center;
-  background-color: rgba(255, 255, 255, 0.9);
-  color: #999;
-  box-shadow: 3px 3px 10px #999;
-  border-radius: 50%;
-  position: fixed;
-  z-index: 0.5;
-  line-height: 5vw;
-  font-family: "NEXON Lv2 Gothic Bold";
-  transition: all 0.7s;
-  font-size: 15px;
 }

@@ -1,11 +1,12 @@
 import React from "react";
 
 class MyPage extends React.Component {
-  constructor({ match, props }) {
+  constructor(props) {
     super(props);
-    this.state = {
-      email: match.params.email,
-    };
+    this.state = {};
+  }
+  componentWillMount() {
+    this.props.getState(false);
   }
   render() {
     return <div>MyPage</div>;
