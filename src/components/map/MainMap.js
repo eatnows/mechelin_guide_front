@@ -20,6 +20,7 @@ const MainMap = (props) => {
   const [myRating, setMyRating] = useState([]);
   const [myFrontImg, setMyFrontImg] = useState([]);
   const [myUPId, setMyUPId] = useState([]);
+  const [myPinUrl, setMyPinUrl] = useState([]);
   const useTest = useRef();
   const [isOpen, setIsOpen] = useState(true);
   // 내 친구들의 맛집 리스트들 필요한 변수
@@ -47,10 +48,13 @@ const MainMap = (props) => {
   useEffect(() => {
     const url = `/place/myplace?user_id=${sessionStorage.getItem("userId")}`;
     setUserId(sessionStorage.getItem("userId"));
+    /*
+     * 나의 맛집 정보를 받는 RESTful API
+     */
     Axios.get(url)
       .then((response) => {
-        console.log(response.data);
         for (let i = 0; i < response.data.length; i++) {
+          console.log(response.data[i].pin_url);
           myLatitude.push(response.data[i].latitude_x);
           myLongitude.push(response.data[i].longitude_y);
           myPlaceName.push(response.data[i].name);
@@ -60,6 +64,7 @@ const MainMap = (props) => {
           myContent.push(response.data[i].content);
           myRating.push(response.data[i].rating);
           myFrontImg.push(response.data[i].front_image);
+          myPinUrl.push(response.data[i].pin_url);
         }
       })
       .catch((error) => {
@@ -69,11 +74,15 @@ const MainMap = (props) => {
     const friendUrl = `/place/friendsplace?user_id=${sessionStorage.getItem(
       "userId"
     )}`;
-    // 친구들 맛집
+
+    /*
+     * 친구들의 맛집 정보를 받는 RESTful API
+     */
     Axios.get(friendUrl)
       .then((res) => {
         console.log(res.data);
         for (let i = 0; i < res.data.length - 1; i++) {
+          console.log(res.data);
           friendLatitude.push(res.data[i].latitude_x);
           friendLongitude.push(res.data[i].longitude_y);
           friendPlaceName.push(res.data[i].name);
@@ -111,8 +120,7 @@ const MainMap = (props) => {
 
         setMap(createmap);
         // 나의 맛집 표시핀
-        let imageSrc =
-            "https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/marker_red.png", // 마커이미지의 주소입니다
+        let imageSrc = myPinUrl[0], // 마커이미지의 주소입니다
           // 마커이미지의 크기입니다
           imageSize = new kakao.maps.Size(64, 69),
           // 마커이미지의 옵션입니다. 마커의 좌표와 일치시킬 이미지 안에서의 좌표를 설정합니다.
@@ -128,7 +136,10 @@ const MainMap = (props) => {
 
         // 이미지 태그 제거
         let imgTag = /<IMG(.*?)>/gi;
-
+        console.log(myPinUrl);
+        /*
+         * 친구 맛집 표시
+         */
         // 친구맛집 표시할 마커들
         let friendMarker = [];
         // 친구의 맛집 표시 핀
@@ -261,7 +272,7 @@ const MainMap = (props) => {
                 console.log(error);
               });
           });
-        }
+        } // 친구 맛집 끝
 
         // 마커를 생성합니다
         // let marker = new kakao.maps.Marker({
