@@ -1,13 +1,16 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Post from "components/review/Post";
-import { Router } from "react-router-dom";
 
-const Review = ({ match, props }) => {
-  const [email, setEmail] = useState(match.params.email);
+const Review = (props) => {
+  /*view 페이지의 main state 값을 false로 변경 */
+  useEffect(() => {
+    props.getState(false);
+  }, []);
+
   return (
     <div>
       <h2></h2>
-      <Post userPlaceId={match.params.userPlaceId} />
+      <Post userPlaceId={props.userPlaceId} />
     </div>
   );
 };

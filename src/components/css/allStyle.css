@@ -28,3 +28,10 @@ li {
   height: "10vh";
   border-right: "1px solid white";
 }
+.sideMenu {
+  position: fixed;
+  top: 25vh;
+  left: 0vw;
+  font-family: "NEXON Lv1 Gothic OTF Light";
+  text-align: center;
+}
