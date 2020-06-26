@@ -20,6 +20,7 @@ import friend from "images/friend2.png";
 import message from "images/messag2.png";
 import review from "images/review2.png";
 import MainMap from "components/map/MainMap";
+import MyMapFilter from "../../components/switch/MyMapFilter";
 
 Quill.register("modules/imageUpload", ImageUpload);
 
@@ -277,6 +278,9 @@ class FullMap extends React.Component {
       .catch((error) => {
         console.log(error);
       });
+  };
+  onClickMyMapFilter = (e) => {
+    console.log(e.target.value);
   };
 
   render() {
@@ -598,6 +602,9 @@ class FullMap extends React.Component {
                 cursor: "pointer",
               }}
             ></div>
+            <div onChange={this.onClickMyMapFilter.bind(this)}>
+              <MyMapFilter />
+            </div>
           </div>
         </section>
       </div>
