@@ -3,7 +3,7 @@ import FormGroup from "@material-ui/core/FormGroup";
 import FormControlLabel from "@material-ui/core/FormControlLabel";
 import Switch from "@material-ui/core/Switch";
 
-export default function SwitchLabels() {
+export default function FrendMapFilter() {
   const [state, setState] = React.useState({
     checkedA: true,
     checkedB: true,
@@ -23,7 +23,7 @@ export default function SwitchLabels() {
             name="checkedA"
           />
         }
-        label="내 맛집"
+        label="친구 맛집"
       />
     </FormGroup>
   );

@@ -20,10 +20,14 @@ import friend from "images/friend2.png";
 import message from "images/messag2.png";
 import review from "images/review2.png";
 import MainMap from "components/map/MainMap";
-import MyMapFilter from "../../components/switch/MyMapFilter";
+import MyMapFilter from "components/switch/MyMapFilter";
+import FriendMapFilter from "components/switch/FriendMapFilter";
+import CategoryFilter from "components/switch/CategoryFilter";
 
 Quill.register("modules/imageUpload", ImageUpload);
 
+let MyFilter = true;
+let FriendFilter = true;
 class FullMap extends React.Component {
   constructor(props) {
     super();
@@ -48,6 +52,8 @@ class FullMap extends React.Component {
     bottomMenu: false,
     fullMap: true,
     filterModal: false,
+    myFilter: true,
+    friendFilter: true,
   };
 
   modules = {
@@ -273,8 +279,28 @@ class FullMap extends React.Component {
         console.log(error);
       });
   };
+  /*
+   * 내 맛집 필터 기능
+   */
   onClickMyMapFilter = (e) => {
-    console.log(e.target.value);
+    console.log(e.target.checked);
+    MyFilter = e.target.checked;
+    console.log(`myFilter : ${MyFilter}`);
+    this.setState({
+      myFilter: e.target.checked,
+    });
+  };
+  onChangeFriendMapFilter = (e) => {
+    console.log(e.target.checked);
+    FriendFilter = e.target.checked;
+    this.setState({
+      friendFilter: e.target.checked,
+    });
+  };
+  onClickCategoryFilter = (e) => {
+    console.log(23);
+    console.log(e.target.checked);
+    console.log(e.target.name);
   };
 
   render() {
@@ -282,7 +308,11 @@ class FullMap extends React.Component {
       <div>
         {this.state.fullMap ? (
           <div>
-            <MainMap />
+            <MainMap
+              history={this.props.history}
+              MyFilter={MyFilter}
+              FriendFilter={FriendFilter}
+            />
             {/*하단 메뉴바 */}
             <div style={{ cursor: "pointer" }}>
               <div
@@ -598,6 +628,12 @@ class FullMap extends React.Component {
             ></div>
             <div onChange={this.onClickMyMapFilter.bind(this)}>
               <MyMapFilter />
+            </div>
+            <div onChange={this.onChangeFriendMapFilter.bind(this)}>
+              <FriendMapFilter />
+            </div>
+            <div onClick={this.onClickCategoryFilter.bind(this)}>
+              <CategoryFilter />
             </div>
           </div>
         </section>
