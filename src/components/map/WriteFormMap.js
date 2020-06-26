@@ -71,7 +71,7 @@ const WriteFormMap2 = (props) => {
     document.head.appendChild(script);
     script.onload = () => {
       kakao.maps.load(() => {
-        let mapContainer = document.getElementById("addmap");
+        let mapContainer = document.getElementById("map");
         let mapOption = {
           center: new kakao.maps.LatLng(latitude, longitude),
           level: 3,
@@ -479,140 +479,138 @@ const WriteFormMap2 = (props) => {
     searchPlaces();
   };
   return (
-    <div>
-      <div className="map_wrap">
-        <div
-          id="addmap"
-          style={{
-            width: "100%",
-            height: "100%",
-            position: "relative",
-            overflow: " hidden",
-          }}
-          onMouseDown={clickMap}
-        ></div>
-        <div
-          style={{
-            width: "220px",
-            height: "130px",
-            position: "absolute",
-            right: "0",
-            bottom: "0",
-            zIndex: "1",
-            margin: "10px 10px 230px 0",
-            padding: "5px",
-            opacity: "0.9",
-            overflow: "auto",
-            display: visible ? "block" : "none",
-          }}
-          className="bg_white"
-        >
-          <p style={{ fontSize: "1.5em", textAlign: "center" }}>근처 맛집</p>
-          <br />
-          <ul id="dbDataList">
-            {dbData.map((contact, i) => (
-              <li
-                key={i}
-                className="dbDataList"
-                name={contact.name}
-                address={contact.address}
-                x={contact.latitude_x}
-                y={contact.longitude_y}
-                style={{
-                  cursor: "pointer",
-                  width: "180px",
-                }}
-                onClick={onClickDbList}
-              >
-                {contact.name}
-                <br />
-                {contact.address}
-                <br />
-                <hr />
-              </li>
-            ))}
-          </ul>
+    <div className="map_wrap">
+      <div
+        id="map"
+        style={{
+          width: "100%",
+          height: "100%",
+          position: "relative",
+          overflow: " hidden",
+        }}
+        onMouseDown={clickMap}
+      ></div>
+      <div
+        style={{
+          width: "220px",
+          height: "130px",
+          position: "absolute",
+          right: "0",
+          bottom: "0",
+          zIndex: "1",
+          margin: "10px 10px 230px 0",
+          padding: "5px",
+          opacity: "0.9",
+          overflow: "auto",
+          display: visible ? "block" : "none",
+        }}
+        className="bg_white"
+      >
+        <p style={{ fontSize: "1.5em", textAlign: "center" }}>근처 맛집</p>
+        <br />
+        <ul id="dbDataList">
+          {dbData.map((contact, i) => (
+            <li
+              key={i}
+              className="dbDataList"
+              name={contact.name}
+              address={contact.address}
+              x={contact.latitude_x}
+              y={contact.longitude_y}
+              style={{
+                cursor: "pointer",
+                width: "180px",
+              }}
+              onClick={onClickDbList}
+            >
+              {contact.name}
+              <br />
+              {contact.address}
+              <br />
+              <hr />
+            </li>
+          ))}
+        </ul>
+      </div>
+      <div
+        id="gps"
+        onClick={panTo}
+        onMouseDown={panTo}
+        style={{
+          width: "30px",
+          height: "30px",
+          position: "absolute",
+          top: "0",
+          right: "0",
+          bottom: "0",
+          zIndex: "1",
+          margin: "10px 10px 30px 0",
+          padding: "5px",
+          opacity: "0.8",
+        }}
+        className="bg_white"
+      >
+        <img src={LocationIcon} alt="" style={{ width: "20px" }} />
+      </div>
+      <div
+        id="addPlaceName"
+        style={{
+          width: "220px",
+          height: "130px",
+          position: "absolute",
+          right: "0",
+          bottom: "0",
+          zIndex: "1",
+          margin: "10px 10px 30px 0",
+          padding: "5px",
+          opacity: "0.8",
+        }}
+        className="bg_white"
+      >
+        <p align="center" style={{ fontSize: "12pt" }}>
+          맛집등록
+        </p>
+        상호명 :&nbsp;
+        <br />
+        <input
+          type="text"
+          name="placeName"
+          ref={addPlaceName}
+          onChange={onChangeName}
+          value={placeName}
+        />
+        <br />
+        주소 : <br />
+        {address}
+        <br />
+        <div style={{ textAlign: "center" }}>
+          <button type="button" onClick={onClickName}>
+            확인
+          </button>
+          &nbsp;
+          <button type="button" onClick={onClickCancle}>
+            취소
+          </button>
         </div>
-        <div
-          id="gps"
-          onClick={panTo}
-          onMouseDown={panTo}
-          style={{
-            width: "30px",
-            height: "30px",
-            position: "absolute",
-            top: "0",
-            right: "0",
-            bottom: "0",
-            zIndex: "1",
-            margin: "10px 10px 30px 0",
-            padding: "5px",
-            opacity: "0.8",
-          }}
-          className="bg_white"
-        >
-          <img src={LocationIcon} alt="" style={{ width: "20px" }} />
-        </div>
-        <div
-          id="addPlaceName"
-          style={{
-            width: "220px",
-            height: "130px",
-            position: "absolute",
-            right: "0",
-            bottom: "0",
-            zIndex: "1",
-            margin: "10px 10px 30px 0",
-            padding: "5px",
-            opacity: "0.8",
-          }}
-          className="bg_white"
-        >
-          <p align="center" style={{ fontSize: "12pt" }}>
-            맛집등록
-          </p>
-          상호명 :&nbsp;
-          <br />
-          <input
-            type="text"
-            name="placeName"
-            ref={addPlaceName}
-            onChange={onChangeName}
-            value={placeName}
-          />
-          <br />
-          주소 : <br />
-          {address}
-          <br />
-          <div style={{ textAlign: "center" }}>
-            <button type="button" onClick={onClickName}>
-              확인
-            </button>
-            &nbsp;
-            <button type="button" onClick={onClickCancle}>
-              취소
-            </button>
+      </div>
+      <div id="menu_wrap" className="bg_white">
+        <div className="option">
+          <div>
+            <form onSubmit={onSubmitBtn}>
+              키워드 :{" "}
+              <input
+                type="text"
+                id="keyword"
+                size="15"
+                placeholder="지역명, 키워드"
+              />
+              <button type="submit">검색하기</button>
+            </form>
           </div>
         </div>
-        <div id="menu_wrap" className="bg_white">
-          <div className="option">
-            <div>
-              <form onSubmit={onSubmitBtn}>
-                키워드 :{" "}
-                <input
-                  type="text"
-                  id="keyword"
-                  size="15"
-                  placeholder="지역명, 키워드"
-                />
-                <button type="submit">검색하기</button>
-              </form>
-            </div>
-          </div>
-          <hr />
-          <ul id="placesList"></ul>
-          <div id="pagination"></div>
-        </div>
+        <hr />
+        <ul id="placesList"></ul>
+        <div id="pagination"></div>
       </div>
     </div>
   );

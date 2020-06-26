@@ -4,11 +4,11 @@
   bottom: 40px;
   width: 288px;
   height: 132px;
-  margin-left: -139px;
+  margin-left: -144px;
   text-align: left;
   overflow: hidden;
   font-size: 12px;
-  /* font-family: "Malgun Gothic", dotum, "돋움", sans-serif; */
+  font-family: "Malgun Gothic", dotum, "돋움", sans-serif;
   line-height: 1.5;
 }
 .wrap * {
@@ -24,21 +24,18 @@
   overflow: hidden;
   background: #fff;
 }
-.wrap .info:hover {
-  cursor: pointer;
-}
 .wrap .info:nth-child(1) {
   border: 0;
   box-shadow: 0px 1px 2px #888;
 }
-/* .info .title {
+.info .title {
   padding: 5px 0 0 10px;
   height: 30px;
   background: #eee;
   border-bottom: 1px solid #ddd;
   font-size: 18px;
   font-weight: bold;
-} */
+}
 .info .close {
   position: absolute;
   top: 10px;
@@ -57,7 +54,7 @@
 }
 .info .desc {
   position: relative;
-  margin: 40px 0 0 90px;
+  margin: 13px 0 0 90px;
   height: 75px;
 }
 .desc .ellipsis {
@@ -72,7 +69,7 @@
 }
 .info .img {
   position: absolute;
-  top: 35px;
+  top: 6px;
   left: 5px;
   width: 73px;
   height: 71px;
@@ -92,55 +89,4 @@
 }
 .info .link {
   color: #5085bb;
-}
-
-/*
- * 제목과 닫기버튼이 보이는 말풍선
- */
-.wrapTitle {
-  position: absolute;
-  left: 0;
-  bottom: 40px;
-  /* width: 288px;
-  height: 132px; */
-  margin-left: -144px;
-  margin-bottom: 100px;
-  text-align: left;
-  overflow: hidden;
-  font-size: 12px;
-  /* font-family: "Malgun Gothic", dotum, "돋움", sans-serif; */
-  line-height: 1.5;
-}
-
-.infoTitle .title2 {
-  padding: 5px 0 0 10px;
-  height: 30px;
-  background: #eee;
-  border-bottom: 1px solid #ddd;
-  font-size: 18px;
-  font-weight: bold;
-}
-
-.wrapTitle .infoTitle {
-  width: 286px;
-  /* border-radius: 5px;
-  border-bottom: 2px solid #ccc; */
-  border-right: 1px solid #ccc;
-  overflow: hidden;
-  background: #fff;
-}
-
-.infoTitle .close {
-  position: absolute;
-  top: 10px;
-  right: 10px;
-  color: #888;
-  width: 17px;
-  height: 17px;
-  background: url("https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/overlay_close.png");
-}
-
-.moreBtn:hover {
-  cursor: pointer;
-  color: #ff8c2d;
 }
