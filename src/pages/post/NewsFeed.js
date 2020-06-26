@@ -8,7 +8,6 @@ class NewsFeed extends React.Component {
     this.state = {
       Data: [],
       time: "",
-      ex: "2020-05-09 05:30",
       row: sessionStorage.getItem("userId"),
     };
   }
@@ -17,6 +16,7 @@ class NewsFeed extends React.Component {
     this.nowTime();
     this.props.getState(false);
   }
+
   //게시글 올린 날짜(현재시간 기준으로 얼마나 지났는지 표시)
   nowTime = () => {
     // parse a date in yyyy-mm-dd format
@@ -57,6 +57,7 @@ class NewsFeed extends React.Component {
     });
   };
 
+  /*포스트 내용 가져오기 */
   getAllPost = () => {
     let url =
       "/post/newsfeed/getallpost?user_id=" +

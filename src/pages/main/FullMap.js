@@ -199,9 +199,15 @@ class FullMap extends React.Component {
   };
   /*필터 모달창 보이게 */
   showFilterForm = () => {
-    this.setState({
-      filterModal: true,
-    });
+    if (this.state.filterModal) {
+      this.setState({
+        filterModal: false,
+      });
+    } else {
+      this.setState({
+        filterModal: true,
+      });
+    }
   };
   /*
    * 리뷰글 등록 버튼 클릭시 실행
