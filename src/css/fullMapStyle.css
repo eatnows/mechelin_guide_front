@@ -68,44 +68,44 @@
   transition: all 0.7s;
   font-size: 15px;
 }
-.subMenuBall:hover div img {
+.subMenuBall div:hover img {
   animation: showSubMenu 5s;
 }
 @keyframes showSubMenu {
   10% {
-    color: transparent;
+    opacity: 0;
   }
   20% {
-    color: rgba(245, 145, 45);
+    opacity: 1;
   }
   30% {
-    color: transparent;
+    opacity: 0;
   }
   40% {
-    color: rgba(245, 145, 45);
+    opacity: 1;
   }
   50% {
-    color: transparent;
+    opacity: 0;
   }
   60% {
-    color: rgba(245, 145, 45);
+    opacity: 1;
   }
   70% {
-    color: transparent;
+    opacity: 0;
   }
   80% {
-    color: rgba(245, 145, 45);
+    opacity: 1;
   }
   90% {
-    color: transparent;
+    opacity: 0;
   }
   100% {
-    color: rgba(245, 145, 45);
+    opacity: 1;
   }
 }
 /*섹션 안의 별점 컴포넌트*/
 .starRate {
-  background: url("../../images/star-empty.svg");
+  background: url("../images/star-empty.svg");
   width: 1vw;
   height: 2vh;
   background-size: 100%;
@@ -116,7 +116,7 @@
   vertical-align: top;
 }
 .starRateisSelected {
-  background: url("../../images/star-full.svg");
+  background: url("../images/star-full.svg");
   width: 1vw;
   height: 2vh;
   background-size: 100%;
@@ -127,7 +127,7 @@
   vertical-align: top;
 }
 .starRateisHalfSelected {
-  background: url("../../images/star-half.svg");
+  background: url("../images/star-half.svg");
   width: 1vw;
   height: 2vh;
   background-size: 100%;

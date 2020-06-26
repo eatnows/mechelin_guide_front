@@ -1,6 +1,32 @@
 import React from "react";
 import Axios from "util/axios";
 import Comment from "pages/post/Comment";
+import "css/postStyle.css";
+import { Button } from "antd";
+var nowTime = (data) => {
+  let now = new Date().getTime();
+  let date = new Date(0).setUTCSeconds(data) / 1000;
+  let timeDiff = (now - date) / (1000 * 60);
+
+  if (isNaN(timeDiff) || timeDiff < 0) return;
+
+  let simpleTime;
+  if (timeDiff < 1) {
+    simpleTime = "방금 전";
+  } else if (timeDiff < 60) {
+    simpleTime = parseInt(timeDiff) + "분 전";
+  } else if (timeDiff < 60 * 24) {
+    simpleTime = parseInt(timeDiff / 60) + "시간 전";
+  } else if (timeDiff < 60 * 24 * 30) {
+    simpleTime = parseInt(timeDiff / (60 * 24)) + "일 전";
+  } else if (timeDiff < 60 * 24 * 30 * 12) {
+    simpleTime = parseInt(timeDiff / (60 * 24 * 30)) + "달 전";
+  } else {
+    simpleTime = parseInt(timeDiff / (60 * 24 * 30 * 12)) + "년 전";
+  }
+
+  return `${simpleTime}`;
+};
 //import Comment from "pages";
 class NewsFeed extends React.Component {
   constructor({ props }) {
@@ -8,55 +34,18 @@ class NewsFeed extends React.Component {
     this.state = {
       Data: [],
       time: "",
-      ex: "2020-05-09 05:30",
       row: sessionStorage.getItem("userId"),
+      realTime: "",
+      heart: "",
     };
   }
   componentWillMount() {
     this.getAllPost();
-    this.nowTime();
     this.props.getState(false);
+    console.log("현재날짜:" + this.state.realTime);
   }
-  //게시글 올린 날짜(현재시간 기준으로 얼마나 지났는지 표시)
-  nowTime = () => {
-    // parse a date in yyyy-mm-dd format
-    const parseDate = (input) => {
-      var parts = input.match(/(\d+)/g);
-      // new Date(year, month [, date [, hours[, minutes[, seconds[, ms]]]]])
-      var createAt = new Date(
-        parts[0],
-        parts[1] - 1,
-        parts[2],
-        parts[3],
-        parts[4]
-      ); // months are 0-based
-      return createAt;
-    };
 
-    let now = new Date();
-    let createAt = parseDate("2020-05-04 04:45");
-    let timeDiff = now.getTime() - createAt.getTime();
-    timeDiff /= 1000 * 60;
-
-    let simpleTime = "";
-    if (timeDiff < 1) {
-      simpleTime = "방금 전";
-    } else if (timeDiff < 60) {
-      simpleTime = parseInt(timeDiff) + "분 전";
-    } else if (timeDiff < 60 * 24) {
-      simpleTime = parseInt(timeDiff / 60) + "시간 전";
-    } else if (timeDiff < 60 * 24 * 30) {
-      simpleTime = parseInt(timeDiff / (60 * 24)) + "일 전";
-    } else if (timeDiff < 60 * 24 * 30 * 12) {
-      simpleTime = parseInt(timeDiff / (60 * 24 * 30)) + "달 전";
-    } else {
-      simpleTime = parseInt(timeDiff / (60 * 24 * 30 * 12)) + "년 전";
-    }
-    this.setState({
-      time: simpleTime,
-    });
-  };
-
+  /*포스트 내용 가져오기 */
   getAllPost = () => {
     let url =
       "/post/newsfeed/getallpost?user_id=" +
@@ -77,39 +66,86 @@ class NewsFeed extends React.Component {
         console.log("getAllPost error:" + err);
       });
   };
+
+  //게시글 올린 날짜(현재시간 기준으로 얼마나 지났는지 표시)
+  nowTime = () => {
+    // parse a date in yyyy-mm-dd format
+    const parseDate = (input) => {
+      var parts = input.match(/(\d+)/g);
+      // new Date(year, month [, date [, hours[, minutes[, seconds[, ms]]]]])
+      var createAt = new Date(
+        parts[0],
+        parts[1] - 1,
+        parts[2],
+        parts[3],
+        parts[4]
+      ); // months are 0-based
+      return createAt;
+    };
+
+    let now = new Date();
+    let createAt = parseDate(this.state.realTime);
+    let timeDiff = now.getTime() - createAt.getTime();
+    timeDiff /= 1000 * 60;
+
+    if (isNaN(timeDiff) || timeDiff < 0) return;
+
+    let simpleTime = "";
+    if (timeDiff < 1) {
+      simpleTime = "방금 전";
+    } else if (timeDiff < 60) {
+      simpleTime = parseInt(timeDiff) + "분 전";
+    } else if (timeDiff < 60 * 24) {
+      simpleTime = parseInt(timeDiff / 60) + "시간 전";
+    } else if (timeDiff < 60 * 24 * 30) {
+      simpleTime = parseInt(timeDiff / (60 * 24)) + "일 전";
+    } else if (timeDiff < 60 * 24 * 30 * 12) {
+      simpleTime = parseInt(timeDiff / (60 * 24 * 30)) + "달 전";
+    } else {
+      simpleTime = parseInt(timeDiff / (60 * 24 * 30 * 12)) + "년 전";
+    }
+    this.setState({
+      time: simpleTime,
+    });
+  };
+  clickHeart = () => {
+    if (this.state.heart) {
+      this.setState({
+        heart: false,
+      });
+    } else {
+      this.setState({
+        heart: true,
+      });
+    }
+  };
   render() {
     return (
       <div>
-        <div
-          className="sideMenu"
-          style={{ fontSize: "25px", color: "rgba(245,145,45)" }}
-        >
-          뉴스피드
-        </div>
-        <div
-          className="table"
-          style={{ marginTop: "15vh", height: "85vh", overflow: "auto" }}
-        >
+        <div className="sideMenu">뉴스피드</div>
+        <Button type="primary">테스트</Button>
+        <div type="primary">테스트</div>
+        <Button type="success">테스트</Button>
+        <Button type="error">테스트</Button>
+        <div className="list">
           {this.state.Data.map((row, idx) => (
             <form>
-              <table
-                style={{
-                  border: "1px solid #999",
-                  width: "50vw",
-                  margin: "8vh auto",
-                }}
-                className="table"
-              >
+              <table className="postTable">
                 <thead>
-                  <tr style={{ width: "50%" }}>
-                    <th colSpan="2">{row.name}</th>
+                  <tr>
+                    <th colSpan="2" style={{ fontWeight: "bold" }}>
+                      {row.name}
+                    </th>
                   </tr>
                   <tr>
-                    <th>사진:{row.profile_url}</th>
+                    <th style={{ width: "5vw", paddingRight: "0" }}>
+                      프로필 사진
+                      <img src={row.profile_url} alt="" />
+                    </th>
                     <th>
-                      닉네임:{row.nickname}
+                      {row.nickname}
                       <br />
-                      작성일:{row.create_at}
+                      {this.state.realTime}
                     </th>
                   </tr>
                 </thead>
@@ -129,18 +165,24 @@ class NewsFeed extends React.Component {
                     </td>
                   </tr>
                   <tr>
-                    <td colSpan="2">좋아요:{row.likes}</td>
+                    <td colSpan="2">
+                      <div
+                        className={this.state.heart ? "xi-heart-o" : "xi-heart"}
+                        style={{ cursor: "pointer", fontSize: "25px" }}
+                        onClick={this.clickHeart.bind(this)}
+                      ></div>
+                      {row.likes}
+                    </td>
                   </tr>
                   <tr>
                     <td colSpan="2">
-                      <Comment row={row} idx={idx} key={row.num} />
+                      <Comment postId={row.id} />
                     </td>
                   </tr>
                 </tbody>
               </table>
             </form>
           ))}
-          {this.state.time}
         </div>
       </div>
     );

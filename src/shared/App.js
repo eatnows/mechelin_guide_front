@@ -1,11 +1,9 @@
 import React, { Component } from "react";
-import { Route, BrowserRouter } from "react-router-dom";
+import { Route } from "react-router-dom";
 import { Login, View, ChangePwd, Welcome, SignUp } from "pages";
-import "components/css/allStyle.css";
+import "css/allStyle.css";
 import FullMap from "pages/main/FullMap";
-//import { reviewAdd } from "pages";
-//import WriteFormMap from "../components/map/WriteFormMap";
-
+import "css/App.less";
 class App extends Component {
   render() {
     return (

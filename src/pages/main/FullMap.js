@@ -1,10 +1,10 @@
 import React from "react";
-
+import { Switch } from "antd";
 import ReactQuill, { Quill } from "react-quill";
 import { ImageUpload } from "quill-image-upload";
 import "react-quill/dist/quill.snow.css";
 //import e from "cors";
-import StarRate from "./StarRate";
+import StarRate from "components/review/StarRate";
 import WriteFormMap from "components/map/WriteFormMap";
 import Axios from "util/axios";
 import map from "images/map.PNG";
@@ -214,9 +214,15 @@ class FullMap extends React.Component {
   };
   /*필터 모달창 보이게 */
   showFilterForm = () => {
-    this.setState({
-      filterModal: true,
-    });
+    if (this.state.filterModal) {
+      this.setState({
+        filterModal: false,
+      });
+    } else {
+      this.setState({
+        filterModal: true,
+      });
+    }
   };
   /*
    * 리뷰글 등록 버튼 클릭시 실행

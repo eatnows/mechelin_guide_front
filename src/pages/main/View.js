@@ -1,5 +1,5 @@
 import React from "react";
-import { NavLink, Route, BrowserRouter } from "react-router-dom";
+import { NavLink, Route } from "react-router-dom";
 import {
   FullMap,
   FAQ,
@@ -12,7 +12,7 @@ import {
   Result,
   MyList,
 } from "pages/index.js";
-import "components/css/mainStyle.css";
+import "css/mainStyle.css";
 
 class View extends React.Component {
   state = {

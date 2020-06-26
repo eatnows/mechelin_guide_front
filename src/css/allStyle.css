@@ -1,0 +1,36 @@
+@import "~antd/dist/antd.css";
+* {
+  font-family: "NanumSquare";
+  font-weight: 500;
+}
+body {
+  overflow: hidden;
+}
+a {
+  cursor: pointer;
+  color: black;
+  text-decoration: none;
+}
+ul {
+  padding: 0;
+}
+li {
+  list-style: none;
+  display: inline-block;
+  width: "10vw";
+  height: "10vh";
+  border-right: "1px solid white";
+}
+.sideMenu {
+  position: fixed;
+  top: 25vh;
+  left: 3.5vw;
+  font-family: "NEXON Lv1 Gothic OTF Light";
+  text-align: center;
+  width: 10vw;
+  height: 10vh;
+  line-height: 10vh;
+  background-color: rgba(245, 145, 45, 0.5);
+  font-size: 25px;
+  color: white;
+}

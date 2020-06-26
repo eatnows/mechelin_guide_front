@@ -1,0 +1,20 @@
+table {
+}
+.list {
+  height: 100vh;
+  overflow: auto;
+}
+.postTable {
+  width: 50vw;
+  margin: 8vh auto;
+  border-radius: 20px;
+  font-size: 1vw;
+  vertical-align: middle;
+  background-color: rgba(245, 145, 45, 0.1);
+}
+.postTable tr {
+}
+.postTable td,
+th {
+  padding: 20px 20px 10px;
+}
