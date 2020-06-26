@@ -23,6 +23,7 @@ const MainMap = (props) => {
   const [myUPId, setMyUPId] = useState([]);
   const [myPinUrl, setMyPinUrl] = useState([]);
   const [myUserId, setMyUserId] = useState([]);
+  const [myCategory, setMyCategory] = useState([]);
   const useTest = useRef();
   const [isOpen, setIsOpen] = useState(true);
   const [markers, setMarkers] = useState([]);
@@ -52,11 +53,9 @@ const MainMap = (props) => {
   //const [closeBtn, setCloseBtn] = useState();
   //const [myFilterRender, setMyFilterRender] = useState(true);
   useEffect(() => {
-    console.log("유즈이펙트");
-    console.log("마이필터 : " + props.MyFilter);
-    console.log("프렌드 필터 : " + props.FriendFilter);
+    console.log(props.categoryFilter.koreanFilter);
     //setMyFilterRender(props.MyFilter);
-  }, [props.MyFilter, props.FriendFilter]);
+  }, [props.MyFilter, props.FriendFilter, props.categoryFilter]);
 
   useEffect(() => {
     const url = `/place/allplace?user_id=${sessionStorage.getItem("userId")}`;
@@ -72,6 +71,7 @@ const MainMap = (props) => {
       .then((response) => {
         console.log(response.data);
         for (let i = 0; i < response.data.length; i++) {
+          console.log(response.data);
           myLatitude.push(response.data[i].latitude_x);
           myLongitude.push(response.data[i].longitude_y);
           myPlaceName.push(response.data[i].name);
@@ -294,12 +294,18 @@ const MainMap = (props) => {
           });
 
           setTimeout(() => {
+            for (let j = 0; j < category.length; j++) {
+              if (categoryFilter(myCategory[i])) {
+                marker[i].setMap(createmap);
+                markers.push(marker[i]);
+              }
+            }
             if (userIdFilter(myUserId[i])) {
               // 마커가 지도 위에 표시되도록 설정합니다
               marker[i].setMap(createmap);
               markers.push(marker[i]);
             }
-          }, 100);
+          }, 5);
         }
       });
     };
@@ -310,8 +316,13 @@ const MainMap = (props) => {
       (props.FriendFilter && userId !== allUserId.toString())
     );
   };
-  const categoryFilter = () => {
-    return "";
+  const categoryFilter = (food) => {
+    return (
+      (props.categoryFilter.koreanFilter && food === "한식") ||
+      (props.categoryFilter.westernFilter && food === "양식") ||
+      (props.categoryFilter.chineseFilter && food === "중식") ||
+      (props.categoryFilter.japaneseFilter && food === "일식")
+    );
   };
 
   return (

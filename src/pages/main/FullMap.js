@@ -28,6 +28,10 @@ Quill.register("modules/imageUpload", ImageUpload);
 
 let MyFilter = true;
 let FriendFilter = true;
+let koreanFilter = true;
+let westernFilter = true;
+let chineseFilter = true;
+let japaneseFilter = true;
 class FullMap extends React.Component {
   constructor(props) {
     super();
@@ -54,6 +58,10 @@ class FullMap extends React.Component {
     filterModal: false,
     myFilter: true,
     friendFilter: true,
+    koreanFilter: true,
+    westernFilter: true,
+    chineseFilter: true,
+    japaneseFilter: true,
   };
 
   modules = {
@@ -298,9 +306,19 @@ class FullMap extends React.Component {
     });
   };
   onClickCategoryFilter = (e) => {
-    console.log(23);
-    console.log(e.target.checked);
     console.log(e.target.name);
+    this.setState({
+      [e.target.name]: e.target.checked,
+    });
+    if (e.target.name === "korean") {
+      koreanFilter = e.target.checked;
+    } else if (e.target.name === "western") {
+      westernFilter = e.target.checked;
+    } else if (e.target.name === "chinese") {
+      chineseFilter = e.target.checked;
+    } else if (e.target.name === "japanese") {
+      japaneseFilter = e.target.checked;
+    }
   };
 
   render() {
@@ -312,6 +330,12 @@ class FullMap extends React.Component {
               history={this.props.history}
               MyFilter={MyFilter}
               FriendFilter={FriendFilter}
+              categoryFilter={{
+                koreanFilter,
+                westernFilter,
+                chineseFilter,
+                japaneseFilter,
+              }}
             />
             {/*하단 메뉴바 */}
             <div style={{ cursor: "pointer" }}>

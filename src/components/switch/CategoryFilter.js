@@ -43,10 +43,10 @@ export default function CategoryFilter() {
             checked={westernChecked}
             onChange={westernHandleChange}
             name="western"
-            color="양식"
+            color="primary"
           />
         }
-        label="Primary"
+        label="양식"
       />
       <FormControlLabel
         control={
@@ -54,10 +54,10 @@ export default function CategoryFilter() {
             checked={chineseChecked}
             onChange={chineseHandleChange}
             name="chinese"
-            color="중식"
+            color="primary"
           />
         }
-        label="Primary"
+        label="중식"
       />
       <FormControlLabel
         control={
