@@ -1,13 +1,13 @@
 import React from "react";
 
 class Timeline extends React.Component {
-  constructor({ match, props }) {
+  constructor(props) {
     super(props);
-    this.state = {
-      email: match.params.email,
-    };
+    this.state = {};
   }
-  componentWillMount() {}
+  componentWillMount() {
+    this.props.getState(false);
+  }
   render() {
     return <div>Timeline</div>;
   }

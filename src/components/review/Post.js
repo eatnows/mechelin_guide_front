@@ -174,21 +174,25 @@ const Post = (props) => {
   };
 
   return (
-    <div
-      className="App"
-      style={{
-        overflow: "auto",
-        width: "1000px",
-        height: "500px",
-        marginTop: "200px",
-        marginLeft: "300px",
-      }}
-    >
-      {[...result].map((contact, i) => {
-        return <ListItem contact={contact} i={i} likesChange={onClickLikes} />;
-      })}
-      <div ref={setRef} className="Loading">
-        {isLoading && "Loading..."}
+    <div>
+      <div
+        className="App"
+        style={{
+          overflow: "auto",
+          width: "1000px",
+          height: "500px",
+          marginTop: "200px",
+          marginLeft: "300px",
+        }}
+      >
+        {[...result].map((contact, i) => {
+          return (
+            <ListItem contact={contact} i={i} likesChange={onClickLikes} />
+          );
+        })}
+        <div ref={setRef} className="Loading">
+          {isLoading && "Loading..."}
+        </div>
       </div>
     </div>
   );

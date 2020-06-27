@@ -1,6 +1,5 @@
 import React, { Component } from "react";
-import "components/css/loginStyle.css";
-import { NavLink, Link } from "react-router-dom";
+import { NavLink } from "react-router-dom";
 import kakaotalk from "images/kakaotalk.png";
 import Axios from "util/axios";
 
