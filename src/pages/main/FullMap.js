@@ -20,9 +20,6 @@ import friend from "images/friend2.png";
 import message from "images/messag2.png";
 import review from "images/review2.png";
 import MainMap from "components/map/MainMap";
-import MyMapFilter from "components/switch/MyMapFilter";
-import FriendMapFilter from "components/switch/FriendMapFilter";
-import CategoryFilter from "components/switch/CategoryFilter";
 
 Quill.register("modules/imageUpload", ImageUpload);
 
@@ -39,6 +36,7 @@ const categoryOptions = [
   { label: "일식", value: "일식" },
 ];
 let categoryFilter = ["한식", "양식", "중식", "일식"];
+let blacklist = false;
 class FullMap extends React.Component {
   constructor(props) {
     super();
@@ -70,6 +68,7 @@ class FullMap extends React.Component {
     chineseFilter: true,
     japaneseFilter: true,
     categoryFilter: ["한식", "양식", "중식", "일식"],
+    blacklist: false,
   };
 
   modules = {
@@ -306,7 +305,6 @@ class FullMap extends React.Component {
    */
   onClickMyMapFilter = (checked) => {
     MyFilter = checked;
-    console.log(`myFilter : ${MyFilter}`);
     this.setState({
       myFilter: checked,
     });
@@ -325,6 +323,13 @@ class FullMap extends React.Component {
       categoryFilter: checkedValues,
     });
   };
+  onClickBlackListFilter = (checked) => {
+    console.log(checked);
+    blacklist = checked;
+    this.setState({
+      blacklist: checked,
+    });
+  };
 
   render() {
     return (
@@ -336,6 +341,7 @@ class FullMap extends React.Component {
               MyFilter={MyFilter}
               FriendFilter={FriendFilter}
               categoryFilter={categoryFilter}
+              blacklistFilter={blacklist}
             />
             {/*하단 메뉴바 */}
             <div style={{ cursor: "pointer" }}>
@@ -667,6 +673,9 @@ class FullMap extends React.Component {
               defaultValue={["한식", "양식", "중식", "일식"]}
               onChange={this.onClickCategoryFilter.bind(this)}
             />
+            <br />
+            <Switch onChange={this.onClickBlackListFilter.bind(this)} />{" "}
+            블랙리스트
           </div>
         </section>
       </div>

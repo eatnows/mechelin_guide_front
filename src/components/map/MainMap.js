@@ -24,6 +24,7 @@ const MainMap = (props) => {
   const [myPinUrl, setMyPinUrl] = useState([]);
   const [myUserId, setMyUserId] = useState([]);
   const [myCategory, setMyCategory] = useState([]);
+  const [myBlackList, setMyBlackList] = useState([]);
   const useTest = useRef();
   const [isOpen, setIsOpen] = useState(true);
   const [markers, setMarkers] = useState([]);
@@ -53,9 +54,14 @@ const MainMap = (props) => {
   //const [closeBtn, setCloseBtn] = useState();
   //const [myFilterRender, setMyFilterRender] = useState(true);
   useEffect(() => {
-    console.log(props.categoryFilter);
+    console.log(props.blacklistFilter);
     //setMyFilterRender(props.MyFilter);
-  }, [props.MyFilter, props.FriendFilter, props.categoryFilter]);
+  }, [
+    props.MyFilter,
+    props.FriendFilter,
+    props.categoryFilter,
+    props.blacklistFilter,
+  ]);
 
   useEffect(() => {
     const url = `/place/allplace?user_id=${sessionStorage.getItem("userId")}`;
@@ -83,6 +89,7 @@ const MainMap = (props) => {
           myPinUrl.push(response.data[i].pin_url);
           myUserId.push(response.data[i].user_id);
           myCategory.push(response.data[i].category);
+          myBlackList.push(response.data[i].blacklist);
         }
       })
       .catch((error) => {
@@ -188,6 +195,10 @@ const MainMap = (props) => {
             imageSize = new kakao.maps.Size(64, 69),
             // 마커이미지의 옵션입니다. 마커의 좌표와 일치시킬 이미지 안에서의 좌표를 설정합니다.
             imageOption = { offset: new kakao.maps.Point(27, 69) };
+          if (blacklistFilter(myUserId[i], myBlackList[i])) {
+            imageSrc =
+              "https://mechelinbucket.s3.ap-northeast-2.amazonaws.com/images/profle/blacklist_marker.png";
+          }
 
           // 마커의 이미지정보를 가지고 있는 마커이미지를 생성합니다
           let markerImage = new kakao.maps.MarkerImage(
@@ -298,7 +309,16 @@ const MainMap = (props) => {
             //   markers.push(marker[i]);
             // }
 
-            if (userIdFilter(myUserId[i]) && categoryFilter(myCategory[i])) {
+            if (
+              userIdFilter(myUserId[i]) &&
+              categoryFilter(myCategory[i]) &&
+              myBlackList[i] === false
+            ) {
+              // 마커가 지도 위에 표시되도록 설정합니다
+              marker[i].setMap(createmap);
+              markers.push(marker[i]);
+            }
+            if (blacklistFilter(myUserId[i], myBlackList[i])) {
               // 마커가 지도 위에 표시되도록 설정합니다
               marker[i].setMap(createmap);
               markers.push(marker[i]);
@@ -307,7 +327,13 @@ const MainMap = (props) => {
         }
       });
     };
-  }, [props.MyFilter, props.FriendFilter, myPlaceName, props.categoryFilter]);
+  }, [
+    props.MyFilter,
+    props.FriendFilter,
+    myPlaceName,
+    props.categoryFilter,
+    props.blacklistFilter,
+  ]);
   const userIdFilter = (allUserId) => {
     return (
       (props.MyFilter && userId === allUserId.toString()) ||
@@ -322,6 +348,13 @@ const MainMap = (props) => {
       }
     }
     return result;
+  };
+  const blacklistFilter = (myUserId, blacklist) => {
+    return (
+      userId === myUserId.toString() &&
+      blacklist === true &&
+      props.blacklistFilter
+    );
   };
 
   return (
