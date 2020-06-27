@@ -1,5 +1,5 @@
 import React from "react";
-import { Switch } from "antd";
+import { Switch, Checkbox } from "antd";
 import ReactQuill, { Quill } from "react-quill";
 import { ImageUpload } from "quill-image-upload";
 import "react-quill/dist/quill.snow.css";
@@ -20,10 +20,23 @@ import friend from "images/friend2.png";
 import message from "images/messag2.png";
 import review from "images/review2.png";
 import MainMap from "components/map/MainMap";
-import MyMapFilter from "../../components/switch/MyMapFilter";
 
 Quill.register("modules/imageUpload", ImageUpload);
 
+let MyFilter = true;
+let FriendFilter = true;
+let koreanFilter = true;
+let westernFilter = true;
+let chineseFilter = true;
+let japaneseFilter = true;
+const categoryOptions = [
+  { label: "한식", value: "한식" },
+  { label: "양식", value: "양식" },
+  { label: "중식", value: "중식" },
+  { label: "일식", value: "일식" },
+];
+let categoryFilter = ["한식", "양식", "중식", "일식"];
+let blacklist = false;
 class FullMap extends React.Component {
   constructor(props) {
     super();
@@ -48,6 +61,14 @@ class FullMap extends React.Component {
     bottomMenu: false,
     fullMap: true,
     filterModal: false,
+    myFilter: true,
+    friendFilter: true,
+    koreanFilter: true,
+    westernFilter: true,
+    chineseFilter: true,
+    japaneseFilter: true,
+    categoryFilter: ["한식", "양식", "중식", "일식"],
+    blacklist: false,
   };
 
   modules = {
@@ -279,8 +300,32 @@ class FullMap extends React.Component {
         console.log(error);
       });
   };
-  onClickMyMapFilter = (e) => {
-    console.log(e.target.value);
+  /*
+   * 내 맛집 필터 기능
+   */
+  onClickMyMapFilter = (checked) => {
+    MyFilter = checked;
+    this.setState({
+      myFilter: checked,
+    });
+  };
+  onChangeFriendMapFilter = (checked) => {
+    FriendFilter = checked;
+    this.setState({
+      friendFilter: checked,
+    });
+  };
+  onClickCategoryFilter = (checkedValues) => {
+    categoryFilter = checkedValues;
+    this.setState({
+      categoryFilter: checkedValues,
+    });
+  };
+  onClickBlackListFilter = (checked) => {
+    blacklist = checked;
+    this.setState({
+      blacklist: checked,
+    });
   };
 
   render() {
@@ -288,7 +333,13 @@ class FullMap extends React.Component {
       <div>
         {this.state.fullMap ? (
           <div>
-            <MainMap />
+            <MainMap
+              history={this.props.history}
+              MyFilter={MyFilter}
+              FriendFilter={FriendFilter}
+              categoryFilter={categoryFilter}
+              blacklistFilter={blacklist}
+            />
             {/*하단 메뉴바 */}
             <div style={{ cursor: "pointer" }}>
               <div
@@ -602,9 +653,26 @@ class FullMap extends React.Component {
                 cursor: "pointer",
               }}
             ></div>
-            <div onChange={this.onClickMyMapFilter.bind(this)}>
-              <MyMapFilter />
-            </div>
+            <Switch
+              defaultChecked
+              onChange={this.onClickMyMapFilter.bind(this)}
+            />{" "}
+            내 맛집
+            <br />
+            <Switch
+              defaultChecked
+              onChange={this.onChangeFriendMapFilter.bind(this)}
+            />{" "}
+            친구 맛집
+            <br />
+            <Checkbox.Group
+              options={categoryOptions}
+              defaultValue={["한식", "양식", "중식", "일식"]}
+              onChange={this.onClickCategoryFilter.bind(this)}
+            />
+            <br />
+            <Switch onChange={this.onClickBlackListFilter.bind(this)} />{" "}
+            블랙리스트
           </div>
         </section>
       </div>
