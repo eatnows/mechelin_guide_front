@@ -310,21 +310,18 @@ class FullMap extends React.Component {
     });
   };
   onChangeFriendMapFilter = (checked) => {
-    console.log(checked);
     FriendFilter = checked;
     this.setState({
       friendFilter: checked,
     });
   };
   onClickCategoryFilter = (checkedValues) => {
-    console.log(checkedValues);
     categoryFilter = checkedValues;
     this.setState({
       categoryFilter: checkedValues,
     });
   };
   onClickBlackListFilter = (checked) => {
-    console.log(checked);
     blacklist = checked;
     this.setState({
       blacklist: checked,

@@ -39,7 +39,6 @@ const MainMap = (props) => {
 
     Axios.get(url)
       .then((response) => {
-        console.log(response.data);
         for (let i = 0; i < response.data.length; i++) {
           myLatitude.push(response.data[i].latitude_x);
           myLongitude.push(response.data[i].longitude_y);
@@ -72,7 +71,7 @@ const MainMap = (props) => {
         let mapContainer = document.getElementById("map");
         let mapOption = {
           center: new kakao.maps.LatLng(latitude, longitude),
-          level: 4,
+          level: 5,
         };
         // 지도를 생성합니다
         createmap = new kakao.maps.Map(mapContainer, mapOption);
@@ -110,10 +109,6 @@ const MainMap = (props) => {
         imageSize = new kakao.maps.Size(64, 69),
         // 마커이미지의 옵션입니다. 마커의 좌표와 일치시킬 이미지 안에서의 좌표를 설정합니다.
         imageOption = { offset: new kakao.maps.Point(27, 69) };
-      if (blacklistFilter(myUserId[i], myBlackList[i])) {
-        imageSrc =
-          "https://mechelinbucket.s3.ap-northeast-2.amazonaws.com/images/profle/blacklist_marker.png";
-      }
 
       // 마커의 이미지정보를 가지고 있는 마커이미지를 생성합니다
       let markerImage = new kakao.maps.MarkerImage(
@@ -219,8 +214,20 @@ const MainMap = (props) => {
       });
 
       // 마커가 지도 위에 표시되도록 설정합니다
-      marker[i].setMap(createmap);
-      markers.push(marker[i]);
+      if (
+        userIdFilter(myUserId[i]) &&
+        categoryFilter(myCategory[i]) &&
+        myBlackList[i] === false
+      ) {
+        // 마커가 지도 위에 표시되도록 설정합니다
+        marker[i].setMap(createmap);
+        markers.push(marker[i]);
+      }
+      if (blacklistFilter(myUserId[i], myBlackList[i])) {
+        // 마커가 지도 위에 표시되도록 설정합니다
+        marker[i].setMap(createmap);
+        markers.push(marker[i]);
+      }
     }
   };
 
