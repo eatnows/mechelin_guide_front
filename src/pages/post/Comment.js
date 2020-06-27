@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-
+import { Input, Button } from "antd";
 import Axios from "axios";
 import SingleComment from "./SingleComment";
 
@@ -134,25 +134,25 @@ const Comment = ({ postId }) => {
           프로필사진
         </td>
         <td colSpan="3">
-          <input
+          <Input
             type="text"
             value={writeComment}
             onInput={(e) => setWriteComment(e.target.value)}
           />
           {/* 댓글수정 시 내용변경 */}
+
           {updateView ? (
-            <button type="button" onClick={(e) => onCommentUpdate()}>
+            <Button type="primary" onClick={(e) => onCommentUpdate()}>
               수정
-            </button>
+            </Button>
           ) : (
-            <button
-              type="button"
+            <Button
               onClick={() =>
                 commentInsert(postId, sessionStorage.getItem("userId"))
               }
             >
               작성
-            </button>
+            </Button>
           )}
         </td>
       </tr>

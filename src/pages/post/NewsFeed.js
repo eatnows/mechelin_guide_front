@@ -2,9 +2,9 @@ import React from "react";
 import Axios from "util/axios";
 import Comment from "pages/post/Comment";
 import "css/postStyle.css";
-import { Avatar } from "antd";
-import { UserOutlined } from "@ant-design/icons";
 import profile from "images/default_profile.png";
+import insta from "images/insta.jpg";
+import { Rate } from "antd";
 var nowTime = (data) => {
   let now = new Date().getTime();
   let date = new Date(0).setUTCSeconds(data) / 1000;
@@ -135,54 +135,104 @@ class NewsFeed extends React.Component {
                 <thead>
                   <tr>
                     <th
-                      colSpan="2"
+                      colSpan="4"
                       style={{
-                        backgroundColor: "rgba(156, 197, 87, 0.2)",
                         fontWeight: "bold",
+                      }}
+                    >
+                      {" "}
+                      {row.subject}{" "}
+                    </th>
+                    <th
+                      style={{
+                        fontWeight: "bold",
+                        textAlign: "right",
                       }}
                     >
                       {row.name}
                     </th>
                   </tr>
-                  <tr>
-                    <th style={{ width: "5vw", paddingRight: "0" }}>
-                      <img src={profile} alt="" width="45px" height="45px" />
+                  <tr style={{ backgroundColor: "white" }}>
+                    <th
+                      style={{
+                        paddingRight: "0",
+                        width: "65px",
+                      }}
+                    >
+                      <img
+                        src={profile}
+                        alt=""
+                        style={{
+                          width: "3vw",
+                          borderRadius: "50%",
+                          height: "3vw",
+                        }}
+                      />
                       {/* <img src={row.profile_url} alt="" /> */}
                     </th>
-                    <th>
+                    <th colspan="3" style={{ paddingLeft: "10px" }}>
                       {row.nickname}
                       <br />
                       {this.state.realTime}
                     </th>
+                    <th>
+                      <div style={{ float: "right" }}>
+                        <Rate
+                          allowHalf
+                          value={row.rating}
+                          disabled="disabled"
+                          style={{
+                            pointerEvents: "none",
+                            fontSize: "15px",
+                          }}
+                        />
+                      </div>
+                    </th>
                   </tr>
                 </thead>
                 <tbody>
-                  <tr>
-                    <td colSpan="2">
-                      제목:{row.subject}{" "}
-                      <div style={{ float: "right" }}>{row.rating}점</div>
-                    </td>
-                  </tr>
-                  <tr>
-                    <td colSpan="2">
-                      내용:
+                  <tr style={{ backgroundColor: "white" }}>
+                    <td colSpan="5">
                       <span
                         dangerouslySetInnerHTML={{ __html: row.content }}
                       ></span>
+                      <img src={insta} alt="" width="100%" height="70%" />
                     </td>
                   </tr>
                   <tr>
-                    <td colSpan="2">
+                    <td
+                      colSpan="5"
+                      style={{
+                        textAlign: "center",
+                      }}
+                    >
                       <div
-                        className={this.state.heart ? "xi-heart-o" : "xi-heart"}
-                        style={{ cursor: "pointer", fontSize: "25px" }}
-                        onClick={this.clickHeart.bind(this)}
-                      ></div>
-                      {row.likes}
+                        style={{
+                          height: "30px",
+                          width: "50px",
+                          lineHeight: "30px",
+                          fontSize: "20px",
+                        }}
+                      >
+                        <div
+                          className={
+                            this.state.heart ? "xi-heart-o" : "xi-heart"
+                          }
+                          style={{
+                            cursor: "pointer",
+                            fontSize: "25px",
+                            color: "rgba(156, 197, 87)",
+                          }}
+                          onClick={this.clickHeart.bind(this)}
+                        >
+                          {" "}
+                        </div>{" "}
+                        <span style={{ color: "#7D67AF" }}>{row.likes}</span>
+                      </div>
                     </td>
                   </tr>
                   <tr>
-                    <td colSpan="2">
+                    <td colSpan="5">
                       <Comment postId={row.id} />
                     </td>
                   </tr>

@@ -299,9 +299,9 @@ class Login extends Component {
                         src={icon}
                         style={{
                           textAlign: "center",
-                          width: "40px",
-                          height: "30px",
-                          marginLeft: "-8px",
+                          width: "30px",
+                          height: "35px",
+                          marginLeft: "-3px",
                         }}
                         alt=""
                       />
