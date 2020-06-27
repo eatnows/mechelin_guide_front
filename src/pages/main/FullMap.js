@@ -1,5 +1,5 @@
 import React from "react";
-import { Switch } from "antd";
+import { Switch, Checkbox } from "antd";
 import ReactQuill, { Quill } from "react-quill";
 import { ImageUpload } from "quill-image-upload";
 import "react-quill/dist/quill.snow.css";
@@ -32,6 +32,13 @@ let koreanFilter = true;
 let westernFilter = true;
 let chineseFilter = true;
 let japaneseFilter = true;
+const categoryOptions = [
+  { label: "한식", value: "한식" },
+  { label: "양식", value: "양식" },
+  { label: "중식", value: "중식" },
+  { label: "일식", value: "일식" },
+];
+let categoryFilter = ["한식", "양식", "중식", "일식"];
 class FullMap extends React.Component {
   constructor(props) {
     super();
@@ -62,6 +69,7 @@ class FullMap extends React.Component {
     westernFilter: true,
     chineseFilter: true,
     japaneseFilter: true,
+    categoryFilter: ["한식", "양식", "중식", "일식"],
   };
 
   modules = {
@@ -296,35 +304,26 @@ class FullMap extends React.Component {
   /*
    * 내 맛집 필터 기능
    */
-  onClickMyMapFilter = (e) => {
-    console.log(e.target.checked);
-    MyFilter = e.target.checked;
+  onClickMyMapFilter = (checked) => {
+    MyFilter = checked;
     console.log(`myFilter : ${MyFilter}`);
     this.setState({
-      myFilter: e.target.checked,
+      myFilter: checked,
     });
   };
-  onChangeFriendMapFilter = (e) => {
-    console.log(e.target.checked);
-    FriendFilter = e.target.checked;
+  onChangeFriendMapFilter = (checked) => {
+    console.log(checked);
+    FriendFilter = checked;
     this.setState({
-      friendFilter: e.target.checked,
+      friendFilter: checked,
     });
   };
-  onClickCategoryFilter = (e) => {
-    console.log(e.target.name);
+  onClickCategoryFilter = (checkedValues) => {
+    console.log(checkedValues);
+    categoryFilter = checkedValues;
     this.setState({
-      [e.target.name]: e.target.checked,
+      categoryFilter: checkedValues,
     });
-    if (e.target.name === "korean") {
-      koreanFilter = e.target.checked;
-    } else if (e.target.name === "western") {
-      westernFilter = e.target.checked;
-    } else if (e.target.name === "chinese") {
-      chineseFilter = e.target.checked;
-    } else if (e.target.name === "japanese") {
-      japaneseFilter = e.target.checked;
-    }
   };
 
   render() {
@@ -336,12 +335,7 @@ class FullMap extends React.Component {
               history={this.props.history}
               MyFilter={MyFilter}
               FriendFilter={FriendFilter}
-              categoryFilter={{
-                koreanFilter,
-                westernFilter,
-                chineseFilter,
-                japaneseFilter,
-              }}
+              categoryFilter={categoryFilter}
             />
             {/*하단 메뉴바 */}
             <div style={{ cursor: "pointer" }}>
@@ -656,15 +650,23 @@ class FullMap extends React.Component {
                 cursor: "pointer",
               }}
             ></div>
-            <div onChange={this.onClickMyMapFilter.bind(this)}>
-              <MyMapFilter />
-            </div>
-            <div onChange={this.onChangeFriendMapFilter.bind(this)}>
-              <FriendMapFilter />
-            </div>
-            <div onClick={this.onClickCategoryFilter.bind(this)}>
-              <CategoryFilter />
-            </div>
+            <Switch
+              defaultChecked
+              onChange={this.onClickMyMapFilter.bind(this)}
+            />{" "}
+            내 맛집
+            <br />
+            <Switch
+              defaultChecked
+              onChange={this.onChangeFriendMapFilter.bind(this)}
+            />{" "}
+            친구 맛집
+            <br />
+            <Checkbox.Group
+              options={categoryOptions}
+              defaultValue={["한식", "양식", "중식", "일식"]}
+              onChange={this.onClickCategoryFilter.bind(this)}
+            />
           </div>
         </section>
       </div>

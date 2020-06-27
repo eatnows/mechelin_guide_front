@@ -53,7 +53,7 @@ const MainMap = (props) => {
   //const [closeBtn, setCloseBtn] = useState();
   //const [myFilterRender, setMyFilterRender] = useState(true);
   useEffect(() => {
-    console.log(props.categoryFilter.koreanFilter);
+    console.log(props.categoryFilter);
     //setMyFilterRender(props.MyFilter);
   }, [props.MyFilter, props.FriendFilter, props.categoryFilter]);
 
@@ -71,7 +71,6 @@ const MainMap = (props) => {
       .then((response) => {
         console.log(response.data);
         for (let i = 0; i < response.data.length; i++) {
-          console.log(response.data);
           myLatitude.push(response.data[i].latitude_x);
           myLongitude.push(response.data[i].longitude_y);
           myPlaceName.push(response.data[i].name);
@@ -83,6 +82,7 @@ const MainMap = (props) => {
           myFrontImg.push(response.data[i].front_image);
           myPinUrl.push(response.data[i].pin_url);
           myUserId.push(response.data[i].user_id);
+          myCategory.push(response.data[i].category);
         }
       })
       .catch((error) => {
@@ -137,7 +137,7 @@ const MainMap = (props) => {
     const script = document.createElement("script");
     script.async = true;
     script.src =
-      "https://dapi.kakao.com/v2/maps/sdk.js?appkey=4472c6938cce6e1016fcfd20f0c079e3&autoload=false&libraries=services,clusterer,drawing";
+      "https://dapi.kakao.com/v2/maps/sdk.js?appkey=본인앱키&autoload=false&libraries=services,clusterer,drawing";
     document.head.appendChild(script);
     script.onload = () => {
       kakao.maps.load(() => {
@@ -283,7 +283,6 @@ const MainMap = (props) => {
             overlay[i].setMap(null);
             overlay2[i].setMap(null);
           };
-          console.log(myUserId);
 
           //마커를 클릭했을 때 커스텀 오버레이를 표시합니다
           kakao.maps.event.addListener(marker[i], "click", function () {
@@ -294,22 +293,21 @@ const MainMap = (props) => {
           });
 
           setTimeout(() => {
-            for (let j = 0; j < category.length; j++) {
-              if (categoryFilter(myCategory[i])) {
-                marker[i].setMap(createmap);
-                markers.push(marker[i]);
-              }
-            }
-            if (userIdFilter(myUserId[i])) {
+            // if (categoryFilter(myCategory[i])) {
+            //   marker[i].setMap(createmap);
+            //   markers.push(marker[i]);
+            // }
+
+            if (userIdFilter(myUserId[i]) && categoryFilter(myCategory[i])) {
               // 마커가 지도 위에 표시되도록 설정합니다
               marker[i].setMap(createmap);
               markers.push(marker[i]);
             }
-          }, 5);
+          }, 50);
         }
       });
     };
-  }, [props.MyFilter, props.FriendFilter]);
+  }, [props.MyFilter, props.FriendFilter, myPlaceName, props.categoryFilter]);
   const userIdFilter = (allUserId) => {
     return (
       (props.MyFilter && userId === allUserId.toString()) ||
@@ -317,12 +315,13 @@ const MainMap = (props) => {
     );
   };
   const categoryFilter = (food) => {
-    return (
-      (props.categoryFilter.koreanFilter && food === "한식") ||
-      (props.categoryFilter.westernFilter && food === "양식") ||
-      (props.categoryFilter.chineseFilter && food === "중식") ||
-      (props.categoryFilter.japaneseFilter && food === "일식")
-    );
+    let result = false;
+    for (let i = 0; i < props.categoryFilter.length; i++) {
+      if (props.categoryFilter[i] === food) {
+        result = true;
+      }
+    }
+    return result;
   };
 
   return (
