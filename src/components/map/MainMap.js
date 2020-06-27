@@ -353,6 +353,7 @@ const MainMap = (props) => {
            */
           pageBtn[i].onclick = () => {
             //overlay[i].setMap(null);
+            props.reivewPageMove(myUPId[i]);
             props.history.push(`/mechelin/review/${myUPId[i]}`);
           };
 

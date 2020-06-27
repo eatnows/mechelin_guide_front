@@ -13,7 +13,8 @@ import {
   MyList,
 } from "pages/index.js";
 import "css/mainStyle.css";
-
+let keyword;
+let userPlaceId;
 class View extends React.Component {
   state = {
     main: true,
@@ -25,6 +26,7 @@ class View extends React.Component {
     lock: true,
     mypage: false,
     cc: false,
+    userPlaceId: "",
   };
 
   componentWillMount() {
@@ -96,8 +98,28 @@ class View extends React.Component {
 
   /*값이 변하면 스테이트에 변한 값을 담아줌 */
   changeInput = (e) => {
+    keyword = e.target.value;
     this.setState({
       [e.target.name]: e.target.value,
+    });
+  };
+
+  /*
+   * 검색 버튼 클릭시 검색창 초기화
+   */
+  cleanSearch = () => {
+    this.setState({
+      search: "",
+      bar: false,
+    });
+  };
+  /*
+   * 리뷰 페이지로 넘어가기 위한 메소드
+   */
+  reivewPageMove = (user_place_id) => {
+    userPlaceId = user_place_id;
+    this.setState({
+      userPlaceId: user_place_id,
     });
   };
 
@@ -145,7 +167,11 @@ class View extends React.Component {
 
         {/* 삼항 연산자를 이용해 출력 페이지 변경 */}
         {this.state.main ? (
-          <FullMap history={this.props.history} bar={this.state.bar} />
+          <FullMap
+            history={this.props.history}
+            bar={this.state.bar}
+            reivewPageMove={this.reivewPageMove.bind(this)}
+          />
         ) : (
           ""
         )}
@@ -207,7 +233,12 @@ class View extends React.Component {
         <Route
           path="/mechelin/review/:userPlaceId"
           render={() => {
-            return <Review getState={this.getState.bind(this)} />;
+            return (
+              <Review
+                getState={this.getState.bind(this)}
+                userPlaceId={userPlaceId}
+              />
+            );
           }}
         />
 
@@ -229,6 +260,7 @@ class View extends React.Component {
               <Result
                 getState={this.getState.bind(this)}
                 userId={this.state.userId}
+                search={keyword}
               />
             );
           }}
@@ -324,9 +356,8 @@ class View extends React.Component {
                 <button
                   type="button"
                   className="btn xi-search"
-                  onClick={() => {
-                    this.setState({ main: false });
-                  }}
+                  onClick={this.cleanSearch.bind(this)}
+                  value={!this.state.search === "" ? this.state.search : ""}
                   style={{
                     margin: "-1px 0 0 -6px",
                     display: "inline-block",

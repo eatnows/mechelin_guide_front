@@ -1,4 +1,6 @@
 import React from "react";
+import SearchResult from "components/search/SearchResult";
+import SearchResultPage from "components/search/SearchResultPage";
 
 class Result extends React.Component {
   constructor(props) {
@@ -7,9 +9,14 @@ class Result extends React.Component {
   }
   componentWillMount() {
     this.props.getState(false);
+    console.log(this.props.search);
   }
   render() {
-    return <div>Result</div>;
+    return (
+      <div>
+        <SearchResultPage keyword={this.props.search} />
+      </div>
+    );
   }
 }
 export default Result;

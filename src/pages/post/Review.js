@@ -5,6 +5,8 @@ const Review = (props) => {
   /*view 페이지의 main state 값을 false로 변경 */
   useEffect(() => {
     props.getState(false);
+    console.log(`review`);
+    console.log(props.userPlaceId);
   }, []);
 
   return (
