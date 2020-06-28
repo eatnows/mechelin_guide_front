@@ -13,7 +13,11 @@ import {
   MyList,
 } from "pages/index.js";
 import "css/mainStyle.css";
-
+import Axios from "util/axios";
+import logo from "images/logo2.png";
+let keyword;
+let userPlaceId;
+let listData2 = [];
 class View extends React.Component {
   state = {
     main: true,
@@ -25,6 +29,8 @@ class View extends React.Component {
     lock: true,
     mypage: false,
     cc: false,
+    userPlaceid: "",
+    listData2: [],
   };
 
   componentWillMount() {
@@ -96,8 +102,66 @@ class View extends React.Component {
 
   /*값이 변하면 스테이트에 변한 값을 담아줌 */
   changeInput = (e) => {
+    keyword = e.target.value;
     this.setState({
       [e.target.name]: e.target.value,
+    });
+  };
+  /*
+   * 검색창에서 엔터 입력시
+   */
+  KeyUpSearchBar = (e) => {
+    if (e.key === "Enter") {
+      console.log("엔터");
+      this.cleanSearch();
+      this.props.history.push(`/mechelin/result/${this.state.userId}`);
+    }
+  };
+
+  /*
+   * 검색 버튼 클릭시 검색창 초기화
+   */
+  cleanSearch = () => {
+    const url = `/post/search?user_id=${sessionStorage.getItem(
+      "userId"
+    )}&keyword=${this.state.search}`;
+    Axios.get(url)
+      .then((res) => {
+        console.log(res.data);
+        for (let i = 0; i < res.data.length; i++) {
+          const text = res.data[i].content.replace(/(<([^>]+)>)/gi, "");
+          listData2.push({
+            // href: "https://ant.design",
+            title: res.data[i].name,
+            avatar: res.data[i].profile_url,
+            description: res.data[i].subject,
+            content: text,
+            frontImage: res.data[i].front_image,
+            likes: res.data[i].likes,
+            commentCount: res.data[i].comment_count,
+            wishCount: res.data[i].wish_count,
+            userPlaceId: res.data[i].user_place_id,
+          });
+        }
+
+        this.setState({
+          search: "",
+          bar: false,
+        });
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+
+    listData2 = [];
+  };
+  /*
+   * 리뷰 페이지로 넘어가기 위한 메소드
+   */
+  reivewPageMove = (user_place_id) => {
+    userPlaceId = user_place_id;
+    this.setState({
+      userPlaceid: user_place_id,
     });
   };
 
@@ -128,10 +192,7 @@ class View extends React.Component {
             style={{
               width: "100px",
               height: "100px",
-              border: "1px solid #999",
               cursor: "pointer",
-              background: "white",
-              borderRadius: "50%",
               lineHeight: "100px",
               zIndex: "1",
               position: "fixed",
@@ -139,13 +200,25 @@ class View extends React.Component {
               top: "6%",
             }}
           >
-            로고 {/* <img src={} alt=""/> */}
+            <img
+              src={logo}
+              alt=""
+              style={{
+                backgroundPosition: "10px 10px",
+                width: "auto",
+                height: "100px",
+              }}
+            />
           </div>
         </NavLink>
 
         {/* 삼항 연산자를 이용해 출력 페이지 변경 */}
         {this.state.main ? (
-          <FullMap history={this.props.history} bar={this.state.bar} />
+          <FullMap
+            history={this.props.history}
+            bar={this.state.bar}
+            reivewPageMove={this.reivewPageMove.bind(this)}
+          />
         ) : (
           ""
         )}
@@ -207,7 +280,12 @@ class View extends React.Component {
         <Route
           path="/mechelin/review/:userPlaceId"
           render={() => {
-            return <Review getState={this.getState.bind(this)} />;
+            return (
+              <Review
+                getState={this.getState.bind(this)}
+                userPlaceId={userPlaceId}
+              />
+            );
           }}
         />
 
@@ -229,6 +307,10 @@ class View extends React.Component {
               <Result
                 getState={this.getState.bind(this)}
                 userId={this.state.userId}
+                search={keyword}
+                listData2={listData2}
+                reivewPageMove={this.reivewPageMove.bind(this)}
+                history={this.props.history}
               />
             );
           }}
@@ -308,6 +390,7 @@ class View extends React.Component {
                 name="search"
                 maxLength="100"
                 onChange={this.changeInput.bind(this)}
+                onKeyUp={this.KeyUpSearchBar.bind(this)}
                 style={{
                   fontFamily: "Nanum Gothic Coding",
                   fontWeight: "normal",
@@ -324,9 +407,8 @@ class View extends React.Component {
                 <button
                   type="button"
                   className="btn xi-search"
-                  onClick={() => {
-                    this.setState({ main: false });
-                  }}
+                  onClick={this.cleanSearch.bind(this)}
+                  value={!this.state.search === "" ? this.state.search : ""}
                   style={{
                     margin: "-1px 0 0 -6px",
                     display: "inline-block",
@@ -356,9 +438,10 @@ class View extends React.Component {
                   onClick={this.goAnotherPage.bind(this)}
                   style={{
                     fontSize:
-                      this.state.mypage || this.state.cc ? "4.7vw" : "6vw",
+                      this.state.mypage || this.state.cc ? "4vw" : "6vw",
                     marginBottom:
-                      this.state.mypage || this.state.cc ? "-5vh" : "0",
+                      this.state.mypage || this.state.cc ? "-5vh" : "-2vh",
+                    marginTop: this.state.cc ? "2vh" : "0",
                   }}
                 >
                   뉴스 피드
@@ -370,9 +453,10 @@ class View extends React.Component {
                   onClick={this.goAnotherPage.bind(this)}
                   style={{
                     fontSize:
-                      this.state.mypage || this.state.cc ? "4.7vw" : "6vw",
+                      this.state.mypage || this.state.cc ? "4vw" : "6vw",
                     marginBottom:
-                      this.state.mypage || this.state.cc ? "-5vh" : "0",
+                      this.state.mypage || this.state.cc ? "-5vh" : "-2vh",
+                    marginTop: this.state.cc ? "2vh" : "0",
                   }}
                 >
                   타임라인
@@ -380,36 +464,36 @@ class View extends React.Component {
                 <br />
               </NavLink>
               <li
-                onClick={this.goAnotherPage.bind(this)}
-                onMouseOver={this.showMypage.bind(this)}
+                id="mypage"
+                onClick={this.showMypage.bind(this)}
                 style={{
-                  fontSize:
-                    this.state.mypage || this.state.cc ? "4.7vw" : "6vw",
+                  fontSize: this.state.cc ? "4vw" : "6vw",
                   marginBottom: this.state.cc
                     ? "-5vh"
                     : this.state.mypage
                     ? "22vh"
-                    : "0",
-                  color: this.state.mypage ? "rgba(245,145,45)" : "black",
+                    : "-2vh",
                   cursor: "pointer",
+                  marginTop: this.state.cc ? "2vh" : "0",
+                  color: this.state.mypage ? "rgba(245, 145, 45)" : "black",
                 }}
               >
                 마이 페이지
               </li>{" "}
               <br />
               <li
-                onClick={this.goAnotherPage.bind(this)}
-                onMouseOver={this.showCC.bind(this)}
+                id="cc"
+                onClick={this.showCC.bind(this)}
                 style={{
                   cursor: "pointer",
-                  fontSize:
-                    this.state.mypage || this.state.cc ? "4.7vw" : "6vw",
+                  fontSize: this.state.mypage ? "4vw" : "6vw",
                   marginBottom: this.state.mypage
                     ? "-5vh"
                     : this.state.cc
                     ? "10vh"
-                    : "0",
-                  color: this.state.cc ? "rgba(245,145,45)" : "black",
+                    : "-2vh",
+                  marginTop: this.state.cc ? "2vh" : "0",
+                  color: this.state.cc ? "rgba(245, 145, 45)" : "black",
                 }}
               >
                 고객 센터
@@ -422,7 +506,7 @@ class View extends React.Component {
               className="mypage"
               style={{
                 position: "fixed",
-                top: "47%",
+                top: "48%",
                 right: "50%",
                 transform: "translate(50%)",
                 opacity: this.state.mypage ? "1" : "0",
@@ -450,7 +534,7 @@ class View extends React.Component {
               className="cc"
               style={{
                 position: "fixed",
-                bottom: "34%",
+                bottom: "24%",
                 right: "50%",
                 transform: "translate(50%)",
                 opacity: this.state.cc ? "1" : "0",

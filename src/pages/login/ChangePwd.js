@@ -1,6 +1,6 @@
 import React from "react";
 import Axios from "util/axios";
-
+import { Input } from "antd";
 class ChangePwd extends React.Component {
   state = {
     email: "",
@@ -214,16 +214,24 @@ class ChangePwd extends React.Component {
               top: "50%",
               transform: "translate(-50%,-50%)",
               width: "200px",
+              height: "auto",
             }}
           >
-            <caption style={{ textAlign: "center", fontSize: "20px" }}>
+            <caption
+              style={{
+                display: "block",
+                textAlign: "center",
+                fontSize: "20px",
+                fontWeight: "bold",
+                marginBottom: "10px",
+              }}
+            >
               비밀번호 재설정
-            </caption>
-
+            </caption>{" "}
             <tbody>
               <tr>
                 <td>
-                  <input
+                  <Input
                     type="text"
                     className="form-control"
                     onChange={this.handleInform.bind(this)}
@@ -239,11 +247,13 @@ class ChangePwd extends React.Component {
                       fontSize: "13px",
                     }}
                   />
+                  <br />
                   <span
                     style={{
                       color: "red",
                       fontSize: "10px",
                       fontWeight: "normal",
+
                       margin: "10px auto",
                     }}
                   >
@@ -285,9 +295,8 @@ class ChangePwd extends React.Component {
               >
                 <td>
                   <br />
-                  <input
+                  <Input
                     type="text"
-                    className="form-control"
                     placeholder="인증코드"
                     name="userCode"
                     style={{
@@ -336,9 +345,7 @@ class ChangePwd extends React.Component {
                   ) : (
                     <br />
                   )}
-                  <input
-                    type="password"
-                    className="form-control"
+                  <Input.Password
                     onChange={this.handleInform.bind(this)}
                     onKeyUp={this.checkPW.bind(this)}
                     name="password"
@@ -349,8 +356,10 @@ class ChangePwd extends React.Component {
                       height: "50px",
                       fontWeight: "normal",
                       fontSize: "13px",
+                      fontFamily: "none",
                     }}
-                  />
+                  />{" "}
+                  <br />
                   <span
                     style={{
                       color: this.state.pwSuccess ? "green" : "red",
@@ -360,16 +369,15 @@ class ChangePwd extends React.Component {
                       margin: "10px auto",
                     }}
                   >
+                    {" "}
                     {this.state.possiblePwCkMsg}
-                    <br />
                   </span>
+                  <br />
                 </td>
               </tr>
               <tr>
                 <td>
-                  <input
-                    type="password"
-                    className="form-control"
+                  <Input.Password
                     onChange={this.handleInform.bind(this)}
                     onKeyUp={this.checkPW.bind(this)}
                     name="rePassword"
@@ -380,8 +388,10 @@ class ChangePwd extends React.Component {
                       height: "50px",
                       fontWeight: "normal",
                       fontSize: "13px",
+                      fontFamily: "none",
                     }}
-                  />
+                  />{" "}
+                  <br />
                   <span
                     style={{
                       color: this.state.samePwSuccess ? "green" : "red",
@@ -392,7 +402,7 @@ class ChangePwd extends React.Component {
                     }}
                   >
                     {this.state.samePwCkMsg}
-                  </span>
+                  </span>{" "}
                   <br />
                 </td>
               </tr>

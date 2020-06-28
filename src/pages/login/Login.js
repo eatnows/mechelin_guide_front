@@ -2,7 +2,10 @@ import React, { Component } from "react";
 import { NavLink } from "react-router-dom";
 import kakaotalk from "images/kakaotalk.png";
 import Axios from "util/axios";
+import { Input, Checkbox } from "antd";
 
+import logo from "images/logo2.png";
+import icon from "images/icon.PNG";
 class Login extends Component {
   constructor(props) {
     super(props);
@@ -32,6 +35,7 @@ class Login extends Component {
     });
   };
 
+  /*체크 상태 변경 */
   ChangeCheck = () => {
     if (this.state.checked === false) {
       this.setState({
@@ -51,7 +55,7 @@ class Login extends Component {
     const url = "/login";
     Axios.post(url, {
       email: this.state.email,
-      password: this.refs.password.value,
+      password: this.state.password,
     })
       .then((res) => {
         console.log(res.data);
@@ -124,41 +128,39 @@ class Login extends Component {
                 <td>
                   <div
                     style={{
-                      border: "1px solid lightgray",
                       width: "100px",
                       height: "100px",
-                      margin: "7vh auto",
+                      margin: "13vh auto 4vh",
                     }}
                   >
-                    로고
+                    <img
+                      src={logo}
+                      alt=""
+                      style={{
+                        width: "auto",
+                        height: "100px",
+                      }}
+                    />
                   </div>
                 </td>
               </tr>
               <tr>
                 <td>
                   <span style={{ float: "right", marginTop: "8px" }}>
-                    <input
+                    <Checkbox
                       className="loginck"
                       type="checkbox"
-                      style={{ width: "13px", height: "13px" }}
                       onChange={this.ChangeCheck.bind(this)}
                       checked={this.state.checked}
-                    />
-                    <span
-                      style={{
-                        marginLeft: "5px",
-                        fontWeight: "normal",
-                        fontSize: "13px",
-                      }}
                     >
+                      {" "}
                       로그인 상태 유지
-                    </span>
+                    </Checkbox>
                   </span>
                   <br />
                   <br />
-                  <input
+                  <Input
                     type="text"
-                    className="form-control"
                     placeholder="이메일"
                     ref="email"
                     name="email"
@@ -170,7 +172,8 @@ class Login extends Component {
                       outline: "none",
                       fontSize: "13px",
                     }}
-                  />
+                  />{" "}
+                  <br />
                   <span
                     style={{
                       color: "red",
@@ -187,17 +190,17 @@ class Login extends Component {
               </tr>
               <tr>
                 <td>
-                  <input
-                    type="password"
-                    className="form-control"
+                  <Input.Password
                     placeholder="비밀번호"
-                    ref="password"
+                    name="password"
+                    onChange={this.handleInform.bind(this)}
                     style={{
                       width: "250px",
                       outline: "none",
                       height: "50px",
                       fontWeight: "normal",
                       fontSize: "13px",
+                      fontFamily: "none",
                     }}
                   />
                 </td>
@@ -208,8 +211,8 @@ class Login extends Component {
                     style={{
                       marginLeft: "5px",
                       fontWeight: "normal",
-                      fontSize: "10px",
-                      marginTop: "2vh",
+                      fontSize: "12px",
+                      marginTop: "1.4vh",
                       float: "left",
                     }}
                   >
@@ -242,7 +245,7 @@ class Login extends Component {
                     type="submit"
                     className="btn"
                     style={{
-                      margin: "8vh 0",
+                      margin: "5vh 0",
                       backgroundColor: "rgba(245,145,45)",
                       color: "white",
                       height: "40px",
@@ -279,7 +282,7 @@ class Login extends Component {
                       alt=""
                     />
                   </a>
-                  &nbsp;&nbsp;
+                  &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp;
                   <NavLink to="/signup">
                     <button
                       type="button"
@@ -289,19 +292,19 @@ class Login extends Component {
                         border: "1px solid lightgray",
                         width: "50px",
                         height: "50px",
-                        backgroundColor: "white",
+                        backgroundColor: "#9CC557 ",
                       }}
                     >
-                      미쉐린 회원가입
-                      {/*<img
-                        src={Google}
+                      <img
+                        src={icon}
                         style={{
                           textAlign: "center",
-                          width: "25px",
-                          height: "25px",
+                          width: "40px",
+                          height: "30px",
+                          marginLeft: "-8px",
                         }}
                         alt=""
-                      />*/}
+                      />
                     </button>
                   </NavLink>
                 </td>

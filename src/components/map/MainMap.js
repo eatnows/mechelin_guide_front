@@ -93,7 +93,8 @@ const MainMap = (props) => {
     setMap(createmap);
 
     // 이미지 태그 제거
-    let imgTag = /<IMG(.*?)>/gi;
+    // let imgTag = /<IMG(.*?)>/gi;
+    let imgTag = /(<([^>]+)>)/gi;
 
     let marker = [];
     let content = [];
@@ -194,6 +195,7 @@ const MainMap = (props) => {
        */
       pageBtn[i].onclick = () => {
         //overlay[i].setMap(null);
+        props.reivewPageMove(myUPId[i]);
         props.history.push(`/mechelin/review/${myUPId[i]}`);
       };
 
@@ -353,6 +355,7 @@ const MainMap = (props) => {
            */
           pageBtn[i].onclick = () => {
             //overlay[i].setMap(null);
+            props.reivewPageMove(myUPId[i]);
             props.history.push(`/mechelin/review/${myUPId[i]}`);
           };
 

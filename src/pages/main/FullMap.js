@@ -231,36 +231,44 @@ class FullMap extends React.Component {
       });
     }
   };
+
+  /*
+   * 리뷰창으로 넘어가는 메소드
+   */
+  reivewPageMove = (userPlaceId) => {
+    this.props.reivewPageMove(userPlaceId);
+  };
+
   /*
    * 리뷰글 등록 버튼 클릭시 실행
    */
   onSubmitReview = (e) => {
     e.preventDefault();
     //데이터 유효성 검사
-    // if (this.state.subject === "") {
-    //   alert("제목을 입력해주세요.");
-    //   return false;
-    // }
-    // if (this.state.content === "") {
-    //   alert("내용을 입력해주세요.");
-    //   return false;
-    // }
-    // if (this.state.category === "") {
-    //   alert("카테고리를 선택해주세요.");
-    //   return false;
-    // }
-    // if (this.state.starScore === 0) {
-    //   alert("맛집 평가를 해주세요.");
-    //   return false;
-    // }
-    // if (this.state.x === 0 && this.state.y === 0) {
-    //   alert("맛집을 등록해주세요.");
-    //   return false;
-    // }
-    // if (this.state.placeName === "") {
-    //   alert("상호명을 입력해주세요.");
-    //   return false;
-    // }
+    if (this.state.subject === "") {
+      alert("제목을 입력해주세요.");
+      return false;
+    }
+    if (this.state.content === "") {
+      alert("내용을 입력해주세요.");
+      return false;
+    }
+    if (this.state.category === "") {
+      alert("카테고리를 선택해주세요.");
+      return false;
+    }
+    if (this.state.starScore === 0) {
+      alert("맛집 평가를 해주세요.");
+      return false;
+    }
+    if (this.state.x === 0 && this.state.y === 0) {
+      alert("맛집을 등록해주세요.");
+      return false;
+    }
+    if (this.state.placeName === "") {
+      alert("상호명을 입력해주세요.");
+      return false;
+    }
 
     const url = "http://localhost:9000/mechelin/post/add";
     Axios.post(url, {
@@ -339,6 +347,7 @@ class FullMap extends React.Component {
               FriendFilter={FriendFilter}
               categoryFilter={categoryFilter}
               blacklistFilter={blacklist}
+              reivewPageMove={this.reivewPageMove.bind(this)}
             />
             {/*하단 메뉴바 */}
             <div style={{ cursor: "pointer" }}>
@@ -590,7 +599,7 @@ class FullMap extends React.Component {
                     color: "white",
                     marginLeft: "12vw",
                   }}
-                  onClick={this.onSubmitReview}
+                  onClick={this.onSubmitReview.bind(this)}
                 >
                   등록하기
                 </button>
