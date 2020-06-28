@@ -1,4 +1,5 @@
 import React from "react";
+import ProfileUpload from "components/mypage/ProfileUpload";
 
 class MyPage extends React.Component {
   constructor(props) {
@@ -9,7 +10,12 @@ class MyPage extends React.Component {
     this.props.getState(false);
   }
   render() {
-    return <div>MyPage</div>;
+    return (
+      <div>
+        MyPage
+        <ProfileUpload />
+      </div>
+    );
   }
 }
 export default MyPage;

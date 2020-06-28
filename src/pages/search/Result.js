@@ -1,15 +1,30 @@
 import React from "react";
+import SearchResult from "components/search/SearchResult";
+import SearchResultPage from "components/search/SearchResultPage";
+import Axios from "util/axios";
 
 class Result extends React.Component {
   constructor(props) {
     super(props);
-    this.state = {};
+    this.state = {
+      listData2: [],
+    };
   }
   componentWillMount() {
     this.props.getState(false);
+    console.log(this.props.search);
   }
   render() {
-    return <div>Result</div>;
+    return (
+      <div>
+        <SearchResultPage
+          keyword={this.props.search}
+          listData2={this.props.listData2}
+          reivewPageMove={this.props.reivewPageMove}
+          history={this.props.history}
+        />
+      </div>
+    );
   }
 }
 export default Result;

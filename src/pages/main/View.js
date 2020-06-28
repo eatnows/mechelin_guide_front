@@ -16,6 +16,10 @@ import "css/mainStyle.css";
 import { Input } from "antd";
 import logo from "images/logo.png";
 import logo2 from "images/logo2.png";
+import Axios from "util/axios";
+let keyword;
+let userPlaceId;
+let listData2 = [];
 class View extends React.Component {
   state = {
     main: true,
@@ -27,6 +31,8 @@ class View extends React.Component {
     lock: true,
     mypage: false,
     cc: false,
+    userPlaceid: "",
+    listData2: [],
   };
 
   componentWillMount() {
@@ -98,8 +104,66 @@ class View extends React.Component {
 
   /*검색창 값이 변하면 스테이트에 변한 값을 담아줌 */
   changeInput = (e) => {
+    keyword = e.target.value;
     this.setState({
       [e.target.name]: e.target.value,
+    });
+  };
+  /*
+   * 검색창에서 엔터 입력시
+   */
+  KeyUpSearchBar = (e) => {
+    if (e.key === "Enter") {
+      console.log("엔터");
+      this.cleanSearch();
+      this.props.history.push(`/mechelin/result/${this.state.userId}`);
+    }
+  };
+
+  /*
+   * 검색 버튼 클릭시 검색창 초기화
+   */
+  cleanSearch = () => {
+    const url = `/post/search?user_id=${sessionStorage.getItem(
+      "userId"
+    )}&keyword=${this.state.search}`;
+    Axios.get(url)
+      .then((res) => {
+        console.log(res.data);
+        for (let i = 0; i < res.data.length; i++) {
+          const text = res.data[i].content.replace(/(<([^>]+)>)/gi, "");
+          listData2.push({
+            // href: "https://ant.design",
+            title: res.data[i].name,
+            avatar: res.data[i].profile_url,
+            description: res.data[i].subject,
+            content: text,
+            frontImage: res.data[i].front_image,
+            likes: res.data[i].likes,
+            commentCount: res.data[i].comment_count,
+            wishCount: res.data[i].wish_count,
+            userPlaceId: res.data[i].user_place_id,
+          });
+        }
+
+        this.setState({
+          search: "",
+          bar: false,
+        });
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+
+    listData2 = [];
+  };
+  /*
+   * 리뷰 페이지로 넘어가기 위한 메소드
+   */
+  reivewPageMove = (user_place_id) => {
+    userPlaceId = user_place_id;
+    this.setState({
+      userPlaceid: user_place_id,
     });
   };
 
@@ -159,7 +223,11 @@ class View extends React.Component {
 
         {/* 삼항 연산자를 이용해 출력 페이지 변경 */}
         {this.state.main ? (
-          <FullMap history={this.props.history} bar={this.state.bar} />
+          <FullMap
+            history={this.props.history}
+            bar={this.state.bar}
+            reivewPageMove={this.reivewPageMove.bind(this)}
+          />
         ) : (
           ""
         )}
@@ -221,7 +289,12 @@ class View extends React.Component {
         <Route
           path="/mechelin/review/:userPlaceId"
           render={() => {
-            return <Review getState={this.getState.bind(this)} />;
+            return (
+              <Review
+                getState={this.getState.bind(this)}
+                userPlaceId={userPlaceId}
+              />
+            );
           }}
         />
 
@@ -243,7 +316,10 @@ class View extends React.Component {
               <Result
                 getState={this.getState.bind(this)}
                 userId={this.state.userId}
-                search={this.state.search}
+                search={keyword}
+                listData2={listData2}
+                reivewPageMove={this.reivewPageMove.bind(this)}
+                history={this.props.history}
               />
             );
           }}
@@ -323,6 +399,7 @@ class View extends React.Component {
                 name="search"
                 maxLength="100"
                 onChange={this.changeInput.bind(this)}
+                onKeyUp={this.KeyUpSearchBar.bind(this)}
                 style={{
                   fontFamily: "Nanum Gothic Coding",
                   fontWeight: "normal",
