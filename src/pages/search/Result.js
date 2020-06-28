@@ -1,11 +1,14 @@
 import React from "react";
 import SearchResult from "components/search/SearchResult";
 import SearchResultPage from "components/search/SearchResultPage";
+import Axios from "util/axios";
 
 class Result extends React.Component {
   constructor(props) {
     super(props);
-    this.state = {};
+    this.state = {
+      listData2: [],
+    };
   }
   componentWillMount() {
     this.props.getState(false);
@@ -14,7 +17,10 @@ class Result extends React.Component {
   render() {
     return (
       <div>
-        <SearchResultPage keyword={this.props.search} />
+        <SearchResultPage
+          keyword={this.props.search}
+          listData2={this.props.listData2}
+        />
       </div>
     );
   }

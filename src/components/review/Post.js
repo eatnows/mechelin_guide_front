@@ -43,7 +43,7 @@ const ListItem = ({ contact, i, likesChange }) => {
 
             <td>작성일 : {contact.created_at}</td>
 
-            <td>{i}번째 리뷰글</td>
+            <td>{contact.post_count - i}번째 리뷰글</td>
             <td>평점 {contact.rating}</td>
           </tr>
           <tr>

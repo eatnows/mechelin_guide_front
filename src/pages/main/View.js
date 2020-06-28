@@ -13,8 +13,10 @@ import {
   MyList,
 } from "pages/index.js";
 import "css/mainStyle.css";
+import Axios from "util/axios";
 let keyword;
 let userPlaceId;
+let listData2 = [];
 class View extends React.Component {
   state = {
     main: true,
@@ -26,7 +28,8 @@ class View extends React.Component {
     lock: true,
     mypage: false,
     cc: false,
-    userPlaceId: "",
+    userPlaceid: "",
+    listData2: [],
   };
 
   componentWillMount() {
@@ -108,10 +111,37 @@ class View extends React.Component {
    * 검색 버튼 클릭시 검색창 초기화
    */
   cleanSearch = () => {
-    this.setState({
-      search: "",
-      bar: false,
-    });
+    const url = `/post/search?user_id=${sessionStorage.getItem(
+      "userId"
+    )}&keyword=${this.state.search}`;
+    Axios.get(url)
+      .then((res) => {
+        console.log(res.data);
+        for (let i = 0; i < res.data.length; i++) {
+          const text = res.data[i].content.replace(/(<([^>]+)>)/gi, "");
+          listData2.push({
+            // href: "https://ant.design",
+            title: res.data[i].name,
+            avatar: res.data[i].profile_url,
+            description: res.data[i].subject,
+            content: text,
+            frontImage: res.data[i].front_image,
+            likes: res.data[i].likes,
+            commentCount: res.data[i].comment_count,
+            wishCount: res.data[i].wish_count,
+          });
+        }
+
+        this.setState({
+          search: "",
+          bar: false,
+        });
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+
+    listData2 = [];
   };
   /*
    * 리뷰 페이지로 넘어가기 위한 메소드
@@ -119,7 +149,7 @@ class View extends React.Component {
   reivewPageMove = (user_place_id) => {
     userPlaceId = user_place_id;
     this.setState({
-      userPlaceId: user_place_id,
+      userPlaceid: user_place_id,
     });
   };
 
@@ -261,6 +291,7 @@ class View extends React.Component {
                 getState={this.getState.bind(this)}
                 userId={this.state.userId}
                 search={keyword}
+                listData2={listData2}
               />
             );
           }}
