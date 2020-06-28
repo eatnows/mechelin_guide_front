@@ -106,6 +106,16 @@ class View extends React.Component {
       [e.target.name]: e.target.value,
     });
   };
+  /*
+   * 검색창에서 엔터 입력시
+   */
+  KeyUpSearchBar = (e) => {
+    if (e.key === "Enter") {
+      console.log("엔터");
+      this.cleanSearch();
+      this.props.history.push(`/mechelin/result/${this.state.userId}`);
+    }
+  };
 
   /*
    * 검색 버튼 클릭시 검색창 초기화
@@ -374,6 +384,7 @@ class View extends React.Component {
                 name="search"
                 maxLength="100"
                 onChange={this.changeInput.bind(this)}
+                onKeyUp={this.KeyUpSearchBar.bind(this)}
                 style={{
                   fontFamily: "Nanum Gothic Coding",
                   fontWeight: "normal",
