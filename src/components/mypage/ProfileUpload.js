@@ -7,6 +7,7 @@ import {
   PlusOutlined,
   ProfileFilled,
 } from "@ant-design/icons";
+import Axios from "util/axios";
 
 function getBase64(img, callback) {
   const reader = new FileReader();
@@ -32,7 +33,21 @@ class ProfileUpload extends React.Component {
     path:
       "http://localhost:9000/mechelin/image/profile/image?id=" +
       sessionStorage.getItem("userId"),
+    imageUrl: "",
   };
+
+  componentWillMount() {
+    const url = `/friends/profile?id=${sessionStorage.getItem("userId")}`;
+    Axios.get(url)
+      .then((res) => {
+        this.setState({
+          imageUrl: res.data.profile_url,
+        });
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  }
 
   handleChange = (info) => {
     if (info.file.status === "uploading") {
