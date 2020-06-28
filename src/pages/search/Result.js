@@ -20,6 +20,8 @@ class Result extends React.Component {
         <SearchResultPage
           keyword={this.props.search}
           listData2={this.props.listData2}
+          reivewPageMove={this.props.reivewPageMove}
+          history={this.props.history}
         />
       </div>
     );

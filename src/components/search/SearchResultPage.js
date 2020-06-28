@@ -6,6 +6,7 @@ import { List, Avatar, Space } from "antd";
 import { MessageOutlined, LikeOutlined, StarOutlined } from "@ant-design/icons";
 import Axios from "util/axios";
 import { useState } from "react";
+import { NavLink } from "react-router-dom";
 
 // const listData = [];
 const SearchResultPage = (props) => {
@@ -15,6 +16,16 @@ const SearchResultPage = (props) => {
       {text}
     </Space>
   );
+
+  const reivewPageMove = () => {
+    props.reivewPageMove();
+  };
+
+  const onClickTitle = (e) => {
+    const userPlaceId = e.target.getAttribute("userPlaceId");
+    props.reivewPageMove(userPlaceId);
+    props.history.push(`/mechelin/review/${userPlaceId}`);
+  };
 
   return (
     <div>
@@ -62,7 +73,15 @@ const SearchResultPage = (props) => {
                   style={{ width: "32px", height: "32px" }}
                 />
               }
-              title={<a href={item.href}>{item.title}</a>}
+              title={
+                <div
+                  onClick={onClickTitle}
+                  userPlaceId={item.userPlaceId}
+                  style={{ cursor: "pointer" }}
+                >
+                  {item.title}
+                </div>
+              }
               description={item.description}
             />
             {item.content}

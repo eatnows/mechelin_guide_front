@@ -129,6 +129,7 @@ class View extends React.Component {
             likes: res.data[i].likes,
             commentCount: res.data[i].comment_count,
             wishCount: res.data[i].wish_count,
+            userPlaceId: res.data[i].user_place_id,
           });
         }
 
@@ -292,6 +293,8 @@ class View extends React.Component {
                 userId={this.state.userId}
                 search={keyword}
                 listData2={listData2}
+                reivewPageMove={this.reivewPageMove.bind(this)}
+                history={this.props.history}
               />
             );
           }}
