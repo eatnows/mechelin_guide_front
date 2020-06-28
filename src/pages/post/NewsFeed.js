@@ -2,7 +2,9 @@ import React from "react";
 import Axios from "util/axios";
 import Comment from "pages/post/Comment";
 import "css/postStyle.css";
-import { Button } from "antd";
+import { Avatar } from "antd";
+import { UserOutlined } from "@ant-design/icons";
+import profile from "images/default_profile.png";
 var nowTime = (data) => {
   let now = new Date().getTime();
   let date = new Date(0).setUTCSeconds(data) / 1000;
@@ -108,6 +110,8 @@ class NewsFeed extends React.Component {
       time: simpleTime,
     });
   };
+
+  /*좋아요 클릭시 이미지 변경 */
   clickHeart = () => {
     if (this.state.heart) {
       this.setState({
@@ -119,28 +123,31 @@ class NewsFeed extends React.Component {
       });
     }
   };
+
   render() {
     return (
       <div>
         <div className="sideMenu">뉴스피드</div>
-        <Button type="primary">테스트</Button>
-        <div type="primary">테스트</div>
-        <Button type="success">테스트</Button>
-        <Button type="error">테스트</Button>
         <div className="list">
           {this.state.Data.map((row, idx) => (
             <form>
               <table className="postTable">
                 <thead>
                   <tr>
-                    <th colSpan="2" style={{ fontWeight: "bold" }}>
+                    <th
+                      colSpan="2"
+                      style={{
+                        backgroundColor: "rgba(156, 197, 87, 0.2)",
+                        fontWeight: "bold",
+                      }}
+                    >
                       {row.name}
                     </th>
                   </tr>
                   <tr>
                     <th style={{ width: "5vw", paddingRight: "0" }}>
-                      프로필 사진
-                      <img src={row.profile_url} alt="" />
+                      <img src={profile} alt="" width="45px" height="45px" />
+                      {/* <img src={row.profile_url} alt="" /> */}
                     </th>
                     <th>
                       {row.nickname}

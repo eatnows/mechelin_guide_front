@@ -14,6 +14,7 @@ import {
 } from "pages/index.js";
 import "css/mainStyle.css";
 import Axios from "util/axios";
+import logo from "images/logo2.png";
 let keyword;
 let userPlaceId;
 let listData2 = [];
@@ -191,10 +192,7 @@ class View extends React.Component {
             style={{
               width: "100px",
               height: "100px",
-              border: "1px solid #999",
               cursor: "pointer",
-              background: "white",
-              borderRadius: "50%",
               lineHeight: "100px",
               zIndex: "1",
               position: "fixed",
@@ -202,7 +200,15 @@ class View extends React.Component {
               top: "6%",
             }}
           >
-            로고 {/* <img src={} alt=""/> */}
+            <img
+              src={logo}
+              alt=""
+              style={{
+                backgroundPosition: "10px 10px",
+                width: "auto",
+                height: "100px",
+              }}
+            />
           </div>
         </NavLink>
 
@@ -432,9 +438,10 @@ class View extends React.Component {
                   onClick={this.goAnotherPage.bind(this)}
                   style={{
                     fontSize:
-                      this.state.mypage || this.state.cc ? "4.7vw" : "6vw",
+                      this.state.mypage || this.state.cc ? "4vw" : "6vw",
                     marginBottom:
-                      this.state.mypage || this.state.cc ? "-5vh" : "0",
+                      this.state.mypage || this.state.cc ? "-5vh" : "-2vh",
+                    marginTop: this.state.cc ? "2vh" : "0",
                   }}
                 >
                   뉴스 피드
@@ -446,9 +453,10 @@ class View extends React.Component {
                   onClick={this.goAnotherPage.bind(this)}
                   style={{
                     fontSize:
-                      this.state.mypage || this.state.cc ? "4.7vw" : "6vw",
+                      this.state.mypage || this.state.cc ? "4vw" : "6vw",
                     marginBottom:
-                      this.state.mypage || this.state.cc ? "-5vh" : "0",
+                      this.state.mypage || this.state.cc ? "-5vh" : "-2vh",
+                    marginTop: this.state.cc ? "2vh" : "0",
                   }}
                 >
                   타임라인
@@ -456,36 +464,36 @@ class View extends React.Component {
                 <br />
               </NavLink>
               <li
-                onClick={this.goAnotherPage.bind(this)}
-                onMouseOver={this.showMypage.bind(this)}
+                id="mypage"
+                onClick={this.showMypage.bind(this)}
                 style={{
-                  fontSize:
-                    this.state.mypage || this.state.cc ? "4.7vw" : "6vw",
+                  fontSize: this.state.cc ? "4vw" : "6vw",
                   marginBottom: this.state.cc
                     ? "-5vh"
                     : this.state.mypage
                     ? "22vh"
-                    : "0",
-                  color: this.state.mypage ? "rgba(245,145,45)" : "black",
+                    : "-2vh",
                   cursor: "pointer",
+                  marginTop: this.state.cc ? "2vh" : "0",
+                  color: this.state.mypage ? "rgba(245, 145, 45)" : "black",
                 }}
               >
                 마이 페이지
               </li>{" "}
               <br />
               <li
-                onClick={this.goAnotherPage.bind(this)}
-                onMouseOver={this.showCC.bind(this)}
+                id="cc"
+                onClick={this.showCC.bind(this)}
                 style={{
                   cursor: "pointer",
-                  fontSize:
-                    this.state.mypage || this.state.cc ? "4.7vw" : "6vw",
+                  fontSize: this.state.mypage ? "4vw" : "6vw",
                   marginBottom: this.state.mypage
                     ? "-5vh"
                     : this.state.cc
                     ? "10vh"
-                    : "0",
-                  color: this.state.cc ? "rgba(245,145,45)" : "black",
+                    : "-2vh",
+                  marginTop: this.state.cc ? "2vh" : "0",
+                  color: this.state.cc ? "rgba(245, 145, 45)" : "black",
                 }}
               >
                 고객 센터
@@ -498,7 +506,7 @@ class View extends React.Component {
               className="mypage"
               style={{
                 position: "fixed",
-                top: "47%",
+                top: "48%",
                 right: "50%",
                 transform: "translate(50%)",
                 opacity: this.state.mypage ? "1" : "0",
@@ -526,7 +534,7 @@ class View extends React.Component {
               className="cc"
               style={{
                 position: "fixed",
-                bottom: "34%",
+                bottom: "24%",
                 right: "50%",
                 transform: "translate(50%)",
                 opacity: this.state.cc ? "1" : "0",

@@ -10,7 +10,8 @@ table {
   border-radius: 20px;
   font-size: 1vw;
   vertical-align: middle;
-  background-color: rgba(245, 145, 45, 0.1);
+  border: 1px solid #9cc557;
+  /*; */
 }
 .postTable tr {
 }

@@ -1,6 +1,8 @@
 import React, { Component } from "react";
 import Axios from "util/axios";
-
+import logo from "images/logo2.png";
+import { Input } from "antd";
+import { NavLink } from "react-router-dom";
 export default class SignUp extends Component {
   constructor(props) {
     super(props);
@@ -54,10 +56,12 @@ export default class SignUp extends Component {
             } else if (res.data.check_item === "kakaouser") {
               this.setState({
                 emailCkMsg: "카카오로 가입된 이메일입니다.",
+                emailSuccess: false,
               });
             } else {
               this.setState({
                 emailCkMsg: "이미 등록된 이메일입니다.",
+                emailSuccess: false,
               });
             }
           })
@@ -115,6 +119,7 @@ export default class SignUp extends Component {
           } else {
             this.setState({
               nicknameCkMsg: "이미 등록된 닉네임입니다.",
+              nicknameSuccess: false,
             });
           }
         })
@@ -141,6 +146,7 @@ export default class SignUp extends Component {
         this.setState({
           possiblePwCkMsg:
             "영문, 숫자, 특수문자를 혼합하여 8~20자 이내로 입력해주십시오.",
+          pwSuccess: false,
         });
       } else {
         this.setState({
@@ -164,6 +170,7 @@ export default class SignUp extends Component {
       } else {
         this.setState({
           samePwCkMsg: "비밀번호가 일치하지 않습니다.",
+          samePwSuccess: false,
         });
       }
     } else {
@@ -221,20 +228,26 @@ export default class SignUp extends Component {
                 <td>
                   <div
                     style={{
-                      border: "1px solid lightgray",
                       width: "100px",
                       height: "100px",
                       margin: "0 auto",
                     }}
                   >
-                    로고
+                    <img
+                      src={logo}
+                      alt=""
+                      style={{
+                        width: "auto",
+                        height: "100px",
+                      }}
+                    />
                   </div>
                   <br />
                 </td>
               </tr>
               <tr>
                 <td>
-                  <input
+                  <Input
                     type="text"
                     className="form-control"
                     onChange={this.handleInform.bind(this)}
@@ -251,13 +264,14 @@ export default class SignUp extends Component {
                       fontSize: "13px",
                     }}
                   />
+                  <br />
                   <span
                     style={{
                       color: this.state.emailSuccess ? "green" : "red",
                       fontSize: "10px",
                       fontWeight: "normal",
                       textAlign: "center",
-                      margin: "10px auto",
+                      margin: "0 auto 10px",
                     }}
                   >
                     {this.state.emailCkMsg}
@@ -273,20 +287,26 @@ export default class SignUp extends Component {
                     style={{
                       border: this.state.finishSending
                         ? "1px solid #ccc"
+                        : this.state.clickAuthBtn && !this.state.emailSuccess
+                        ? "1px solid red"
                         : "1px solid rgba(245,145,45)",
                       backgroundColor: this.state.finishSending
                         ? "#999"
                         : "white",
                       color: this.state.finishSending
                         ? "white"
+                        : this.state.clickAuthBtn && !this.state.emailSuccess
+                        ? "red"
                         : "rgba(245,145,45)",
                       verticalAlign: "center",
                       width: "250px",
                       height: "30px",
                     }}
                   >
-                    {this.state.clickAuthBtn
+                    {this.state.clickAuthBtn && this.state.emailSuccess
                       ? "이메일 발송 중"
+                      : this.state.clickAuthBtn && !this.state.emailSuccess
+                      ? "이메일 발송 불가"
                       : this.state.finishSending
                       ? "이메일 발송 완료"
                       : "인증하기"}
@@ -296,7 +316,7 @@ export default class SignUp extends Component {
               <tr>
                 <td>
                   <br />
-                  <input
+                  <Input
                     type="text"
                     className="form-control"
                     onChange={this.handleInform.bind(this)}
@@ -310,7 +330,8 @@ export default class SignUp extends Component {
                       fontWeight: "normal",
                       fontSize: "13px",
                     }}
-                  />
+                  />{" "}
+                  <br />
                   <span
                     style={{
                       color: this.state.nicknameSuccess ? "green" : "red",
@@ -327,7 +348,7 @@ export default class SignUp extends Component {
               </tr>
               <tr>
                 <td>
-                  <input
+                  <Input
                     type="password"
                     className="form-control"
                     onChange={this.handleInform.bind(this)}
@@ -340,8 +361,10 @@ export default class SignUp extends Component {
                       height: "50px",
                       fontWeight: "normal",
                       fontSize: "13px",
+                      fontFamily: "none",
                     }}
-                  />
+                  />{" "}
+                  <br />
                   <span
                     style={{
                       color: this.state.pwSuccess ? "green" : "red",
@@ -358,7 +381,7 @@ export default class SignUp extends Component {
               </tr>
               <tr>
                 <td>
-                  <input
+                  <Input
                     type="password"
                     className="form-control"
                     onChange={this.handleInform.bind(this)}
@@ -371,8 +394,10 @@ export default class SignUp extends Component {
                       height: "50px",
                       fontWeight: "normal",
                       fontSize: "13px",
+                      fontFamily: "none",
                     }}
                   />
+                  <br />
                   <span
                     style={{
                       color: this.state.samePwSuccess ? "green" : "red",
@@ -383,12 +408,13 @@ export default class SignUp extends Component {
                     }}
                   >
                     {this.state.samePwCkMsg}
-                  </span>
+                  </span>{" "}
                   <br />
                 </td>
               </tr>
               <tr>
                 <td style={{ textAlign: "center" }}>
+                  {" "}
                   <button
                     type="submit"
                     className="btn"
@@ -401,6 +427,26 @@ export default class SignUp extends Component {
                   >
                     회원가입
                   </button>
+                </td>
+              </tr>
+              <tr>
+                <td>
+                  <br />
+                  <NavLink to="/">
+                    <button
+                      type="button"
+                      className="btn"
+                      style={{
+                        backgroundColor: "white",
+                        color: "#9CC557 ",
+                        width: "250px",
+                        height: "30px",
+                        border: "1px solid #9CC557 ",
+                      }}
+                    >
+                      돌아가기
+                    </button>
+                  </NavLink>
                 </td>
               </tr>
             </tbody>
