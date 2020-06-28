@@ -14,7 +14,8 @@ import {
 } from "pages/index.js";
 import "css/mainStyle.css";
 import { Input } from "antd";
-import logo from "images/logo2.png";
+import logo from "images/logo.png";
+import logo2 from "images/logo2.png";
 class View extends React.Component {
   state = {
     main: true,
@@ -137,17 +138,18 @@ class View extends React.Component {
             style={{
               cursor: "pointer",
               lineHeight: "100px",
+
               zIndex: "1",
               position: "fixed",
-              left: "5%",
-              top: "6%",
+              left: "2%",
+              top: "3%",
             }}
           >
             <img
-              src={logo}
+              src={!this.state.main || this.state.bar ? logo2 : logo}
               alt=""
               style={{
-                backgroundPosition: "10px 10px",
+                backgroundPosition: "30px 20px",
                 width: "auto",
                 height: "100px",
               }}

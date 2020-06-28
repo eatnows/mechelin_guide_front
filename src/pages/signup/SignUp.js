@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import Axios from "util/axios";
-import logo from "images/logo2.png";
+import logo from "images/logo.png";
 import { Input } from "antd";
 import { NavLink } from "react-router-dom";
 export default class SignUp extends Component {
@@ -228,8 +228,8 @@ export default class SignUp extends Component {
                 <td>
                   <div
                     style={{
-                      width: "100px",
-                      height: "100px",
+                      width: "125px",
+                      height: "125px",
                       margin: "0 auto",
                     }}
                   >
@@ -238,7 +238,8 @@ export default class SignUp extends Component {
                       alt=""
                       style={{
                         width: "auto",
-                        height: "100px",
+                        height: "125px",
+                        marginLeft: "-24px",
                       }}
                     />
                   </div>

@@ -9,8 +9,7 @@ table {
   margin: 8vh auto;
   font-size: 1vw;
   vertical-align: middle;
-  border: 1px solid #9cc557;
-  background-color: rgba(156, 197, 87, 0.2);
+  border: 1px solid rgba(245, 145, 45);
 }
 .postTable tr {
 }

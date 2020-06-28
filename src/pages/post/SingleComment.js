@@ -1,11 +1,7 @@
 import React, { useState } from "react";
-import {
-  DislikeOutlined,
-  LikeOutlined,
-  DislikeFilled,
-  LikeFilled,
-} from "@ant-design/icons";
+import { LikeOutlined, LikeFilled } from "@ant-design/icons";
 import { Comment, List, Tooltip, Button } from "antd";
+
 const SingleComment = ({ item, cLikeChange, cUpdateClick, cDeleteChange }) => {
   //게시글 올린 날짜(현재시간 기준으로 얼마나 지났는지 표시)
   const nowTime = (data) => {
@@ -34,13 +30,12 @@ const SingleComment = ({ item, cLikeChange, cUpdateClick, cDeleteChange }) => {
   };
 
   const [likes, setLikes] = useState(`${item.likes}`);
-  const [dislikes, setDislikes] = useState(0);
   const [action, setAction] = useState(null);
 
   const like = (e) => {
-    setLikes(`${item.likes}`);
-    setAction("liked");
     cLikeChange(e);
+    setAction("liked");
+    setLikes(`${item.likes}`);
   };
 
   const data = [
@@ -51,6 +46,7 @@ const SingleComment = ({ item, cLikeChange, cUpdateClick, cDeleteChange }) => {
             title="Like"
             commentId={item.id}
             userId={sessionStorage.getItem("userId")}
+            fill="rgba(245,145,45)"
           >
             {React.createElement(
               action === "liked" ? LikeFilled : LikeOutlined,
@@ -59,7 +55,7 @@ const SingleComment = ({ item, cLikeChange, cUpdateClick, cDeleteChange }) => {
               }
             )}
           </Tooltip>
-          <span className="comment-action">{likes}</span>
+          <span className="comment-action"> {likes}</span>
         </span>,
         <span key="comment-list-reply-to-0">답글 달기</span>,
       ],
@@ -71,56 +67,67 @@ const SingleComment = ({ item, cLikeChange, cUpdateClick, cDeleteChange }) => {
   ];
 
   return (
-    <div>
-      <tr style={{ borderTop: "1px solid #9CC557", width: "100%" }}>
-        <td colSpan="5">
-          <List
-            className="comment-list"
-            itemLayout="horizontal"
-            dataSource={data}
-            renderItem={(a) => (
-              <li width="100%">
-                <Comment
-                  actions={a.actions}
-                  author={a.author}
-                  avatar={a.avatar}
-                  content={a.content}
-                  datetime={a.datetime}
-                />{" "}
-                {sessionStorage.getItem("userId") === item.user_id ? (
-                  <span style={{ float: "right" }}>
-                    <Button
-                      onClick={cUpdateClick}
-                      commentId={item.id}
-                      content={item.content}
-                      style={{
-                        color: "#7D67AF ",
-                        borderRadius: "5px",
-                        backgroundColor: "white",
-                      }}
-                    >
-                      수정
-                    </Button>
-                    <Button
-                      style={{
-                        color: "red",
-                        borderRadius: "5px",
-                        backgroundColor: "white",
-                      }}
-                      onClick={cDeleteChange}
-                      commentId={item.id}
-                    >
-                      삭제
-                    </Button>
-                  </span>
-                ) : (
-                  ""
-                )}
-              </li>
+    <div
+      style={{
+        borderBottom: "1px solid rgba(0,0,0,.2)",
+        paddingTop: "5px",
+        width: "100%",
+      }}
+    >
+      <List
+        className="comment-list"
+        itemLayout="horizontal"
+        dataSource={data}
+        renderItem={(a) => (
+          <li style={{ width: "48vw" }}>
+            <Comment
+              actions={a.actions}
+              author={a.author}
+              avatar={a.avatar}
+              content={a.content}
+              datetime={a.datetime}
+              style={{ float: "left", width: "40vw" }}
+            />{" "}
+            {sessionStorage.getItem("userId") === item.user_id ? (
+              <div
+                style={{
+                  width: "1vw",
+                  position: "absolute",
+                  top: "50%",
+                  right: "7%",
+                  transform: "translateY(-50%)",
+                }}
+              >
+                <Button
+                  onClick={cUpdateClick}
+                  commentId={item.id}
+                  content={item.content}
+                  style={{
+                    color: "#7D67AF ",
+                    borderRadius: "5px",
+                    backgroundColor: "white",
+                  }}
+                >
+                  수정
+                </Button>
+                <Button
+                  style={{
+                    color: "red",
+                    borderRadius: "5px",
+                    backgroundColor: "white",
+                  }}
+                  onClick={cDeleteChange}
+                  commentId={item.id}
+                >
+                  삭제
+                </Button>
+              </div>
+            ) : (
+              ""
             )}
-          />
-        </td>
-      </tr>
+          </li>
+        )}
+      />
     </div>
   );
 };

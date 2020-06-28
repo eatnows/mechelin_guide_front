@@ -4,7 +4,7 @@ import kakaotalk from "images/kakaotalk.png";
 import Axios from "util/axios";
 import { Input, Checkbox } from "antd";
 
-import logo from "images/logo2.png";
+import logo from "images/logo.png";
 import icon from "images/icon.PNG";
 class Login extends Component {
   constructor(props) {
@@ -128,9 +128,9 @@ class Login extends Component {
                 <td>
                   <div
                     style={{
-                      width: "100px",
-                      height: "100px",
-                      margin: "13vh auto 4vh",
+                      width: "125px",
+                      height: "125px",
+                      margin: "8vh auto 3vh",
                     }}
                   >
                     <img
@@ -138,7 +138,8 @@ class Login extends Component {
                       alt=""
                       style={{
                         width: "auto",
-                        height: "100px",
+                        height: "125px",
+                        marginLeft: "-25px",
                       }}
                     />
                   </div>
@@ -152,6 +153,7 @@ class Login extends Component {
                       type="checkbox"
                       onChange={this.ChangeCheck.bind(this)}
                       checked={this.state.checked}
+                      style={{ fontSize: "13px" }}
                     >
                       {" "}
                       로그인 상태 유지
@@ -265,7 +267,6 @@ class Login extends Component {
                     onClick={this.kUserLogin.bind(this)}
                     style={{
                       borderRadius: "100%",
-                      border: "1px solid lightgray",
                       width: "50px",
                       height: "50px",
                       backgroundColor: "#fee500",
@@ -289,7 +290,6 @@ class Login extends Component {
                       className="btn"
                       style={{
                         borderRadius: "100%",
-                        border: "1px solid lightgray",
                         width: "50px",
                         height: "50px",
                         backgroundColor: "#9CC557 ",
@@ -299,9 +299,9 @@ class Login extends Component {
                         src={icon}
                         style={{
                           textAlign: "center",
-                          width: "30px",
-                          height: "35px",
-                          marginLeft: "-3px",
+                          width: "auto",
+                          height: "50px",
+                          margin: "-5.5px 0 0 -23.5px",
                         }}
                         alt=""
                       />

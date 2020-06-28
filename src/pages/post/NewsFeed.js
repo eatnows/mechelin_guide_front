@@ -4,7 +4,10 @@ import Comment from "pages/post/Comment";
 import "css/postStyle.css";
 import profile from "images/default_profile.png";
 import insta from "images/insta.jpg";
+import heart from "images/heart.png";
+import heart_o from "images/heart_o.png";
 import { Rate } from "antd";
+import share from "images/share2.png";
 var nowTime = (data) => {
   let now = new Date().getTime();
   let date = new Date(0).setUTCSeconds(data) / 1000;
@@ -38,7 +41,7 @@ class NewsFeed extends React.Component {
       time: "",
       row: sessionStorage.getItem("userId"),
       realTime: "",
-      heart: "",
+      heart: false,
     };
   }
   componentWillMount() {
@@ -110,9 +113,10 @@ class NewsFeed extends React.Component {
       time: simpleTime,
     });
   };
-
-  /*좋아요 클릭시 이미지 변경 */
-  clickHeart = () => {
+  /*
+   * 공감 버튼 클릭시 실행되는 메소드
+   */
+  clickHeart = (e) => {
     if (this.state.heart) {
       this.setState({
         heart: false,
@@ -122,18 +126,47 @@ class NewsFeed extends React.Component {
         heart: true,
       });
     }
+    const url = `http://localhost:9000/mechelin/likes/post`;
+    Axios.post(url, {
+      user_id: sessionStorage.getItem("userId"),
+      post_id: e.target.getAttribute("postId"),
+    })
+      .then((response) => {
+        console.log(response.data);
+        this.onClickLikesRender();
+      })
+      .catch((error) => {
+        console.log("clickHeart" + error);
+      });
+  };
+  /*
+   *  공감 버튼을 눌렀을때 바로 반영될 수 있게 하는 메소드
+   */
+  onClickLikesRender = () => {
+    item = dataLength;
+    const url = `http://localhost:9000/mechelin/post/review?user_place_id=${props.userPlaceId}&row=${item}`;
+    Axios.get(url)
+      .then((response) => {
+        this.setState({
+          result: response.data,
+        });
+
+        item += 3;
+      })
+      .catch((error) => {
+        console.log("clickLikesRender" + error);
+      });
   };
 
   render() {
     return (
       <div>
-        <div className="sideMenu">뉴스피드</div>
         <div className="list">
           {this.state.Data.map((row, idx) => (
             <form>
               <table className="postTable">
                 <thead>
-                  <tr>
+                  <tr style={{ backgroundColor: "rgba(245, 145, 45, 0.2)" }}>
                     <th
                       colSpan="4"
                       style={{
@@ -152,7 +185,7 @@ class NewsFeed extends React.Component {
                       {row.name}
                     </th>
                   </tr>
-                  <tr style={{ backgroundColor: "white" }}>
+                  <tr>
                     <th
                       style={{
                         paddingRight: "0",
@@ -191,7 +224,7 @@ class NewsFeed extends React.Component {
                   </tr>
                 </thead>
                 <tbody>
-                  <tr style={{ backgroundColor: "white" }}>
+                  <tr>
                     <td colSpan="5">
                       <span
                         dangerouslySetInnerHTML={{ __html: row.content }}
@@ -200,37 +233,59 @@ class NewsFeed extends React.Component {
                     </td>
                   </tr>
                   <tr>
-                    <td
-                      colSpan="5"
-                      style={{
-                        textAlign: "center",
-                      }}
-                    >
+                    <td colSpan="5">
                       <div
                         style={{
                           height: "30px",
-                          width: "50px",
+                          width: "100%",
                           lineHeight: "30px",
-                          fontSize: "20px",
+                          marginBottom: "10px",
                         }}
                       >
                         <div
-                          className={
-                            this.state.heart ? "xi-heart-o" : "xi-heart"
-                          }
                           style={{
                             cursor: "pointer",
-                            fontSize: "25px",
-                            color: "rgba(156, 197, 87)",
+                            display: "inline-block",
                           }}
                           onClick={this.clickHeart.bind(this)}
                         >
-                          {" "}
+                          <img
+                            src={this.state.heart ? heart : heart_o}
+                            alt=""
+                            width="30"
+                            height="27"
+                          />
                         </div>{" "}
-                        <span style={{ color: "#7D67AF" }}>{row.likes}</span>
+                        <span
+                          style={{
+                            display: "inline-block",
+                            color: "#999",
+                            fontSize: "15px",
+                            verticalAlign: "middle",
+                          }}
+                        >
+                          {row.likes}
+                        </span>
+                        <img
+                          src={share}
+                          width="30"
+                          height="30"
+                          alt=""
+                          style={{ float: "right" }}
+                        />
                       </div>
+
+                      <div
+                        style={{
+                          width: "100%",
+                          height: "10px",
+                          borderBottom: "1px solid rgba(0,0,0,.2) ",
+                          textAlign: "center",
+                          marginBottom: "-25px",
+                        }}
+                      ></div>
                     </td>
-                  </tr>
+                  </tr>{" "}
                   <tr>
                     <td colSpan="5">
                       <Comment postId={row.id} />
