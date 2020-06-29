@@ -4,52 +4,16 @@ import { Pagination } from "antd";
 import Axios from "util/axios";
 
 // let pageStart = 0;
-const WishlistComponent = () => {
-  const perPageNum = 5;
-  const [pageStart, setPageStart] = useState(0);
-  const [totalcount, setTotalCount] = useState("");
-  const [render, setRender] = useState("");
-  const [result, setResult] = useState([]);
-  useEffect(() => {
-    const url = `wishlist/totalcount?user_id=${sessionStorage.getItem(
-      "userId"
-    )}`;
-    Axios.get(url)
-      .then((res) => {
-        console.log(res.data);
-        setTotalCount(res.data);
-      })
-      .catch((error) => {
-        console.log(error);
-      });
-  }, []);
-
-  useEffect(() => {
-    const url = `/wishlist/pagedata?user_id=${sessionStorage.getItem(
-      "userId"
-    )}&pageStart=${pageStart}&perPageNum=${perPageNum}`;
-    Axios.get(url)
-      .then((res) => {
-        console.log(res.data);
-        setResult(res.data);
-      })
-      .catch((error) => {
-        console.log(error);
-      });
-  }, [pageStart]);
-
+const WishlistComponent = (props) => {
   const onChangePage = (value) => {
-    console.log(value);
-    setPageStart((value - 1) * perPageNum);
-    //pageStart = value * 5 - 1;
-    console.log(pageStart);
-    setRender(render + 1);
+    props.onChangePage(value);
   };
+
   return (
     <div>
       <div>
         <h1>가보고 싶은 맛집</h1>
-        {[...result].map((contact, i) => {
+        {[...props.result].map((contact, i) => {
           return (
             <table>
               <tr>
@@ -73,9 +37,9 @@ const WishlistComponent = () => {
         <Pagination
           size="small"
           defaultCurrent={1}
-          defaultPageSize={perPageNum} //default size of page
+          defaultPageSize={props.perPageNum} //default size of page
           onChange={onChangePage}
-          total={totalcount}
+          total={props.totalcount}
         />
       </div>
     </div>
