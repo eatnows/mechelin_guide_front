@@ -12,7 +12,7 @@ const Review = (props) => {
   return (
     <div>
       <h2></h2>
-      <Post userPlaceId={props.userPlaceId} />
+      <Post userPlaceId={props.userPlaceId} pathFrom="review" />
     </div>
   );
 };

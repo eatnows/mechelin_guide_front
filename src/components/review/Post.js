@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import useIntersect from "./useIntersect";
-import Axios from "axios";
+import Axios from "util/axios";
 import Comment from "../../pages/post/Comment";
 import e from "cors";
 
@@ -89,10 +89,17 @@ const Post = (props) => {
   const [result, setResult] = useState([]);
   const [theposition, setTheposition] = useState("");
   const [likes, setLikes] = useState(false);
+
   console.log("state구역");
   /* fake async fetch */
   const fetchItems = async () => {
-    const url = `http://localhost:9000/mechelin/post/review?user_place_id=${props.userPlaceId}&row=${item}`;
+    let url = ``;
+    if (props.pathFrom === "timeline") {
+      url = `/post/timeline?user_id=${props.userId}&row=${item}`;
+    } else {
+      url = `/post/review?user_place_id=${props.userPlaceId}&row=${item}`;
+    }
+
     Axios.get(url)
       .then((response) => {
         console.log(response.data);
@@ -142,7 +149,7 @@ const Post = (props) => {
    * 공감 버튼 클릭시 실행되는 메소드
    */
   const onClickLikes = (e) => {
-    const url = `http://localhost:9000/mechelin/likes/post`;
+    const url = `/likes/post`;
     Axios.post(url, {
       user_id: sessionStorage.getItem("userId"),
       post_id: e.target.getAttribute("postId"),
@@ -162,7 +169,12 @@ const Post = (props) => {
     console.log(item);
     item = dataLength;
     console.log(item);
-    const url = `http://localhost:9000/mechelin/post/review?user_place_id=${props.userPlaceId}&row=${item}`;
+    let url = ``;
+    if (props.pathFrom === "timeline") {
+      url = `/post/timeline?user_id=${props.userId}&row=${item}`;
+    } else {
+      url = `/post/review?user_place_id=${props.userPlaceId}&row=${item}`;
+    }
     Axios.get(url)
       .then((response) => {
         setResult(response.data);
