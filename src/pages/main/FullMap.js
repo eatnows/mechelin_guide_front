@@ -7,7 +7,6 @@ import "react-quill/dist/quill.snow.css";
 import StarRate from "components/review/StarRate";
 import WriteFormMap from "components/map/WriteFormMap";
 import Axios from "util/axios";
-import map from "images/map.PNG";
 import {
   useHistory,
   withRouter,
