@@ -9,6 +9,7 @@ const WishlistComponent = () => {
   const [pageStart, setPageStart] = useState(0);
   const [totalcount, setTotalCount] = useState("");
   const [render, setRender] = useState("");
+  const [result, setResult] = useState([]);
   useEffect(() => {
     const url = `wishlist/totalcount?user_id=${sessionStorage.getItem(
       "userId"
@@ -30,6 +31,7 @@ const WishlistComponent = () => {
     Axios.get(url)
       .then((res) => {
         console.log(res.data);
+        setResult(res.data);
       })
       .catch((error) => {
         console.log(error);
@@ -45,13 +47,37 @@ const WishlistComponent = () => {
   };
   return (
     <div>
-      <Pagination
-        size="small"
-        defaultCurrent={1}
-        defaultPageSize={perPageNum} //default size of page
-        onChange={onChangePage}
-        total={totalcount}
-      />
+      <div>
+        <h1>가보고 싶은 맛집</h1>
+        {[...result].map((contact, i) => {
+          return (
+            <table>
+              <tr>
+                <td rowSpan="2">
+                  <img
+                    src={contact.front_image}
+                    alt=""
+                    style={{ width: "50px", height: "50px" }}
+                  />
+                </td>
+                <td>{contact.name}</td>
+              </tr>
+              <tr>
+                <td>{contact.address}</td>
+              </tr>
+            </table>
+          );
+        })}
+      </div>
+      <div>
+        <Pagination
+          size="small"
+          defaultCurrent={1}
+          defaultPageSize={perPageNum} //default size of page
+          onChange={onChangePage}
+          total={totalcount}
+        />
+      </div>
     </div>
   );
 };
