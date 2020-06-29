@@ -1,11 +1,14 @@
 import React, { Component } from "react";
 import { NavLink } from "react-router-dom";
 import kakaotalk from "images/kakaotalk.png";
+import KakaoLogin from "react-kakao-login";
 import Axios from "util/axios";
 import { Input, Checkbox } from "antd";
-
+import styled from "styled-components";
 import logo from "images/logo2.png";
 import icon from "images/icon.PNG";
+import { parse } from "@babel/core";
+
 class Login extends Component {
   constructor(props) {
     super(props);
@@ -76,27 +79,23 @@ class Login extends Component {
       });
   };
   //카카오 로그인 메소드
-  kUserLogin = (e) => {
-    setTimeout(() => {
-      console.log("되나?");
-      const url = "/klogin";
-      Axios.get(url)
-        .then((res) => {
-          this.setState({
-            kUserEmail: res.data.email,
-            access_token: res.data.accessToken,
-          });
-          sessionStorage.setItem("kLogin", true);
-          this.setState({
-            kUser: true,
-          });
-          this.getUserId();
-        })
-        .catch((err) => {
-          console.log(`카카오 로그인 에러:${err}`);
+  resKakao = (kakao) => {
+    const url = `/kakaologin`;
+    Axios.post(url, kakao)
+      .then((res) => {
+        sessionStorage.setItem("kLogin", true);
+        sessionStorage.setItem("userId", res.data.id);
+        this.setState({
+          userId: res.data.id,
+          email: res.data.email,
+          kUser: true,
         });
-    }, 30000);
+      })
+      .catch((error) => {
+        console.log("카카오 로그인 에러" + error);
+      });
   };
+
   //email 값 보내고 user id 가져오는 메소드
   getUserId = () => {
     const email =
@@ -258,30 +257,14 @@ class Login extends Component {
               </tr>
               <tr>
                 <td style={{ textAlign: "center" }}>
-                  <a
-                    href="https://kauth.kakao.com/oauth/authorize?client_id=71100263fd4bab7558fb465089e72859&redirect_uri=http://localhost:9000/mechelin/klogin&response_type=code"
-                    className="btn"
-                    target="_blank"
-                    onClick={this.kUserLogin.bind(this)}
-                    style={{
-                      borderRadius: "100%",
-                      border: "1px solid lightgray",
-                      width: "50px",
-                      height: "50px",
-                      backgroundColor: "#fee500",
+                  <KakaoLogin
+                    jsKey="fd5a9908b3ef1290f9c3d52aadfd29f1"
+                    onSuccess={(result) => {
+                      this.resKakao(result);
                     }}
-                  >
-                    <img
-                      src={kakaotalk}
-                      style={{
-                        textAlign: "center",
-                        width: "28px",
-                        height: "28px",
-                        margin: "5px 0 0 -1px",
-                      }}
-                      alt=""
-                    />
-                  </a>
+                    onFailure={(result) => console.log(result)}
+                    getProfile={true}
+                  />
                   &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp;
                   <NavLink to="/signup">
                     <button
@@ -317,4 +300,27 @@ class Login extends Component {
   }
 }
 
+const KakaoBtn = () => {
+  const style = {
+    borderRadius: "100%",
+    border: "1px solid lightgray",
+    width: "50px",
+    height: "50px",
+    backgroundColor: "#fee500",
+  };
+  return (
+    <div style={style}>
+      <img
+        src={kakaotalk}
+        style={{
+          textAlign: "center",
+          width: "28px",
+          height: "28px",
+          margin: "5px 0 0 -1px",
+        }}
+        alt=""
+      />
+    </div>
+  );
+};
 export default Login;
