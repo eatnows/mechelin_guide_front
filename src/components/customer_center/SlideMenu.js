@@ -46,8 +46,6 @@ class SlideMenu extends React.Component {
         >
           <Menu.Item key="1">FAQ</Menu.Item>
           <Menu.Item key="2">1:1문의</Menu.Item>
-          <Menu.Item key="3">맛집수정</Menu.Item>
-          <Menu.Item key="4">Option 4</Menu.Item>
         </SubMenu>
       </Menu>
     );
