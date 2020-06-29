@@ -1,4 +1,5 @@
 import React from "react";
+import WishlistComponent from "components/wishlist/Wishlist";
 
 class WishList extends React.Component {
   constructor(props) {
@@ -9,7 +10,11 @@ class WishList extends React.Component {
     this.props.getState(false);
   }
   render() {
-    return <div>WishList</div>;
+    return (
+      <div>
+        <WishlistComponent />
+      </div>
+    );
   }
 }
 export default WishList;
