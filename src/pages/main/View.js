@@ -13,8 +13,10 @@ import {
   MyList,
 } from "pages/index.js";
 import "css/mainStyle.css";
+import { Input } from "antd";
+import logo from "images/logo.png";
+import logo2 from "images/logo2.png";
 import Axios from "util/axios";
-import logo from "images/logo2.png";
 let keyword;
 let userPlaceId;
 let listData2 = [];
@@ -100,7 +102,7 @@ class View extends React.Component {
     }
   };
 
-  /*값이 변하면 스테이트에 변한 값을 담아줌 */
+  /*검색창 값이 변하면 스테이트에 변한 값을 담아줌 */
   changeInput = (e) => {
     keyword = e.target.value;
     this.setState({
@@ -165,6 +167,14 @@ class View extends React.Component {
     });
   };
 
+  /*검색 버튼 클릭시 검색창 초기화*/
+  cleanSearch = () => {
+    this.setState({
+      search: "",
+      bar: false,
+    });
+  };
+
   render() {
     return (
       <div>
@@ -190,21 +200,20 @@ class View extends React.Component {
               console.log("a");
             }}
             style={{
-              width: "100px",
-              height: "100px",
               cursor: "pointer",
               lineHeight: "100px",
+
               zIndex: "1",
               position: "fixed",
-              left: "5%",
-              top: "6%",
+              left: "2%",
+              top: "3%",
             }}
           >
             <img
-              src={logo}
+              src={!this.state.main || this.state.bar ? logo2 : logo}
               alt=""
               style={{
-                backgroundPosition: "10px 10px",
+                backgroundPosition: "30px 20px",
                 width: "auto",
                 height: "100px",
               }}
@@ -383,9 +392,9 @@ class View extends React.Component {
               }}
             >
               {" "}
-              <input
+              <Input
                 value={this.state.search}
-                placeholder="검색"
+                placeholder="내슐랭 리뷰를 찾아보세요!"
                 className="search"
                 name="search"
                 maxLength="100"
@@ -402,7 +411,7 @@ class View extends React.Component {
                   padding: "0 13px 0 10px",
                   marginLeft: "6px",
                 }}
-              ></input>
+              />
               <NavLink to={"/mechelin/result/" + this.state.userId}>
                 <button
                   type="button"
@@ -556,7 +565,7 @@ class View extends React.Component {
             <div
               className="bottomMenu"
               style={{
-                position: "absolute",
+                position: "fixed",
                 bottom: "20%",
                 height: "5vh",
                 lineHeight: "5vh",

@@ -7,11 +7,9 @@ table {
 .postTable {
   width: 50vw;
   margin: 8vh auto;
-  border-radius: 20px;
   font-size: 1vw;
   vertical-align: middle;
-  border: 1px solid #9cc557;
-  /*; */
+  border: 1px solid rgba(245, 145, 45);
 }
 .postTable tr {
 }
