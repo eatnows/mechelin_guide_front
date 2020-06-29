@@ -167,14 +167,6 @@ class View extends React.Component {
     });
   };
 
-  /*검색 버튼 클릭시 검색창 초기화*/
-  cleanSearch = () => {
-    this.setState({
-      search: "",
-      bar: false,
-    });
-  };
-
   render() {
     return (
       <div>
