@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import Axios from "axios";
+import Axios from "util/axios";
 import Comment from "./Comment";
 import "css/postStyle.css";
 import useIntersect from "components/review/useIntersect";
@@ -14,12 +14,11 @@ import { Rate } from "antd";
 const fakeFetch = (delay = 1000) =>
   new Promise((res) => setTimeout(res, delay));
 
-const ListItem = ({ row, i, likesChange }) => {
+const ListItem = ({ row, i, likesChange, wishClick }) => {
   useEffect(() => {
     if (row.user_id === sessionStorage.getItem("userId")) {
       setShowBtn(true);
     }
-    heartBoolean();
   }, []);
 
   const [showBtn, setShowBtn] = useState(false);
@@ -210,6 +209,7 @@ const ListItem = ({ row, i, likesChange }) => {
                     alt=""
                     style={{ cursor: "pointer", float: "right" }}
                   />
+
                   <img
                     src={star}
                     width="28.5"
@@ -220,6 +220,9 @@ const ListItem = ({ row, i, likesChange }) => {
                       cursor: "pointer",
                       marginRight: "10px",
                     }}
+                    onClick={wishClick}
+                    placeId={row.place_id}
+                    postId={row.id}
                   />
                 </div>
 
@@ -346,6 +349,23 @@ const NewsFeed = (props) => {
         console.log("onClickLikesRender" + error);
       });
   };
+  /*
+   * 위시리스트 버튼 클릭 시
+   */
+  const wishClick = (e) => {
+    const url = `/wishlist/add`;
+    Axios.post(url, {
+      user_id: sessionStorage.getItem("userId"),
+      place_id: e.target.getAttribute("placeId"),
+      post_id: e.target.getAttribute("postId"),
+    })
+      .then((res) => {
+        console.log(res.data);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  };
   return (
     <div>
       <div
@@ -356,7 +376,14 @@ const NewsFeed = (props) => {
         }}
       >
         {[...result].map((contact, i) => {
-          return <ListItem row={contact} i={i} likesChange={onClickLikes} />;
+          return (
+            <ListItem
+              row={contact}
+              i={i}
+              likesChange={onClickLikes}
+              wishClick={wishClick}
+            />
+          );
         })}
         <div ref={setRef} className="Loading">
           {isLoading && "Loading..."}
