@@ -42,7 +42,7 @@ class View extends React.Component {
     }
   }
 
-  /*다른 페이지에서 스테이트 값을 받아와서 스테이트값 변경을 시켜줌*/
+  /*다른 페이지에서 스테이트 값을 받아와서 스테이트값을 변경시켜줌*/
   getState = (state) => {
     this.setState({ main: state });
   };
@@ -167,14 +167,6 @@ class View extends React.Component {
     });
   };
 
-  /*검색 버튼 클릭시 검색창 초기화*/
-  cleanSearch = () => {
-    this.setState({
-      search: "",
-      bar: false,
-    });
-  };
-
   render() {
     return (
       <div>
@@ -201,8 +193,7 @@ class View extends React.Component {
             }}
             style={{
               cursor: "pointer",
-              lineHeight: "100px",
-
+              lineHeight: "17.5vh",
               zIndex: "1",
               position: "fixed",
               left: "2%",
@@ -213,9 +204,8 @@ class View extends React.Component {
               src={!this.state.main || this.state.bar ? logo2 : logo}
               alt=""
               style={{
-                backgroundPosition: "30px 20px",
                 width: "auto",
-                height: "100px",
+                height: "17.5vh",
               }}
             />
           </div>

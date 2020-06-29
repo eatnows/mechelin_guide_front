@@ -10,6 +10,7 @@ import share from "images/share2.png";
 import star_g from "images/star_g.png";
 import e from "cors";
 import { Rate } from "antd";
+import { RedditSquareFilled } from "@ant-design/icons";
 
 const fakeFetch = (delay = 1000) =>
   new Promise((res) => setTimeout(res, delay));
@@ -72,25 +73,28 @@ const ListItem = ({ row, i, likesChange }) => {
 
   /*좋아요 눌렀는지 확인 */
   const heartBoolean = () => {
-    const url = `http://localhost:9000/mechelin/likes/ispost?id=${sessionStorage.getItem(
+    const url = `http://localhost:9000/mechelin/likes/ispost?user_id=${sessionStorage.getItem(
       "userId"
     )}&post_id=${row.id}`;
     Axios.get(url)
       .then((res) => {
-        console.log("1:" + res.data);
-        return res.data;
+        console.log(res.data);
+        if (res.data === 1) {
+          setCheckHeart(true);
+        } else {
+          setCheckHeart(false);
+        }
       })
       .catch((error) => {
         console.log("heartBoolean" + error);
       });
-    return 1;
   };
   return (
     <div>
       <form>
         <table className="postTable">
           <thead>
-            <tr style={{ backgroundColor: "rgba(245, 145, 45, 0.2)" }}>
+            <tr style={{ backgroundColor: "rgba(0, 0, 0, 0.05)" }}>
               <th
                 colSpan="4"
                 style={{
@@ -165,13 +169,13 @@ const ListItem = ({ row, i, likesChange }) => {
                     marginBottom: "10px",
                   }}
                 >
-                  {heartBoolean() === 1 ? (
+                  {checkHeart ? (
                     <img
                       src={heart}
                       alt=""
                       width="30"
                       height="27"
-                      onClick={heartBoolean}
+                      onClick={likesChange}
                       postId={row.id}
                       style={{
                         cursor: "pointer",
@@ -184,7 +188,7 @@ const ListItem = ({ row, i, likesChange }) => {
                       alt=""
                       width="30"
                       height="27"
-                      onClick={heartBoolean}
+                      onClick={likesChange}
                       postId={row.id}
                       style={{
                         cursor: "pointer",
@@ -192,6 +196,7 @@ const ListItem = ({ row, i, likesChange }) => {
                       }}
                     />
                   )}
+
                   <span
                     style={{
                       display: "inline-block",
@@ -247,7 +252,7 @@ const ListItem = ({ row, i, likesChange }) => {
   );
 };
 
-let item = 5;
+let item = 3;
 let dataLength = 0;
 let theposition;
 let userPlaceId;
@@ -279,15 +284,17 @@ const NewsFeed = (props) => {
     setState((prev) => ({ ...prev, isLoading: true }));
     await fakeFetch();
     setState((prev) => ({
-      itemCount: prev.itemCount + 5,
+      itemCount: prev.itemCount + 3,
       isLoading: false,
     }));
-    item += 5;
+    item = dataLength;
+    item += 3;
   };
   /* initial fetch */
   useEffect(() => {
     fetchItems();
     props.getState(false);
+    console.log(item);
   }, []);
   const [_, setRef] = useIntersect(async (entry, observer) => {
     observer.unobserve(entry.target);
@@ -322,6 +329,7 @@ const NewsFeed = (props) => {
       .then((response) => {
         console.log(response.data);
         onClickLikesRender();
+        this.refs.heartBoolean();
       })
       .catch((error) => {
         console.log("onClickLikes" + error);
@@ -340,7 +348,7 @@ const NewsFeed = (props) => {
     Axios.get(url)
       .then((response) => {
         setResult(response.data);
-        item += 5;
+        item += 3;
       })
       .catch((error) => {
         console.log("onClickLikesRender" + error);

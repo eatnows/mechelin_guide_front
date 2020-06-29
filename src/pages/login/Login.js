@@ -3,8 +3,7 @@ import { NavLink } from "react-router-dom";
 import kakaotalk from "images/kakaotalk.png";
 import Axios from "util/axios";
 import { Input, Checkbox } from "antd";
-
-import logo from "images/logo.png";
+import logo from "images/logo2.png";
 import icon from "images/icon.PNG";
 class Login extends Component {
   constructor(props) {

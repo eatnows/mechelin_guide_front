@@ -216,6 +216,7 @@ class FullMap extends React.Component {
   showReviewForm = () => {
     this.setState({
       reviewModal: true,
+      filterModal: false,
     });
   };
   /*필터 모달창 보이게 */
@@ -447,12 +448,13 @@ class FullMap extends React.Component {
                   left: "50%",
                   top: "7%",
                   transform: "translateX(-50%)",
+                  color: "rgba(0, 0, 0, 0.65)",
                 }}
               >
                 <h3
                   style={{
                     margin: "3vh 2vw",
-                    fontFamily: "Nanum Gothic Coding",
+                    color: "rgba(0, 0, 0, 0.65)",
                   }}
                 >
                   리뷰 작성
@@ -499,6 +501,7 @@ class FullMap extends React.Component {
                       fontSize: "12px",
                       paddingLeft: "3px",
                       paddingRight: "3px",
+                      color: "rgba(0, 0, 0, 0.65)",
                     }}
                     onChange={this.changeState.bind(this)}
                   >
@@ -527,6 +530,7 @@ class FullMap extends React.Component {
                         clear: "both",
                         display: "inline-block",
                         width: "7vw",
+                        marginLeft: "0.2vw",
                       }}
                     >
                       <StarRate
@@ -542,10 +546,11 @@ class FullMap extends React.Component {
                     <div
                       style={{
                         width: "2vw",
+                        marginLeft: "0.2vw",
                         lineHeight: "5vh",
                         display: "inline-block",
                         fontSize: "1.5em",
-                        fontFamily: "Nanum Gothic Coding",
+                        color: "rgba(0, 0, 0, 0.65)",
                       }}
                     >
                       {this.state.starScore === 0
@@ -634,13 +639,14 @@ class FullMap extends React.Component {
           <div
             className="filterModal"
             style={{
-              display: this.state.filterModal ? "block" : "none",
+              display:
+                this.state.filterModal && !this.props.bar ? "block" : "none",
               clear: "both",
               background: "white",
               border: "1px solid rgba(0,0,0,.2)",
               borderRadius: "10px",
-              width: "20vw",
-              height: "50vh",
+              width: "15vw",
+              height: "41vh",
               boxShadow: "5px 5px 5px rgba(0,0,0,.1)",
               position: "absolute",
               zIndex: "9999",
@@ -649,38 +655,86 @@ class FullMap extends React.Component {
             }}
           >
             <div
-              className="closeFilter xi-close xi-2x"
+              className="closeFilter xi-close"
               onClick={() => {
                 this.setState({ filterModal: false });
               }}
               style={{
                 position: "absolute",
-                right: "5%",
-                top: "5%",
+                right: "4%",
+                top: "4%",
+                fontSize: "3vh",
                 color: "rgba(245,145,45)",
                 cursor: "pointer",
+                zIndex: "1",
               }}
             ></div>
-            <Switch
-              defaultChecked
-              onChange={this.onClickMyMapFilter.bind(this)}
-            />{" "}
-            내 맛집
-            <br />
-            <Switch
-              defaultChecked
-              onChange={this.onChangeFriendMapFilter.bind(this)}
-            />{" "}
-            친구 맛집
-            <br />
-            <Checkbox.Group
-              options={categoryOptions}
-              defaultValue={["한식", "양식", "중식", "일식"]}
-              onChange={this.onClickCategoryFilter.bind(this)}
-            />
-            <br />
-            <Switch onChange={this.onClickBlackListFilter.bind(this)} />{" "}
-            블랙리스트
+            <div
+              id="content"
+              style={{
+                width: "15vw",
+                height: "37vh",
+                position: "absolute",
+                left: "50%",
+                top: "50%",
+                transform: "translate(-50%,-50%)",
+              }}
+            >
+              <div
+                style={{
+                  fontSize: "2.5vh",
+                  marginLeft: "2vh",
+                  textAlign: "left",
+                }}
+              >
+                필터
+              </div>
+              <hr
+                style={{
+                  borderColor: "rgba(0,0,0,.2)",
+                  margin: "1vh 0 3vh",
+                }}
+              />
+              <div
+                className="checkButton"
+                style={{
+                  width: "8vw",
+                  height: "auto",
+                  margin: "0 auto",
+                }}
+              >
+                <Switch
+                  defaultChecked
+                  onChange={this.onClickMyMapFilter.bind(this)}
+                  style={{ marginRight: "1.5vh" }}
+                />
+                내 맛집
+                <br />
+                <br />
+                <Switch
+                  defaultChecked
+                  onChange={this.onChangeFriendMapFilter.bind(this)}
+                  style={{ marginRight: "1.5vh" }}
+                />
+                친구 맛집
+                <br />
+                <br />
+                <Switch
+                  onChange={this.onClickBlackListFilter.bind(this)}
+                  style={{ marginRight: "1.5vh" }}
+                />
+                블랙리스트
+                <br />
+                <br />
+                <Checkbox.Group
+                  style={{ width: "11vw", lineHeight: "5vh" }}
+                  options={categoryOptions}
+                  defaultValue={["한식", "양식", "중식", "일식"]}
+                  onChange={this.onClickCategoryFilter.bind(this)}
+                />
+                <br />
+              </div>
+            </div>
           </div>
         </section>
       </div>
