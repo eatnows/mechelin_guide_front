@@ -9,7 +9,7 @@ class MyPage extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      kUser: this.props.kUser,
+      kUser: sessionStorage.getItem("kLogin"),
       email: "",
       introduce: "",
       newIntro: "",
@@ -33,15 +33,17 @@ class MyPage extends React.Component {
   }
 
   userInfo = () => {
+    console.log("state kuser: " + this.state.kUser);
     const url = `/friends/profile?id=${sessionStorage.getItem("userId")}`;
     Axios.get(url)
       .then((res) => {
         console.log(res);
         this.setState({
           email: res.data.email,
+          introduce: res.data.introduce,
+          newIntro: res.data.introduce,
           nickname: res.data.nickname,
           newNickname: res.data.nickname,
-          introduce: res.data.introduce,
           introChange: false,
           nickChange: false,
         });
@@ -190,7 +192,7 @@ class MyPage extends React.Component {
     if (this.state.pwSuccess) {
       const url = "/changepwd/reset";
       Axios.post(url, {
-        email: this.state.email,
+        id: sessionStorage.getItem("userId"),
         password: this.state.newPassword,
       })
         .then((res) => {
@@ -201,6 +203,29 @@ class MyPage extends React.Component {
         });
     } else {
       alert("변경할 수 없습니다. 기입하신 정보를 다시 확인해주세요.");
+    }
+  };
+
+  // 회원 탈퇴
+  dropUser = (e) => {
+    var dropPass = window.prompt("탈퇴하려면 비밀번호를 재입력하세요");
+    if (window.confirm("정말 탈퇴하시겠습니까?")) {
+      const url = `/dropout`;
+      Axios.post(url, {
+        id: sessionStorage.getItem("userId"),
+        password: dropPass,
+      })
+        .then((res) => {
+          if (res.data.check_item === "valid") {
+            sessionStorage.removeItem("userId");
+            window.location.reload();
+          } else {
+            alert("비밀번호가 맞지 않습니다");
+          }
+        })
+        .catch((err) => {
+          console.log("회원 탈퇴 error: " + err);
+        });
     }
   };
 
@@ -315,74 +340,104 @@ class MyPage extends React.Component {
                   )}
                 </tr>
                 <tr>
-                  <td>비밀번호</td>
-                  <td>
-                    <Input.Password
-                      placeholder="비밀번호"
-                      name="newPassword"
-                      onChange={this.handleInform.bind(this)}
-                      onKeyUp={this.checkPW.bind(this)}
-                      style={{
-                        width: "250px",
-                        outline: "none",
-                        height: "50px",
-                        fontWeight: "normal",
-                        fontSize: "13px",
-                        fontFamily: "none",
-                      }}
-                    />{" "}
-                    <br />
-                    <span
-                      style={{
-                        color: this.state.pwSuccess ? "green" : "red",
-                        fontSize: "10px",
-                        fontWeight: "normal",
-                        textAlign: "center",
-                        margin: "10px auto",
-                      }}
-                    >
-                      {this.state.possiblePwCkMsg}
-                    </span>
-                  </td>
+                  <td>비밀번호 변경</td>
+                  {this.state.kUser ? (
+                    <td>카카오 유저는 비밀번호를 변경하실 수 없습니다</td>
+                  ) : (
+                    <td>
+                      <Input.Password
+                        placeholder="비밀번호"
+                        name="newPassword"
+                        onChange={this.handleInform.bind(this)}
+                        onKeyUp={this.checkPW.bind(this)}
+                        style={{
+                          width: "250px",
+                          outline: "none",
+                          height: "50px",
+                          fontWeight: "normal",
+                          fontSize: "13px",
+                          fontFamily: "none",
+                        }}
+                      />{" "}
+                      <br />
+                      <span
+                        style={{
+                          color: this.state.pwSuccess ? "green" : "red",
+                          fontSize: "10px",
+                          fontWeight: "normal",
+                          textAlign: "center",
+                          margin: "10px auto",
+                        }}
+                      >
+                        {this.state.possiblePwCkMsg}
+                      </span>
+                    </td>
+                  )}
                 </tr>
+
+                {this.state.kUser ? (
+                  ""
+                ) : (
+                  <tr>
+                    <td>(비밀번호 확인)</td>
+                    <td>
+                      <Input
+                        type="password"
+                        className="form-control"
+                        onChange={this.handleInform.bind(this)}
+                        onKeyUp={this.checkPW.bind(this)}
+                        name="rePassword"
+                        placeholder="비밀번호 재입력"
+                        style={{
+                          width: "250px",
+                          outline: "none",
+                          height: "50px",
+                          fontWeight: "normal",
+                          fontSize: "13px",
+                          fontFamily: "none",
+                        }}
+                      />
+                      <br />
+                      <span
+                        style={{
+                          color: this.state.samePwSuccess ? "green" : "red",
+                          fontSize: "10px",
+                          fontWeight: "normal",
+                          textAlign: "center",
+                          margin: "10px auto",
+                        }}
+                      >
+                        {this.state.samePwCkMsg}
+                      </span>{" "}
+                      <br />
+                    </td>
+                  </tr>
+                )}
+
                 <tr>
-                  <td></td>
-                  <td>
-                    <Input
-                      type="password"
-                      className="form-control"
-                      onChange={this.handleInform.bind(this)}
-                      onKeyUp={this.checkPW.bind(this)}
-                      name="rePassword"
-                      placeholder="비밀번호 재입력"
-                      style={{
-                        width: "250px",
-                        outline: "none",
-                        height: "50px",
-                        fontWeight: "normal",
-                        fontSize: "13px",
-                        fontFamily: "none",
-                      }}
-                    />
-                    <br />
-                    <span
-                      style={{
-                        color: this.state.samePwSuccess ? "green" : "red",
-                        fontSize: "10px",
-                        fontWeight: "normal",
-                        textAlign: "center",
-                        margin: "10px auto",
-                      }}
-                    >
-                      {this.state.samePwCkMsg}
-                    </span>{" "}
-                    <br />
-                  </td>
-                </tr>
-                <tr>
+                  {this.state.kUser ? (
+                    ""
+                  ) : (
+                    <td style={{ textAlign: "center" }}>
+                      <button
+                        onClick={this.ChangePwd.bind(this)}
+                        type="button"
+                        className="btn"
+                        style={{
+                          margin: "5vh 0",
+                          backgroundColor: "rgba(245,145,45)",
+                          color: "white",
+                          height: "40px",
+                          width: "100px",
+                        }}
+                      >
+                        (PW)저장
+                      </button>
+                    </td>
+                  )}
                   <td style={{ textAlign: "center" }}>
                     <button
-                      onClick={this.ChangePwd.bind(this)}
+                      onClick={this.dropUser.bind(this)}
                       type="button"
                       className="btn"
                       style={{
@@ -393,7 +448,7 @@ class MyPage extends React.Component {
                         width: "100px",
                       }}
                     >
-                      저장하기
+                      회원탈퇴
                     </button>
                   </td>
                 </tr>
