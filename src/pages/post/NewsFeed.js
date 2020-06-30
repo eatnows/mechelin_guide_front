@@ -15,12 +15,18 @@ import { RedditSquareFilled } from "@ant-design/icons";
 const fakeFetch = (delay = 1000) =>
   new Promise((res) => setTimeout(res, delay));
 
-const ListItem = ({ row, i, likesChange, wishClick }) => {
+let checkHearts = false;
+const ListItem = ({ row, i, likesChange, wishClick, render }) => {
   useEffect(() => {
+    heartBoolean();
     if (row.user_id === sessionStorage.getItem("userId")) {
       setShowBtn(true);
     }
   }, []);
+
+  useEffect(() => {
+    heartBoolean();
+  }, [render]);
 
   const [showBtn, setShowBtn] = useState(false);
   const [checkHeart, setCheckHeart] = useState(false);
@@ -53,16 +59,19 @@ const ListItem = ({ row, i, likesChange, wishClick }) => {
 
   /*좋아요 눌렀는지 확인 */
   const heartBoolean = () => {
-    const url = `/likes/ispost?id=${sessionStorage.getItem("userId")}&post_id=${
-      row.id
-    }`;
+    console.log("실행됨");
+    const url = `/likes/ispost?user_id=${sessionStorage.getItem(
+      "userId"
+    )}&post_id=${row.id}`;
     Axios.get(url)
       .then((res) => {
         console.log(res.data);
         if (res.data === 1) {
-          setCheckHeart(true);
+          checkHearts = true;
+          setCheckHeart(checkHearts);
         } else {
-          setCheckHeart(false);
+          checkHearts = false;
+          setCheckHeart(checkHearts);
         }
       })
       .catch((error) => {
@@ -158,6 +167,7 @@ const ListItem = ({ row, i, likesChange, wishClick }) => {
                       height="27"
                       onClick={likesChange}
                       postId={row.id}
+                      checkHeart={checkHeart}
                       style={{
                         cursor: "pointer",
                         display: "inline-block",
@@ -171,6 +181,7 @@ const ListItem = ({ row, i, likesChange, wishClick }) => {
                       height="27"
                       onClick={likesChange}
                       postId={row.id}
+                      checkHeart={checkHeart}
                       style={{
                         cursor: "pointer",
                         display: "inline-block",
@@ -242,6 +253,7 @@ let dataLength = 0;
 const NewsFeed = (props) => {
   const [state, setState] = useState({ itemCount: 3, isLoading: false });
   const [result, setResult] = useState([]);
+  const [render, setRender] = useState(0);
   console.log("state구역");
   /* fake async fetch */
   const fetchItems = async () => {
@@ -297,6 +309,7 @@ const NewsFeed = (props) => {
       .then((response) => {
         console.log(response.data);
         onClickLikesRender();
+        setRender(render + 1);
       })
       .catch((error) => {
         console.log("onClickLikes" + error);
@@ -326,6 +339,8 @@ const NewsFeed = (props) => {
    */
   const wishClick = (e) => {
     const url = `/wishlist/add`;
+    console.log("위시리스트 클릭");
+    console.log(e.target.getAttribute("placeId"));
     Axios.post(url, {
       user_id: sessionStorage.getItem("userId"),
       place_id: e.target.getAttribute("placeId"),
@@ -343,6 +358,7 @@ const NewsFeed = (props) => {
         console.log(error);
       });
   };
+
   function success(str) {
     Modal.success({
       content: str,
@@ -360,6 +376,7 @@ const NewsFeed = (props) => {
       onOk() {},
     });
   }
+
   return (
     <div>
       <div
@@ -376,8 +393,8 @@ const NewsFeed = (props) => {
               i={i}
               likesChange={onClickLikes}
               wishClick={wishClick}
-              changeHeart={changeHeart}
               key={i}
+              render={render}
             />
           );
         })}
