@@ -75,12 +75,28 @@ const QnAComponent = () => {
 
   return (
     <div>
+      {" "}
+      <caption
+        style={{
+          fontWeight: "bold",
+          fontSize: "1.5vw",
+          width: "10vw",
+          marginBottom: "1.3vw",
+          backgroundColor: "white",
+        }}
+      >
+        1:1 문의하기
+      </caption>
       <div
         style={{
-          width: "500px",
+          width: "50vw",
+          borderTop: "1px solid rgba(0,0,0,.2)",
+          padding: "3vw 0",
+          textAlign: "center",
         }}
       >
         <Form form={form} layout="horizontal" onFinish={onFinish}>
+          {" "}
           <Form.Item
             name="subject"
             label="제목"
@@ -105,6 +121,7 @@ const QnAComponent = () => {
           <Form.Item
             name="content"
             label="문의 내용"
+            style={{ textAlign: "left" }}
             labelCol={{
               span: 6,
             }}
@@ -138,24 +155,33 @@ const QnAComponent = () => {
             </Button>
           </Form.Item>
         </Form>
-        <div style={{ width: "300px" }}>
-          <hr />
-          <h3>내가 한 문의 내역</h3>
-          <Collapse onChange={callback}>
-            {result.map((contact, i) => {
-              return (
-                <Panel header={contact.subject} key={i}>
-                  <p>{contact.content}</p>
-                  <Collapse defaultActiveKey={i}>
-                    <Panel header="답변" key={i}>
-                      <p>{contact.reply}</p>
-                    </Panel>
-                  </Collapse>
-                </Panel>
-              );
-            })}
-          </Collapse>
-        </div>
+      </div>
+      <div style={{ width: "50vw" }}>
+        <caption
+          style={{
+            fontWeight: "bold",
+            fontSize: "1.5vw",
+            width: "40vw",
+            marginBottom: "1.3vw",
+            backgroundColor: "white",
+          }}
+        >
+          내가 한 문의 내역
+        </caption>
+        <Collapse onChange={callback} style={{ marginBottom: "3vw" }}>
+          {result.map((contact, i) => {
+            return (
+              <Panel header={contact.subject} key={i}>
+                <p>{contact.content}</p>
+                <Collapse defaultActiveKey={i}>
+                  <Panel header="답변" key={i}>
+                    <p>{contact.reply}</p>
+                  </Panel>
+                </Collapse>
+              </Panel>
+            );
+          })}
+        </Collapse>
       </div>
     </div>
   );
