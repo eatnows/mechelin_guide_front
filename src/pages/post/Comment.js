@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from "react";
-
+import { Input, Button } from "antd";
 import Axios from "axios";
 import SingleComment from "./SingleComment";
-
+import profile from "images/default_profile.png";
 /*
   댓글 영역
 */
@@ -71,6 +71,9 @@ const Comment = ({ postId }) => {
     댓글 추가
   */
   const commentInsert = (postId, userId) => {
+    if (writeComment === "") {
+      return;
+    }
     const url = `http://localhost:9000/mechelin/comment/insertcomment`;
     Axios.post(url, {
       user_id: userId,
@@ -128,34 +131,44 @@ const Comment = ({ postId }) => {
         );
       })}
       {/* 새 댓글 작성 영역 */}
-      <tr>
-        <td>
-          <img alt="" />
-          프로필사진
-        </td>
-        <td colSpan="3">
-          <input
-            type="text"
-            value={writeComment}
-            onInput={(e) => setWriteComment(e.target.value)}
-          />
-          {/* 댓글수정 시 내용변경 */}
+      <div style={{ marginTop: "10px", padding: "15px 0" }}>
+        <img
+          src={profile}
+          alt=""
+          style={{
+            width: "33px",
+            height: "33px",
+            display: "inline-block",
+          }}
+        />
+        <Input
+          type="text"
+          value={writeComment}
+          onInput={(e) => setWriteComment(e.target.value)}
+          style={{
+            marginLeft: "10px",
+            width: "84%",
+            height: "35px",
+            display: "inline-block",
+          }}
+        />
+        {/* 댓글수정 시 내용변경 */}
+        <div style={{ marginLeft: "10px", display: "inline-block" }}>
           {updateView ? (
-            <button type="button" onClick={(e) => onCommentUpdate()}>
+            <Button type="primary" onClick={(e) => onCommentUpdate()}>
               수정
-            </button>
+            </Button>
           ) : (
-            <button
-              type="button"
+            <Button
               onClick={() =>
                 commentInsert(postId, sessionStorage.getItem("userId"))
               }
             >
               작성
-            </button>
+            </Button>
           )}
-        </td>
-      </tr>
+        </div>
+      </div>
     </div>
   );
 };

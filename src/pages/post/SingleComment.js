@@ -1,4 +1,6 @@
-import React from "react";
+import React, { useState } from "react";
+import { LikeOutlined, LikeFilled } from "@ant-design/icons";
+import { Comment, List, Tooltip, Button } from "antd";
 
 const SingleComment = ({ item, cLikeChange, cUpdateClick, cDeleteChange }) => {
   //게시글 올린 날짜(현재시간 기준으로 얼마나 지났는지 표시)
@@ -27,50 +29,105 @@ const SingleComment = ({ item, cLikeChange, cUpdateClick, cDeleteChange }) => {
     return `${simpleTime}`;
   };
 
-  return (
-    <div>
-      <tr>
-        <td>
-          (프로필사진 자리)
-          <img src={item.profile_url} alt="" />
-        </td>
-      </tr>
-      <tr>
-        <td>닉네임 {item.nickname}</td>
-        <td>수정시간 {nowTime(item.updated_at)}</td>
-      </tr>
-      <tr>
-        <td>내용 {item.content}</td>
-      </tr>
-      <tr>
-        {/* 좋아요 버튼 */}
-        <button
-          type="button"
-          onClick={cLikeChange}
-          commentId={item.id}
-          userId={sessionStorage.getItem("userId")}
-        >
-          좋아요 {item.likes}
-        </button>
+  const [likes, setLikes] = useState(`${item.likes}`);
+  const [action, setAction] = useState(null);
 
-        {/* 로그인 유저가 댓글의 유저면 수정/삭제 표시 */}
-        {sessionStorage.getItem("userId") === item.user_id ? (
-          <span>
-            <button
-              onClick={cUpdateClick}
-              commentId={item.id}
-              content={item.content}
-            >
-              수정
-            </button>
-            <button onClick={cDeleteChange} commentId={item.id}>
-              삭제
-            </button>
-          </span>
-        ) : (
-          ""
+  const like = (e) => {
+    cLikeChange(e);
+    setAction("liked");
+    setLikes(`${item.likes}`);
+  };
+
+  const data = [
+    {
+      actions: [
+        <span key="comment-basic-like">
+          <Tooltip
+            title="Like"
+            commentId={item.id}
+            userId={sessionStorage.getItem("userId")}
+            fill="rgba(245,145,45)"
+          >
+            {React.createElement(
+              action === "liked" ? LikeFilled : LikeOutlined,
+              {
+                onClick: like,
+              }
+            )}
+          </Tooltip>
+          <span className="comment-action"> {likes}</span>
+        </span>,
+        <span key="comment-list-reply-to-0">답글 달기</span>,
+      ],
+      author: `${item.nickname}`,
+      avatar: `${item.profile_url}`,
+      content: <p>{item.content}</p>,
+      datetime: `${nowTime(item.updated_at)}`,
+    },
+  ];
+
+  return (
+    <div
+      style={{
+        borderBottom: "1px solid rgba(0,0,0,.2)",
+        paddingTop: "5px",
+        width: "100%",
+      }}
+    >
+      <List
+        className="comment-list"
+        itemLayout="horizontal"
+        dataSource={data}
+        renderItem={(a) => (
+          <li style={{ width: "48vw" }}>
+            <Comment
+              actions={a.actions}
+              author={a.author}
+              avatar={a.avatar}
+              content={a.content}
+              datetime={a.datetime}
+              style={{ float: "left", width: "40vw" }}
+            />{" "}
+            {sessionStorage.getItem("userId") === item.user_id ? (
+              <div
+                style={{
+                  width: "1vw",
+                  position: "absolute",
+                  top: "50%",
+                  right: "7%",
+                  transform: "translateY(-50%)",
+                }}
+              >
+                <Button
+                  onClick={cUpdateClick}
+                  commentId={item.id}
+                  content={item.content}
+                  style={{
+                    color: "#7D67AF ",
+                    borderRadius: "5px",
+                    backgroundColor: "white",
+                  }}
+                >
+                  수정
+                </Button>
+                <Button
+                  style={{
+                    color: "red",
+                    borderRadius: "5px",
+                    backgroundColor: "white",
+                  }}
+                  onClick={cDeleteChange}
+                  commentId={item.id}
+                >
+                  삭제
+                </Button>
+              </div>
+            ) : (
+              ""
+            )}
+          </li>
         )}
-      </tr>
+      />
     </div>
   );
 };
