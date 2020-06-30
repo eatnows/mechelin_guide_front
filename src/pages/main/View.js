@@ -261,6 +261,8 @@ class View extends React.Component {
               <WishList
                 getState={this.getState.bind(this)}
                 userId={this.state.userId}
+                reivewPageMove={this.reivewPageMove.bind(this)}
+                history={this.props.history}
               />
             );
           }}

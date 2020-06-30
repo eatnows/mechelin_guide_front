@@ -2,7 +2,7 @@ import { useState, useEffect, useCallback } from "react";
 
 const baseOption = {
   root: null,
-  threshold: 0.5,
+  threshold: 0,
   rootMargin: "0px",
 };
 const useIntersect = (onIntersect, option) => {

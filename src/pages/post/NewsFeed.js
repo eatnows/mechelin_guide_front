@@ -8,21 +8,32 @@ import heart_o from "images/heart_o.png";
 import star from "images/star.png";
 import share from "images/share2.png";
 import star_g from "images/star_g.png";
-import { Rate } from "antd";
+
+import e from "cors";
+import { Rate, Modal } from "antd";
+import { RedditSquareFilled } from "@ant-design/icons";
+
 
 const fakeFetch = (delay = 1000) =>
   new Promise((res) => setTimeout(res, delay));
 
-const ListItem = ({ row, i, likesChange }) => {
+let checkHearts = false;
+const ListItem = ({ row, i, likesChange, wishClick, render }) => {
   useEffect(() => {
+    heartBoolean();
     if (row.user_id === sessionStorage.getItem("userId")) {
       setShowBtn(true);
     }
-    heartBoolean();
   }, []);
+
+  useEffect(() => {
+    heartBoolean();
+    wishlistBoolean();
+  }, [render]);
 
   const [showBtn, setShowBtn] = useState(false);
   const [checkHeart, setCheckHeart] = useState(false);
+  const [checkWishlist, setCheckWishlist] = useState(false);
 
   /* 게시한 시간 표시*/
   const nowTime = (data) => {
@@ -52,22 +63,51 @@ const ListItem = ({ row, i, likesChange }) => {
 
   /*좋아요 눌렀는지 확인 */
   const heartBoolean = () => {
-    const url = `likes/ispost?user_id=${sessionStorage.getItem(
+
+    const url = `/likes/ispost?user_id=${sessionStorage.getItem(
+
       "userId"
     )}&post_id=${row.id}`;
     Axios.get(url)
       .then((res) => {
         console.log(res.data);
         if (res.data === 1) {
-          setCheckHeart(true);
+
+          checkHearts = true;
+          setCheckHeart(checkHearts);
         } else {
-          setCheckHeart(false);
+          checkHearts = false;
+          setCheckHeart(checkHearts);
+
         }
       })
       .catch((error) => {
         console.log("heartBoolean" + error);
       });
   };
+
+
+  /* 위시리스트 등록되어있는지 확인 */
+  const wishlistBoolean = () => {
+    console.log("실행됨");
+    const url = `/wishlist/exist?user_id=${sessionStorage.getItem(
+      "userId"
+    )}&place_id=${row.place_id}`;
+    Axios.get(url)
+      .then((res) => {
+        console.log("위시리스트");
+        console.log(res.data);
+        if (res.data === 1) {
+          setCheckWishlist(true);
+        } else {
+          setCheckWishlist(false);
+        }
+      })
+      .catch((error) => {
+        console.log("heartBoolean" + error);
+      });
+  };
+
 
   return (
     <div key={i}>
@@ -157,6 +197,7 @@ const ListItem = ({ row, i, likesChange }) => {
                       height="27"
                       onClick={likesChange}
                       postId={row.id}
+                      checkHeart={checkHeart}
                       style={{
                         cursor: "pointer",
                         display: "inline-block",
@@ -170,6 +211,7 @@ const ListItem = ({ row, i, likesChange }) => {
                       height="27"
                       onClick={likesChange}
                       postId={row.id}
+                      checkHeart={checkHeart}
                       style={{
                         cursor: "pointer",
                         display: "inline-block",
@@ -195,17 +237,37 @@ const ListItem = ({ row, i, likesChange }) => {
                     alt=""
                     style={{ cursor: "pointer", float: "right" }}
                   />
-                  <img
-                    src={star}
-                    width="28.5"
-                    height="28.5"
-                    alt=""
-                    style={{
-                      float: "right",
-                      cursor: "pointer",
-                      marginRight: "10px",
-                    }}
-                  />
+                  {checkWishlist ? (
+                    <img
+                      src={star}
+                      width="28.5"
+                      height="28.5"
+                      alt=""
+                      style={{
+                        float: "right",
+                        cursor: "pointer",
+                        marginRight: "10px",
+                      }}
+                      onClick={wishClick}
+                      placeId={row.place_id}
+                      postId={row.id}
+                    />
+                  ) : (
+                    <img
+                      src={star_g}
+                      width="28.5"
+                      height="28.5"
+                      alt=""
+                      style={{
+                        float: "right",
+                        cursor: "pointer",
+                        marginRight: "10px",
+                      }}
+                      onClick={wishClick}
+                      placeId={row.place_id}
+                      postId={row.id}
+                    />
+                  )}
                 </div>
 
                 <div
@@ -237,10 +299,13 @@ let dataLength = 0;
 const NewsFeed = (props) => {
   const [state, setState] = useState({ itemCount: 3, isLoading: false });
   const [result, setResult] = useState([]);
+
+  const [render, setRender] = useState(0);
   console.log("state구역");
   /* fake async fetch */
   const fetchItems = async () => {
-    const url = `post/newsfeed/getallpost?user_id=${sessionStorage.getItem(
+    const url = `/post/newsfeed/getallpost?user_id=${sessionStorage.getItem(
+
       "userId"
     )}&row=${item}`;
     Axios.get(url)
@@ -284,7 +349,9 @@ const NewsFeed = (props) => {
    */
   const onClickLikes = (e) => {
     console.log(sessionStorage.getItem("userId"));
-    const url = `likes/post`;
+
+    const url = `/likes/post`;
+
     Axios.post(url, {
       user_id: sessionStorage.getItem("userId"),
       post_id: e.target.getAttribute("postId"),
@@ -292,6 +359,7 @@ const NewsFeed = (props) => {
       .then((response) => {
         console.log(response.data);
         onClickLikesRender();
+        setRender(render + 1);
       })
       .catch((error) => {
         console.log("onClickLikes" + error);
@@ -304,7 +372,9 @@ const NewsFeed = (props) => {
     console.log(item);
     item = dataLength;
     console.log(item);
-    const url = `post/newsfeed/getallpost?user_id=${sessionStorage.getItem(
+
+    const url = `/post/newsfeed/getallpost?user_id=${sessionStorage.getItem(
+
       "userId"
     )}&row=${item}`;
     Axios.get(url)
@@ -316,6 +386,50 @@ const NewsFeed = (props) => {
         console.log("onClickLikesRender" + error);
       });
   };
+  /*
+   * 위시리스트 버튼 클릭 시
+   */
+  const wishClick = (e) => {
+    const url = `/wishlist/add`;
+    console.log("위시리스트 클릭");
+    console.log(e.target.getAttribute("placeId"));
+    Axios.post(url, {
+      user_id: sessionStorage.getItem("userId"),
+      place_id: e.target.getAttribute("placeId"),
+      post_id: e.target.getAttribute("postId"),
+    })
+      .then((res) => {
+        console.log(res.data);
+        if (res.data === "위시리스트에 추가 되었습니다!") {
+          success(res.data);
+        } else {
+          info(res.data);
+        }
+        setRender(render + 1);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  };
+
+  function success(str) {
+    Modal.success({
+      content: str,
+    });
+  }
+
+  function info(str) {
+    Modal.info({
+      title: str,
+      content: (
+        <div>
+          <p>위시리스트 혹은 리뷰글이 등록된 맛집입니다.</p>
+        </div>
+      ),
+      onOk() {},
+    });
+  }
+
   return (
     <div>
       <div
@@ -326,7 +440,18 @@ const NewsFeed = (props) => {
         }}
       >
         {[...result].map((contact, i) => {
-          return <ListItem row={contact} key={i} likesChange={onClickLikes} />;
+
+          return (
+            <ListItem
+              row={contact}
+              i={i}
+              likesChange={onClickLikes}
+              wishClick={wishClick}
+              key={i}
+              render={render}
+            />
+          );
+
         })}
         <div ref={setRef} className="Loading">
           {isLoading && "Loading..."}
