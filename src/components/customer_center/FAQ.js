@@ -42,8 +42,10 @@ const FAQComponent = () => {
         </Panel>
         <Panel header="맛집 정보가 잘못되었어요!" key="5">
           <p>
+
             맛집의 정보가 틀릴 경우, 고객센터의 <b>맛집 수정 요청 게시판</b>으로
             문의를 주시면 확인 후 수정하도록 하겠습니다.
+
           </p>
         </Panel>
         <Panel header="회원탈퇴는 어떻게 하나요?" key="6">
