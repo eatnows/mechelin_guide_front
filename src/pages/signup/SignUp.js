@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import Axios from "util/axios";
-import logo from "images/logo.png";
+import logo from "images/logo2.png";
 import { Input } from "antd";
 import { NavLink } from "react-router-dom";
 export default class SignUp extends Component {
@@ -250,7 +250,6 @@ export default class SignUp extends Component {
                 <td>
                   <Input
                     type="text"
-                    className="form-control"
                     onChange={this.handleInform.bind(this)}
                     onKeyUp={this.checkEmail.bind(this)}
                     onKeyDown={this.changeBtn.bind(this)}
@@ -349,9 +348,7 @@ export default class SignUp extends Component {
               </tr>
               <tr>
                 <td>
-                  <Input
-                    type="password"
-                    className="form-control"
+                  <Input.Password
                     onChange={this.handleInform.bind(this)}
                     onKeyUp={this.checkPW.bind(this)}
                     name="password"
@@ -382,9 +379,7 @@ export default class SignUp extends Component {
               </tr>
               <tr>
                 <td>
-                  <Input
-                    type="password"
-                    className="form-control"
+                  <Input.Password
                     onChange={this.handleInform.bind(this)}
                     onKeyUp={this.checkPW.bind(this)}
                     name="rePassword"

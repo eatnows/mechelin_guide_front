@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import Axios from "axios";
+import Axios from "util/axios";
 import Comment from "./Comment";
 import "css/postStyle.css";
 import useIntersect from "components/review/useIntersect";
@@ -8,7 +8,6 @@ import heart_o from "images/heart_o.png";
 import star from "images/star.png";
 import share from "images/share2.png";
 import star_g from "images/star_g.png";
-import e from "cors";
 import { Rate } from "antd";
 
 const fakeFetch = (delay = 1000) =>
@@ -25,6 +24,7 @@ const ListItem = ({ row, i, likesChange }) => {
   const [showBtn, setShowBtn] = useState(false);
   const [checkHeart, setCheckHeart] = useState(false);
 
+  /* 게시한 시간 표시*/
   const nowTime = (data) => {
     let now = new Date().getTime();
     let date = new Date(0).setUTCSeconds(data) / 1000;
@@ -50,19 +50,18 @@ const ListItem = ({ row, i, likesChange }) => {
     return `${simpleTime}`;
   };
 
-  const test = (e) => {
-    console.dir(e.target);
-    const url = `http://localhost:9000/mechelin/likes/ispost?id=${sessionStorage.getItem(
+  /*좋아요 눌렀는지 확인 */
+  const heartBoolean = () => {
+    const url = `likes/ispost?user_id=${sessionStorage.getItem(
       "userId"
     )}&post_id=${row.id}`;
     Axios.get(url)
       .then((res) => {
-        console.log("1:" + res.data);
-        if (res == "1") {
-          // e.target.setAttribute("src", heart);
-          e.target.src = heart;
+        console.log(res.data);
+        if (res.data === 1) {
+          setCheckHeart(true);
         } else {
-          e.target.setAttribute("src", heart);
+          setCheckHeart(false);
         }
       })
       .catch((error) => {
@@ -70,27 +69,12 @@ const ListItem = ({ row, i, likesChange }) => {
       });
   };
 
-  /*좋아요 눌렀는지 확인 */
-  const heartBoolean = () => {
-    const url = `http://localhost:9000/mechelin/likes/ispost?id=${sessionStorage.getItem(
-      "userId"
-    )}&post_id=${row.id}`;
-    Axios.get(url)
-      .then((res) => {
-        console.log("1:" + res.data);
-        return res.data;
-      })
-      .catch((error) => {
-        console.log("heartBoolean" + error);
-      });
-    return 1;
-  };
   return (
-    <div>
+    <div key={i}>
       <form>
         <table className="postTable">
           <thead>
-            <tr style={{ backgroundColor: "rgba(245, 145, 45, 0.2)" }}>
+            <tr style={{ backgroundColor: "rgba(0, 0, 0, 0.05)" }}>
               <th
                 colSpan="4"
                 style={{
@@ -126,7 +110,7 @@ const ListItem = ({ row, i, likesChange }) => {
                   }}
                 />
               </th>
-              <th colspan="3" style={{ paddingLeft: "10px" }}>
+              <th colSpan="3" style={{ paddingLeft: "10px" }}>
                 {row.nickname}
                 <br />
                 {nowTime(row.created_at)}
@@ -165,13 +149,13 @@ const ListItem = ({ row, i, likesChange }) => {
                     marginBottom: "10px",
                   }}
                 >
-                  {heartBoolean() === 1 ? (
+                  {checkHeart ? (
                     <img
                       src={heart}
                       alt=""
                       width="30"
                       height="27"
-                      onClick={heartBoolean}
+                      onClick={likesChange}
                       postId={row.id}
                       style={{
                         cursor: "pointer",
@@ -184,7 +168,7 @@ const ListItem = ({ row, i, likesChange }) => {
                       alt=""
                       width="30"
                       height="27"
-                      onClick={heartBoolean}
+                      onClick={likesChange}
                       postId={row.id}
                       style={{
                         cursor: "pointer",
@@ -192,6 +176,7 @@ const ListItem = ({ row, i, likesChange }) => {
                       }}
                     />
                   )}
+
                   <span
                     style={{
                       display: "inline-block",
@@ -247,20 +232,15 @@ const ListItem = ({ row, i, likesChange }) => {
   );
 };
 
-let item = 5;
+let item = 3;
 let dataLength = 0;
-let theposition;
-let userPlaceId;
-let likes = "";
 const NewsFeed = (props) => {
   const [state, setState] = useState({ itemCount: 3, isLoading: false });
   const [result, setResult] = useState([]);
-  const [theposition, setTheposition] = useState("");
-  const [likes, setLikes] = useState(false);
   console.log("state구역");
   /* fake async fetch */
   const fetchItems = async () => {
-    const url = `http://localhost:9000/mechelin/post/newsfeed/getallpost?user_id=${sessionStorage.getItem(
+    const url = `post/newsfeed/getallpost?user_id=${sessionStorage.getItem(
       "userId"
     )}&row=${item}`;
     Axios.get(url)
@@ -279,15 +259,17 @@ const NewsFeed = (props) => {
     setState((prev) => ({ ...prev, isLoading: true }));
     await fakeFetch();
     setState((prev) => ({
-      itemCount: prev.itemCount + 5,
+      itemCount: prev.itemCount + 3,
       isLoading: false,
     }));
-    item += 5;
+    item = dataLength;
+    item += 3;
   };
   /* initial fetch */
   useEffect(() => {
     fetchItems();
     props.getState(false);
+    console.log(item);
   }, []);
   const [_, setRef] = useIntersect(async (entry, observer) => {
     observer.unobserve(entry.target);
@@ -297,24 +279,12 @@ const NewsFeed = (props) => {
   const { itemCount, isLoading } = state;
   if (!itemCount) return null;
 
-  const listenToScroll = () => {
-    const winScroll =
-      document.body.scrollTop || document.documentElement.scrollTop;
-
-    const height =
-      document.documentElement.scrollHeight -
-      document.documentElement.clientHeight;
-
-    const scrolled = winScroll / height;
-
-    setTheposition(scrolled);
-  };
   /*
    * 공감 버튼 클릭시 실행되는 메소드
    */
   const onClickLikes = (e) => {
     console.log(sessionStorage.getItem("userId"));
-    const url = `http://localhost:9000/mechelin/likes/post`;
+    const url = `likes/post`;
     Axios.post(url, {
       user_id: sessionStorage.getItem("userId"),
       post_id: e.target.getAttribute("postId"),
@@ -334,13 +304,13 @@ const NewsFeed = (props) => {
     console.log(item);
     item = dataLength;
     console.log(item);
-    const url = `http://localhost:9000/mechelin/post/newsfeed/getallpost?user_id=${sessionStorage.getItem(
+    const url = `post/newsfeed/getallpost?user_id=${sessionStorage.getItem(
       "userId"
     )}&row=${item}`;
     Axios.get(url)
       .then((response) => {
         setResult(response.data);
-        item += 5;
+        item += 3;
       })
       .catch((error) => {
         console.log("onClickLikesRender" + error);
@@ -356,7 +326,7 @@ const NewsFeed = (props) => {
         }}
       >
         {[...result].map((contact, i) => {
-          return <ListItem row={contact} i={i} likesChange={onClickLikes} />;
+          return <ListItem row={contact} key={i} likesChange={onClickLikes} />;
         })}
         <div ref={setRef} className="Loading">
           {isLoading && "Loading..."}

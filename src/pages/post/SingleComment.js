@@ -1,8 +1,14 @@
-import React, { useState } from "react";
+import React from "react";
 import { LikeOutlined, LikeFilled } from "@ant-design/icons";
 import { Comment, List, Tooltip, Button } from "antd";
 
-const SingleComment = ({ item, cLikeChange, cUpdateClick, cDeleteChange }) => {
+const SingleComment = ({
+  item,
+  i,
+  cLikeChange,
+  cUpdateClick,
+  cDeleteChange,
+}) => {
   //게시글 올린 날짜(현재시간 기준으로 얼마나 지났는지 표시)
   const nowTime = (data) => {
     let now = new Date().getTime();
@@ -29,13 +35,14 @@ const SingleComment = ({ item, cLikeChange, cUpdateClick, cDeleteChange }) => {
     return `${simpleTime}`;
   };
 
-  const [likes, setLikes] = useState(`${item.likes}`);
-  const [action, setAction] = useState(null);
-
   const like = (e) => {
-    cLikeChange(e);
-    setAction("liked");
-    setLikes(`${item.likes}`);
+    cLikeChange(item.id, sessionStorage.getItem("userId"));
+  };
+  const updateComment = (e) => {
+    cUpdateClick(item.id, item.content);
+  };
+  const deleteComment = (e) => {
+    cDeleteChange(item.id);
   };
 
   const data = [
@@ -49,13 +56,13 @@ const SingleComment = ({ item, cLikeChange, cUpdateClick, cDeleteChange }) => {
             fill="rgba(245,145,45)"
           >
             {React.createElement(
-              action === "liked" ? LikeFilled : LikeOutlined,
+              item.now_liked === true ? LikeFilled : LikeOutlined,
               {
                 onClick: like,
               }
             )}
           </Tooltip>
-          <span className="comment-action"> {likes}</span>
+          <span className="comment-action"> {item.likes}</span>
         </span>,
         <span key="comment-list-reply-to-0">답글 달기</span>,
       ],
@@ -68,6 +75,7 @@ const SingleComment = ({ item, cLikeChange, cUpdateClick, cDeleteChange }) => {
 
   return (
     <div
+      key={i}
       style={{
         borderBottom: "1px solid rgba(0,0,0,.2)",
         paddingTop: "5px",
@@ -99,7 +107,7 @@ const SingleComment = ({ item, cLikeChange, cUpdateClick, cDeleteChange }) => {
                 }}
               >
                 <Button
-                  onClick={cUpdateClick}
+                  onClick={updateComment}
                   commentId={item.id}
                   content={item.content}
                   style={{
@@ -116,7 +124,7 @@ const SingleComment = ({ item, cLikeChange, cUpdateClick, cDeleteChange }) => {
                     borderRadius: "5px",
                     backgroundColor: "white",
                   }}
-                  onClick={cDeleteChange}
+                  onClick={deleteComment}
                   commentId={item.id}
                 >
                   삭제
