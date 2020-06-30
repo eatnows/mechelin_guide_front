@@ -15,22 +15,23 @@ class FAQ extends React.Component {
       <div>
         <div
           style={{
-            width: "400px",
-            height: "600px",
+            width: "10vw",
+            height: "10vw",
             position: "absolute",
-            marginTop: "200px",
-            marginLeft: "50px",
+            left: "3%",
+            top: "25%",
           }}
         >
           <SlideMenu />
         </div>
         <div
           style={{
-            width: "800px",
-            height: "500px",
+            width: "50vw",
+            height: "auto",
             position: "absolute",
-            marginTop: "200px",
-            marginLeft: "500px",
+            left: "50%",
+            top: "50%",
+            transform: "translate(-50%,-50%)",
           }}
         >
           <FAQComponent />

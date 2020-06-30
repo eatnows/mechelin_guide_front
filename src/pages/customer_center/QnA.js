@@ -12,26 +12,23 @@ class QnA extends React.Component {
   }
   render() {
     return (
-      <div>
+      <div style={{ overflow: "auto", height: "100vh", width: "100vw" }}>
         <div
           style={{
-            width: "400px",
-            height: "600px",
+            width: "10vw",
+            height: "10vw",
             position: "absolute",
-            marginTop: "200px",
-            marginLeft: "50px",
+            left: "3%",
+            top: "25%",
           }}
         >
           <SlideMenu />
         </div>
         <div
           style={{
-            overflow: "auto",
-            width: "100%",
-            height: "800px",
-            position: "absolute",
-            marginTop: "200px",
-            marginLeft: "400px",
+            width: "50vw",
+            margin: "3vw auto",
+            height: "90vh",
           }}
         >
           <QnAComponent />
