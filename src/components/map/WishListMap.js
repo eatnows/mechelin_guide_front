@@ -2,12 +2,13 @@
 import React, { useEffect, useState, useRef, useCallback } from "react";
 import "./WishListMapStyle.css";
 import Axios from "util/axios";
+import LocationIcon from "images/location-02.png";
 
 let createmap;
 const WishListMap = (props) => {
   const [latitude, setLatitude] = useState(37.49879629938368);
   const [longitude, setLongitude] = useState(127.03168720284643);
-
+  const [map, setMap] = useState("");
   const [myLatitude, setMyLatitude] = useState([]);
   const [myLongitude, setMyLongitude] = useState([]);
   const [myPlaceName, setMyPlaceName] = useState([]);
@@ -22,8 +23,12 @@ const WishListMap = (props) => {
   const [myCategory, setMyCategory] = useState([]);
   const [myBlackList, setMyBlackList] = useState([]);
   const [markers, setMarkers] = useState([]);
+  const [moveLatLon, setMoveLatLon] = useState("");
 
   useEffect(() => {
+    // gps 받아오는 메소드 실행
+    getLocation();
+
     setMyLatitude([]);
     setMyLongitude([]);
     setMyPlaceName([]);
@@ -69,13 +74,39 @@ const WishListMap = (props) => {
         };
         // 지도를 생성합니다
         createmap = new kakao.maps.Map(mapContainer, mapOption);
-
+        setMap(createmap);
         // setTimeout(() => {
         //   markerLoad();
         // }, 50);
       });
     };
-  }, [props.result]);
+  }, []);
+
+  /*
+      GPS 받아오는 메소드
+    */
+  let getLocation = () => {
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          //latitude = position.coords.latitude;
+          //longitude = position.coords.longitude;
+          setLatitude(position.coords.latitude);
+          setLongitude(position.coords.longitude);
+        },
+        (error) => {
+          console.error(error);
+        },
+        {
+          enableHighAccuracy: false,
+          maximumAge: 0,
+          timeout: Infinity,
+        }
+      );
+    } else {
+      alert("GPS를 지원하지 않습니다.");
+    }
+  };
 
   const markerLoad = () => {
     /*
@@ -360,7 +391,20 @@ const WishListMap = (props) => {
         }
       });
     };
-  }, []);
+  }, [props.result]);
+
+  /*
+   * 좌표로 화면 부드럽게 이동
+   */
+  const panTo = () => {
+    // 이동할 위도 경도 위치를 생성합니다
+    setMoveLatLon(new kakao.maps.LatLng(latitude, longitude));
+
+    // 지도 중심을 부드럽게 이동시킵니다
+    // 만약 이동할 거리가 지도 화면보다 크면 부드러운 효과 없이 이동합니다
+
+    map.panTo(moveLatLon);
+  };
 
   return (
     <div>
@@ -368,6 +412,26 @@ const WishListMap = (props) => {
         id="wishListMap"
         style={{ width: "800px", height: "650px", zIndex: "0" }}
       ></div>
+      <div
+        id="gps"
+        onClick={panTo}
+        onMouseDown={panTo}
+        style={{
+          width: "30px",
+          height: "30px",
+          position: "absolute",
+          top: "0",
+          right: "0",
+          bottom: "0",
+          zIndex: "1",
+          margin: "10px 10px 30px 0",
+          padding: "5px",
+          opacity: "0.8",
+        }}
+        className="bg_white"
+      >
+        <img src={LocationIcon} alt="" style={{ width: "20px" }} />
+      </div>
     </div>
   );
 };

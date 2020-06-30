@@ -52,8 +52,8 @@ const WishList = (props) => {
       <div
         style={{
           position: "absolute",
-          marginTop: "300px",
-          marginLeft: "100px",
+          marginTop: "30vh",
+          marginLeft: "40vh",
         }}
       >
         <WishlistComponent
@@ -69,8 +69,8 @@ const WishList = (props) => {
           width: "800px",
           height: "650px",
           position: "absolute",
-          marginTop: "150px",
-          marginLeft: "600px",
+          marginTop: "20vh",
+          marginLeft: "90vh",
         }}
       >
         <WishListMap

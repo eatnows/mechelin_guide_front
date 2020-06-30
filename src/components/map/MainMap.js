@@ -2,6 +2,7 @@
 import React, { useEffect, useState, useRef, useCallback } from "react";
 import "./MainMapStyle.css";
 import Axios from "util/axios";
+import LocationIcon from "images/location-02.png";
 
 //let closeBtn;
 let createmap;
@@ -10,6 +11,7 @@ const MainMap = (props) => {
   const [longitude, setLongitude] = useState(127.03168720284643);
   const [map, setMap] = useState("");
   const [userId, setUserId] = useState(sessionStorage.getItem("userId"));
+  const [moveLatLon, setMoveLatLon] = useState("");
   // 나의 맛집 리스트들 필요한 변수
   const [myLatitude, setMyLatitude] = useState([]);
   const [myLongitude, setMyLongitude] = useState([]);
@@ -28,6 +30,8 @@ const MainMap = (props) => {
   const [markers, setMarkers] = useState([]);
 
   useEffect(() => {
+    // gps 받아오는 메소드 실행
+    getLocation();
     const url = `/place/allplace?user_id=${sessionStorage.getItem("userId")}`;
     const friendUrl = `/place/friendsplace?user_id=${sessionStorage.getItem(
       "userId"
@@ -233,6 +237,45 @@ const MainMap = (props) => {
     }
   };
 
+  /*
+   *  GPS 받아오는 메소드
+   */
+  let getLocation = () => {
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          //latitude = position.coords.latitude;
+          //longitude = position.coords.longitude;
+          setLatitude(position.coords.latitude);
+          setLongitude(position.coords.longitude);
+        },
+        (error) => {
+          console.error(error);
+        },
+        {
+          enableHighAccuracy: false,
+          maximumAge: 0,
+          timeout: Infinity,
+        }
+      );
+    } else {
+      alert("GPS를 지원하지 않습니다.");
+    }
+  };
+
+  /*
+   * 좌표로 화면 부드럽게 이동
+   */
+  const panTo = () => {
+    // 이동할 위도 경도 위치를 생성합니다
+    setMoveLatLon(new kakao.maps.LatLng(latitude, longitude));
+
+    // 지도 중심을 부드럽게 이동시킵니다
+    // 만약 이동할 거리가 지도 화면보다 크면 부드러운 효과 없이 이동합니다
+
+    map.panTo(moveLatLon);
+  };
+
   useEffect(() => {
     const script = document.createElement("script");
     script.async = true;
@@ -430,6 +473,25 @@ const MainMap = (props) => {
         id="map"
         style={{ width: "100%", height: "100vh", zIndex: "0" }}
       ></div>
+      <div
+        id="gps"
+        onClick={panTo}
+        onMouseDown={panTo}
+        style={{
+          width: "60px",
+          height: "60px",
+          position: "absolute",
+          right: "0",
+          bottom: "0",
+          zIndex: "1",
+          margin: "10px 10px 30px 0",
+          padding: "5px",
+          opacity: "0.8",
+        }}
+        className="bg_white"
+      >
+        <img src={LocationIcon} alt="" style={{ width: "50px" }} />
+      </div>
     </div>
   );
 };
