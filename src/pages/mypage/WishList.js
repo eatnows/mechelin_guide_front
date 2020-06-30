@@ -73,7 +73,11 @@ const WishList = (props) => {
           marginLeft: "600px",
         }}
       >
-        <WishListMap result={result} />
+        <WishListMap
+          result={result}
+          history={props.history}
+          reivewPageMove={props.reivewPageMove}
+        />
       </div>
     </div>
   );
