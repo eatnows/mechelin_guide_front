@@ -8,9 +8,7 @@ import heart_o from "images/heart_o.png";
 import star from "images/star.png";
 import share from "images/share2.png";
 import star_g from "images/star_g.png";
-import e from "cors";
 import { Rate } from "antd";
-import { RedditSquareFilled } from "@ant-design/icons";
 
 const fakeFetch = (delay = 1000) =>
   new Promise((res) => setTimeout(res, delay));
@@ -26,6 +24,7 @@ const ListItem = ({ row, i, likesChange }) => {
   const [showBtn, setShowBtn] = useState(false);
   const [checkHeart, setCheckHeart] = useState(false);
 
+  /* 게시한 시간 표시*/
   const nowTime = (data) => {
     let now = new Date().getTime();
     let date = new Date(0).setUTCSeconds(data) / 1000;
@@ -69,8 +68,9 @@ const ListItem = ({ row, i, likesChange }) => {
         console.log("heartBoolean" + error);
       });
   };
+
   return (
-    <div>
+    <div key={i}>
       <form>
         <table className="postTable">
           <thead>
@@ -110,7 +110,7 @@ const ListItem = ({ row, i, likesChange }) => {
                   }}
                 />
               </th>
-              <th colspan="3" style={{ paddingLeft: "10px" }}>
+              <th colSpan="3" style={{ paddingLeft: "10px" }}>
                 {row.nickname}
                 <br />
                 {nowTime(row.created_at)}
@@ -234,15 +234,9 @@ const ListItem = ({ row, i, likesChange }) => {
 
 let item = 3;
 let dataLength = 0;
-let theposition;
-let userPlaceId;
-let likes = "";
 const NewsFeed = (props) => {
   const [state, setState] = useState({ itemCount: 3, isLoading: false });
   const [result, setResult] = useState([]);
-  const [theposition, setTheposition] = useState("");
-  const [likes, setLikes] = useState(false);
-  const [changeHeart, setChangeHeart] = useState(false);
   console.log("state구역");
   /* fake async fetch */
   const fetchItems = async () => {
@@ -285,18 +279,6 @@ const NewsFeed = (props) => {
   const { itemCount, isLoading } = state;
   if (!itemCount) return null;
 
-  const listenToScroll = () => {
-    const winScroll =
-      document.body.scrollTop || document.documentElement.scrollTop;
-
-    const height =
-      document.documentElement.scrollHeight -
-      document.documentElement.clientHeight;
-
-    const scrolled = winScroll / height;
-
-    setTheposition(scrolled);
-  };
   /*
    * 공감 버튼 클릭시 실행되는 메소드
    */
@@ -310,7 +292,6 @@ const NewsFeed = (props) => {
       .then((response) => {
         console.log(response.data);
         onClickLikesRender();
-        setChangeHeart(true);
       })
       .catch((error) => {
         console.log("onClickLikes" + error);
@@ -345,14 +326,7 @@ const NewsFeed = (props) => {
         }}
       >
         {[...result].map((contact, i) => {
-          return (
-            <ListItem
-              row={contact}
-              i={i}
-              likesChange={onClickLikes}
-              changeHeart={changeHeart}
-            />
-          );
+          return <ListItem row={contact} key={i} likesChange={onClickLikes} />;
         })}
         <div ref={setRef} className="Loading">
           {isLoading && "Loading..."}
