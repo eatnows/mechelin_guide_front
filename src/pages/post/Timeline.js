@@ -147,7 +147,11 @@ class Timeline extends React.Component {
           <span>소개글: {this.state.profile.introduce}</span>
         </div>
         <div>
-          <Post userId={this.state.profileUser} pathFrom="timeline" />
+          {this.state.following === "언팔하기" ? (
+            <Post userId={this.state.profileUser} pathFrom="timeline" />
+          ) : (
+            ""
+          )}
         </div>
       </div>
     );
