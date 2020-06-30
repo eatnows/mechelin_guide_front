@@ -423,7 +423,7 @@ const WishListMap = (props) => {
           top: "0",
           right: "0",
           bottom: "0",
-          zIndex: "1",
+          zIndex: "0.5",
           margin: "10px 10px 30px 0",
           padding: "5px",
           opacity: "0.8",
