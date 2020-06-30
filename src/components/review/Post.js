@@ -51,7 +51,9 @@ const ListItem = ({ contact, i, likesChange }) => {
 
   /*좋아요 눌렀는지 확인 */
   const heartBoolean = () => {
-    const url = `http://localhost:9000/mechelin/likes/ispost?user_id=${sessionStorage.getItem(
+
+    const url = `likes/ispost?user_id=${sessionStorage.getItem(
+
       "userId"
     )}&post_id=${contact.id}`;
     Axios.get(url)

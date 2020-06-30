@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import { LikeOutlined, LikeFilled } from "@ant-design/icons";
 import { Comment, List, Tooltip, Button } from "antd";
 
@@ -35,13 +35,14 @@ const SingleComment = ({
     return `${simpleTime}`;
   };
 
-  const [likes, setLikes] = useState(`${item.likes}`);
-  const [action, setAction] = useState(null);
-
   const like = (e) => {
-    cLikeChange(e);
-    setAction("liked");
-    setLikes(`${item.likes}`);
+    cLikeChange(item.id, sessionStorage.getItem("userId"));
+  };
+  const updateComment = (e) => {
+    cUpdateClick(item.id, item.content);
+  };
+  const deleteComment = (e) => {
+    cDeleteChange(item.id);
   };
 
   const data = [
@@ -55,13 +56,13 @@ const SingleComment = ({
             fill="rgba(245,145,45)"
           >
             {React.createElement(
-              action === "liked" ? LikeFilled : LikeOutlined,
+              item.now_liked === true ? LikeFilled : LikeOutlined,
               {
                 onClick: like,
               }
             )}
           </Tooltip>
-          <span className="comment-action"> {likes}</span>
+          <span className="comment-action"> {item.likes}</span>
         </span>,
         <span key="comment-list-reply-to-0">답글 달기</span>,
       ],
@@ -106,7 +107,7 @@ const SingleComment = ({
                 }}
               >
                 <Button
-                  onClick={cUpdateClick}
+                  onClick={updateComment}
                   commentId={item.id}
                   content={item.content}
                   style={{
@@ -123,7 +124,7 @@ const SingleComment = ({
                     borderRadius: "5px",
                     backgroundColor: "white",
                   }}
-                  onClick={cDeleteChange}
+                  onClick={deleteComment}
                   commentId={item.id}
                 >
                   삭제

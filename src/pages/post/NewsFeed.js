@@ -8,9 +8,11 @@ import heart_o from "images/heart_o.png";
 import star from "images/star.png";
 import share from "images/share2.png";
 import star_g from "images/star_g.png";
+
 import e from "cors";
 import { Rate, Modal } from "antd";
 import { RedditSquareFilled } from "@ant-design/icons";
+
 
 const fakeFetch = (delay = 1000) =>
   new Promise((res) => setTimeout(res, delay));
@@ -61,25 +63,29 @@ const ListItem = ({ row, i, likesChange, wishClick, render }) => {
 
   /*좋아요 눌렀는지 확인 */
   const heartBoolean = () => {
-    console.log("실행됨");
+
     const url = `/likes/ispost?user_id=${sessionStorage.getItem(
+
       "userId"
     )}&post_id=${row.id}`;
     Axios.get(url)
       .then((res) => {
         console.log(res.data);
         if (res.data === 1) {
+
           checkHearts = true;
           setCheckHeart(checkHearts);
         } else {
           checkHearts = false;
           setCheckHeart(checkHearts);
+
         }
       })
       .catch((error) => {
         console.log("heartBoolean" + error);
       });
   };
+
 
   /* 위시리스트 등록되어있는지 확인 */
   const wishlistBoolean = () => {
@@ -101,6 +107,7 @@ const ListItem = ({ row, i, likesChange, wishClick, render }) => {
         console.log("heartBoolean" + error);
       });
   };
+
 
   return (
     <div key={i}>
@@ -292,11 +299,13 @@ let dataLength = 0;
 const NewsFeed = (props) => {
   const [state, setState] = useState({ itemCount: 3, isLoading: false });
   const [result, setResult] = useState([]);
+
   const [render, setRender] = useState(0);
   console.log("state구역");
   /* fake async fetch */
   const fetchItems = async () => {
     const url = `/post/newsfeed/getallpost?user_id=${sessionStorage.getItem(
+
       "userId"
     )}&row=${item}`;
     Axios.get(url)
@@ -340,7 +349,9 @@ const NewsFeed = (props) => {
    */
   const onClickLikes = (e) => {
     console.log(sessionStorage.getItem("userId"));
+
     const url = `/likes/post`;
+
     Axios.post(url, {
       user_id: sessionStorage.getItem("userId"),
       post_id: e.target.getAttribute("postId"),
@@ -361,7 +372,9 @@ const NewsFeed = (props) => {
     console.log(item);
     item = dataLength;
     console.log(item);
+
     const url = `/post/newsfeed/getallpost?user_id=${sessionStorage.getItem(
+
       "userId"
     )}&row=${item}`;
     Axios.get(url)
@@ -427,6 +440,7 @@ const NewsFeed = (props) => {
         }}
       >
         {[...result].map((contact, i) => {
+
           return (
             <ListItem
               row={contact}
@@ -437,6 +451,7 @@ const NewsFeed = (props) => {
               render={render}
             />
           );
+
         })}
         <div ref={setRef} className="Loading">
           {isLoading && "Loading..."}

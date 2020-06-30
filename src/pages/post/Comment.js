@@ -23,8 +23,11 @@ const Comment = ({ postId }) => {
     댓글 list 갱신 (+재출력)
   */
   const commentList = () => {
-    const url = `http://localhost:9000/mechelin/comment/getcomments?post_id=${postId}`;
-    Axios.get(url)
+    const url = `http://localhost:9000/mechelin/comment/getcomments`;
+    Axios.post(url, {
+      post_id: postId,
+      user_id: sessionStorage.getItem("userId"),
+    })
       .then((response) => {
         setList(response.data);
       })
@@ -36,11 +39,11 @@ const Comment = ({ postId }) => {
   /*
     댓글 좋아요 클릭 시 실행(SingleComment 와 바인드)
   */
-  const onCommentLike = (e) => {
+  const onCommentLike = (commentId, userId) => {
     const url = `http://localhost:9000/mechelin/likes/comment`;
     Axios.post(url, {
-      comment_id: e.target.getAttribute("commentId"),
-      user_id: e.target.getAttribute("userId"),
+      comment_id: commentId,
+      user_id: userId,
     })
       .then((response) => {
         // 재출력
@@ -53,10 +56,10 @@ const Comment = ({ postId }) => {
   /*
     댓글 삭제 클릭 시 실행(SingleComment 와 바인드)
   */
-  const onCommentDelete = (e) => {
+  const onCommentDelete = (commentId) => {
     const url =
       `http://localhost:9000/mechelin/comment/deletecomment` +
-      `?comment_id=${e.target.getAttribute("commentId")}`;
+      `?comment_id=${commentId}`;
     Axios.get(url)
       .then((response) => {
         // 재출력
@@ -92,10 +95,10 @@ const Comment = ({ postId }) => {
   /*
     댓글 수정 내용+버튼 표시
   */
-  const setCommentUpdate = (e) => {
+  const setCommentUpdate = (commentId, content) => {
     setUpdateView(true);
-    setUpdateId(e.target.getAttribute("commentId"));
-    setWriteComment(e.target.getAttribute("content"));
+    setUpdateId(commentId);
+    setWriteComment(content);
   };
 
   /*
