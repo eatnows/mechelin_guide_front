@@ -51,26 +51,6 @@ const ListItem = ({ row, i, likesChange }) => {
     return `${simpleTime}`;
   };
 
-  const test = (e) => {
-    console.dir(e.target);
-    const url = `http://localhost:9000/mechelin/likes/ispost?id=${sessionStorage.getItem(
-      "userId"
-    )}&post_id=${row.id}`;
-    Axios.get(url)
-      .then((res) => {
-        console.log("1:" + res.data);
-        if (res == "1") {
-          // e.target.setAttribute("src", heart);
-          e.target.src = heart;
-        } else {
-          e.target.setAttribute("src", heart);
-        }
-      })
-      .catch((error) => {
-        console.log("heartBoolean" + error);
-      });
-  };
-
   /*좋아요 눌렀는지 확인 */
   const heartBoolean = () => {
     const url = `http://localhost:9000/mechelin/likes/ispost?user_id=${sessionStorage.getItem(
@@ -262,6 +242,7 @@ const NewsFeed = (props) => {
   const [result, setResult] = useState([]);
   const [theposition, setTheposition] = useState("");
   const [likes, setLikes] = useState(false);
+  const [changeHeart, setChangeHeart] = useState(false);
   console.log("state구역");
   /* fake async fetch */
   const fetchItems = async () => {
@@ -329,7 +310,7 @@ const NewsFeed = (props) => {
       .then((response) => {
         console.log(response.data);
         onClickLikesRender();
-        this.refs.heartBoolean();
+        setChangeHeart(true);
       })
       .catch((error) => {
         console.log("onClickLikes" + error);
@@ -364,7 +345,14 @@ const NewsFeed = (props) => {
         }}
       >
         {[...result].map((contact, i) => {
-          return <ListItem row={contact} i={i} likesChange={onClickLikes} />;
+          return (
+            <ListItem
+              row={contact}
+              i={i}
+              likesChange={onClickLikes}
+              changeHeart={changeHeart}
+            />
+          );
         })}
         <div ref={setRef} className="Loading">
           {isLoading && "Loading..."}
