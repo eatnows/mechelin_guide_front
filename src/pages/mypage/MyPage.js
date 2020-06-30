@@ -232,7 +232,21 @@ class MyPage extends React.Component {
     return (
       <div>
         <div>
+          {" "}
           <form>
+            {" "}
+            <caption
+              style={{
+                position: "absolute",
+                fontSize: "1.5vw",
+                fontWeight: "bold",
+                top: "10vw",
+                left: "3.5vw",
+                color: "rgba(245,145,45)",
+              }}
+            >
+              회원정보 수정
+            </caption>
             <table
               className="myPageTable"
               style={{
