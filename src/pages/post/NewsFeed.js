@@ -26,10 +26,12 @@ const ListItem = ({ row, i, likesChange, wishClick, render }) => {
 
   useEffect(() => {
     heartBoolean();
+    wishlistBoolean();
   }, [render]);
 
   const [showBtn, setShowBtn] = useState(false);
   const [checkHeart, setCheckHeart] = useState(false);
+  const [checkWishlist, setCheckWishlist] = useState(false);
 
   /* 게시한 시간 표시*/
   const nowTime = (data) => {
@@ -72,6 +74,27 @@ const ListItem = ({ row, i, likesChange, wishClick, render }) => {
         } else {
           checkHearts = false;
           setCheckHeart(checkHearts);
+        }
+      })
+      .catch((error) => {
+        console.log("heartBoolean" + error);
+      });
+  };
+
+  /* 위시리스트 등록되어있는지 확인 */
+  const wishlistBoolean = () => {
+    console.log("실행됨");
+    const url = `/wishlist/exist?user_id=${sessionStorage.getItem(
+      "userId"
+    )}&place_id=${row.place_id}`;
+    Axios.get(url)
+      .then((res) => {
+        console.log("위시리스트");
+        console.log(res.data);
+        if (res.data === 1) {
+          setCheckWishlist(true);
+        } else {
+          setCheckWishlist(false);
         }
       })
       .catch((error) => {
@@ -207,21 +230,37 @@ const ListItem = ({ row, i, likesChange, wishClick, render }) => {
                     alt=""
                     style={{ cursor: "pointer", float: "right" }}
                   />
-
-                  <img
-                    src={star}
-                    width="28.5"
-                    height="28.5"
-                    alt=""
-                    style={{
-                      float: "right",
-                      cursor: "pointer",
-                      marginRight: "10px",
-                    }}
-                    onClick={wishClick}
-                    placeId={row.place_id}
-                    postId={row.id}
-                  />
+                  {checkWishlist ? (
+                    <img
+                      src={star}
+                      width="28.5"
+                      height="28.5"
+                      alt=""
+                      style={{
+                        float: "right",
+                        cursor: "pointer",
+                        marginRight: "10px",
+                      }}
+                      onClick={wishClick}
+                      placeId={row.place_id}
+                      postId={row.id}
+                    />
+                  ) : (
+                    <img
+                      src={star_g}
+                      width="28.5"
+                      height="28.5"
+                      alt=""
+                      style={{
+                        float: "right",
+                        cursor: "pointer",
+                        marginRight: "10px",
+                      }}
+                      onClick={wishClick}
+                      placeId={row.place_id}
+                      postId={row.id}
+                    />
+                  )}
                 </div>
 
                 <div
@@ -353,6 +392,7 @@ const NewsFeed = (props) => {
         } else {
           info(res.data);
         }
+        setRender(render + 1);
       })
       .catch((error) => {
         console.log(error);
