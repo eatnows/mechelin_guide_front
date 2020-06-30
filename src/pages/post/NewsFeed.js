@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import Axios from "axios";
+import Axios from "util/axios";
 import Comment from "./Comment";
 import "css/postStyle.css";
 import useIntersect from "components/review/useIntersect";
@@ -52,7 +52,7 @@ const ListItem = ({ row, i, likesChange }) => {
 
   /*좋아요 눌렀는지 확인 */
   const heartBoolean = () => {
-    const url = `http://localhost:9000/mechelin/likes/ispost?user_id=${sessionStorage.getItem(
+    const url = `likes/ispost?user_id=${sessionStorage.getItem(
       "userId"
     )}&post_id=${row.id}`;
     Axios.get(url)
@@ -240,7 +240,7 @@ const NewsFeed = (props) => {
   console.log("state구역");
   /* fake async fetch */
   const fetchItems = async () => {
-    const url = `http://localhost:9000/mechelin/post/newsfeed/getallpost?user_id=${sessionStorage.getItem(
+    const url = `post/newsfeed/getallpost?user_id=${sessionStorage.getItem(
       "userId"
     )}&row=${item}`;
     Axios.get(url)
@@ -284,7 +284,7 @@ const NewsFeed = (props) => {
    */
   const onClickLikes = (e) => {
     console.log(sessionStorage.getItem("userId"));
-    const url = `http://localhost:9000/mechelin/likes/post`;
+    const url = `likes/post`;
     Axios.post(url, {
       user_id: sessionStorage.getItem("userId"),
       post_id: e.target.getAttribute("postId"),
@@ -304,7 +304,7 @@ const NewsFeed = (props) => {
     console.log(item);
     item = dataLength;
     console.log(item);
-    const url = `http://localhost:9000/mechelin/post/newsfeed/getallpost?user_id=${sessionStorage.getItem(
+    const url = `post/newsfeed/getallpost?user_id=${sessionStorage.getItem(
       "userId"
     )}&row=${item}`;
     Axios.get(url)

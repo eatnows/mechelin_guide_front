@@ -1,6 +1,7 @@
 import React from "react";
 import Axios from "util/axios";
 import Post from "components/review/Post";
+import { Button } from "antd";
 
 class Timeline extends React.Component {
   constructor(props) {
@@ -118,40 +119,79 @@ class Timeline extends React.Component {
 
   render() {
     return (
-      <div>
-        <div>
-          프로필 영역
-          <br />
-          <span>
-            <img src={this.state.profile.profile_url} alt="" />
-          </span>
-          <span>닉네임: {this.state.profile.nickname}</span>
-          <span>
-            {/* 팔로우버튼은 자신과 다른 유저일 때만 노출 */}
-            {this.state.sameUser ? (
-              ""
-            ) : this.state.following !== "팔로우 수락" ? (
-              <button onClick={this.onFollowClick}>
-                {this.state.following}
-              </button>
+      <div
+        style={{
+          overflow: "auto",
+          height: "100vh",
+        }}
+      >
+        <div
+          style={{
+            height: "80vh",
+            width: "52vw",
+            margin: "10vh auto 0",
+          }}
+        >
+          <table
+            style={{
+              height: "80vh",
+              width: "50vw",
+              margin: "10vh auto 0",
+            }}
+          >
+            <thead>
+              <tr style={{ width: "50vw" }}>
+                <th style={{ paddingRight: "0" }}>
+                  {" "}
+                  <img
+                    src={this.state.profile.profile_url}
+                    alt=""
+                    style={{
+                      width: "5vw",
+                      borderRadius: "50%",
+                      height: "5vw",
+                    }}
+                  />
+                </th>
+                <th style={{ width: "44vw" }}>
+                  <span style={{ fontSize: "1.3vw", marginRight: "0.7vw" }}>
+                    {this.state.profile.nickname}
+                  </span>
+                  <span>
+                    {/* 팔로우버튼은 자신과 다른 유저일 때만 노출 */}
+                    {this.state.sameUser ? (
+                      ""
+                    ) : this.state.following !== "팔로우 수락" ? (
+                      <Button onClick={this.onFollowClick}>
+                        {this.state.following}
+                      </Button>
+                    ) : (
+                      <div>
+                        <Button onClick={this.onFollowClick}>
+                          팔로우 수락
+                        </Button>
+                        <Button onClick={this.onFollowClick} value="refuse">
+                          팔로우 거절
+                        </Button>
+                      </div>
+                    )}
+                  </span>
+                  <br />{" "}
+                  <span style={{ marginLeft: "5px" }}>
+                    {" "}
+                    소개글: {this.state.profile.introduce}
+                  </span>
+                </th>
+              </tr>
+            </thead>
+          </table>{" "}
+          <div style={{ marginTop: "-1.5vw" }}>
+            {this.state.following === "언팔하기" ? (
+              <Post userId={this.state.profileUser} pathFrom="timeline" />
             ) : (
-              <div>
-                <button onClick={this.onFollowClick}>팔로우 수락</button>
-                <button onClick={this.onFollowClick} value="refuse">
-                  팔로우 거절
-                </button>
-              </div>
+              ""
             )}
-          </span>
-          <br />
-          <span>소개글: {this.state.profile.introduce}</span>
-        </div>
-        <div>
-          {this.state.following === "언팔하기" ? (
-            <Post userId={this.state.profileUser} pathFrom="timeline" />
-          ) : (
-            ""
-          )}
+          </div>
         </div>
       </div>
     );
