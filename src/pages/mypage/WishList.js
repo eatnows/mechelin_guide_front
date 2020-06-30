@@ -9,6 +9,7 @@ const WishList = (props) => {
   const [totalcount, setTotalCount] = useState("");
   const [render, setRender] = useState("");
   const [result, setResult] = useState([]);
+  const [deleteRender, setDeleteRender] = useState("");
 
   useEffect(() => {
     props.getState(false);
@@ -37,7 +38,7 @@ const WishList = (props) => {
       .catch((error) => {
         console.log(error);
       });
-  }, [pageStart]);
+  }, [pageStart, deleteRender]);
 
   const onChangePage = (value) => {
     console.log(value);
@@ -45,6 +46,10 @@ const WishList = (props) => {
     //pageStart = value * 5 - 1;
     console.log(pageStart);
     setRender(render + 1);
+  };
+
+  const onDeletePage = (value) => {
+    setDeleteRender(deleteRender + value);
   };
 
   return (
@@ -61,6 +66,9 @@ const WishList = (props) => {
           totalcount={totalcount}
           result={result}
           perPageNum={perPageNum}
+          history={props.history}
+          reivewPageMove={props.reivewPageMove}
+          onDeletePage={onDeletePage}
         />
       </div>
       <div

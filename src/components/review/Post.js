@@ -247,14 +247,9 @@ const ListItem = ({ contact, i, likesChange }) => {
 
 let item = 3;
 let dataLength = 0;
-let theposition;
-let userPlaceId;
-let likes = "";
 const Post = (props) => {
   const [state, setState] = useState({ itemCount: 3, isLoading: false });
   const [result, setResult] = useState([]);
-  const [theposition, setTheposition] = useState("");
-  const [likes, setLikes] = useState(false);
 
   console.log("state구역");
   /* fake async fetch */
@@ -299,18 +294,6 @@ const Post = (props) => {
   const { itemCount, isLoading } = state;
   if (!itemCount) return null;
 
-  const listenToScroll = () => {
-    const winScroll =
-      document.body.scrollTop || document.documentElement.scrollTop;
-
-    const height =
-      document.documentElement.scrollHeight -
-      document.documentElement.clientHeight;
-
-    const scrolled = winScroll / height;
-
-    setTheposition(scrolled);
-  };
   /*
    * 공감 버튼 클릭시 실행되는 메소드
    */
