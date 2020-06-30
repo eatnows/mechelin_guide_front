@@ -209,23 +209,25 @@ class MyPage extends React.Component {
   // 회원 탈퇴
   dropUser = (e) => {
     var dropPass = window.prompt("탈퇴하려면 비밀번호를 재입력하세요");
-    if (window.confirm("정말 탈퇴하시겠습니까?")) {
-      const url = `/dropout`;
-      Axios.post(url, {
-        id: sessionStorage.getItem("userId"),
-        password: dropPass,
-      })
-        .then((res) => {
-          if (res.data.check_item === "valid") {
-            sessionStorage.removeItem("userId");
-            window.location.reload();
-          } else {
-            alert("비밀번호가 맞지 않습니다");
-          }
+    if (dropPass != null) {
+      if (window.confirm("정말 탈퇴하시겠습니까?")) {
+        const url = `/dropout`;
+        Axios.post(url, {
+          id: sessionStorage.getItem("userId"),
+          password: dropPass,
         })
-        .catch((err) => {
-          console.log("회원 탈퇴 error: " + err);
-        });
+          .then((res) => {
+            if (res.data.check_item === "valid") {
+              sessionStorage.removeItem("userId");
+              window.location.reload();
+            } else {
+              alert("비밀번호가 맞지 않습니다");
+            }
+          })
+          .catch((err) => {
+            console.log("회원 탈퇴 error: " + err);
+          });
+      }
     }
   };
 
