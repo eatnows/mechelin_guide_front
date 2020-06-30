@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect } from "react";
 import Post from "components/review/Post";
 
 const Review = (props) => {
@@ -11,7 +11,6 @@ const Review = (props) => {
 
   return (
     <div>
-      <h2></h2>
       <Post userPlaceId={props.userPlaceId} pathFrom="review" />
     </div>
   );

@@ -2,7 +2,13 @@ import React, { useState } from "react";
 import { LikeOutlined, LikeFilled } from "@ant-design/icons";
 import { Comment, List, Tooltip, Button } from "antd";
 
-const SingleComment = ({ item, cLikeChange, cUpdateClick, cDeleteChange }) => {
+const SingleComment = ({
+  item,
+  i,
+  cLikeChange,
+  cUpdateClick,
+  cDeleteChange,
+}) => {
   //게시글 올린 날짜(현재시간 기준으로 얼마나 지났는지 표시)
   const nowTime = (data) => {
     let now = new Date().getTime();
@@ -68,6 +74,7 @@ const SingleComment = ({ item, cLikeChange, cUpdateClick, cDeleteChange }) => {
 
   return (
     <div
+      key={i}
       style={{
         borderBottom: "1px solid rgba(0,0,0,.2)",
         paddingTop: "5px",

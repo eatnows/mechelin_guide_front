@@ -123,7 +123,7 @@ const Comment = ({ postId }) => {
         return (
           <SingleComment
             item={item}
-            i={i}
+            key={i}
             cLikeChange={onCommentLike}
             cUpdateClick={setCommentUpdate}
             cDeleteChange={onCommentDelete}
