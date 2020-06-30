@@ -1,9 +1,8 @@
 import React from "react";
 import ProfileUpload from "components/mypage/ProfileUpload";
-import { tab } from "material-components-web";
-import { Input } from "antd";
-import { NavLink } from "react-router-dom";
+import { Input, Button } from "antd";
 import Axios from "util/axios";
+import "css/myPageStyle.css";
 
 class MyPage extends React.Component {
   constructor(props) {
@@ -81,7 +80,7 @@ class MyPage extends React.Component {
           this.userInfo();
         })
         .catch((err) => {
-          console.log("닉네임 변경 실패: " + err);
+          console.log("소개글 변경 실패: " + err);
         });
     }
   };
@@ -232,39 +231,57 @@ class MyPage extends React.Component {
   render() {
     return (
       <div>
-        MyPage
-        <ProfileUpload />
         <div>
           <form>
-            <table align="center" style={{ width: "200px", marginTop: "30px" }}>
+            <table
+              className="myPageTable"
+              style={{
+                width: "40vw",
+                position: "absolute",
+                top: "50%",
+                left: "50%",
+                transform: "translate(-50%,-50%)",
+              }}
+            >
+              <thead>
+                <tr>
+                  <th
+                    colSpan="3"
+                    align="center"
+                    style={{
+                      margin: "0 auto",
+                      paddingBottom: "4vh",
+                      align: "center",
+                    }}
+                  >
+                    {" "}
+                    <ProfileUpload />
+                  </th>
+                </tr>
+              </thead>
               <tbody>
                 <tr>
                   <td>이메일</td>
-                  <td>{this.state.email}</td>
+                  <td colSpan="2" style={{ fontWeight: "bold" }}>
+                    {this.state.email}
+                  </td>
                 </tr>
-                <tr>
-                  <td>소개글</td>
-                  {this.state.introChange ? (
-                    <td>
+                {this.state.introChange ? (
+                  <tr>
+                    <td>소개글</td>
+                    <td style={{ paddingBottom: "0" }}>
                       <Input
-                        type="text"
                         value={this.state.newIntro}
                         name="newIntro"
                         onChange={this.handleInform.bind(this)}
                         style={{
-                          width: "250px",
-                          height: "50px",
+                          width: "18vw",
+                          height: "3.5vw",
                           fontWeight: "normal",
                           outline: "none",
-                          fontSize: "13px",
+                          fontSize: "1vw",
                         }}
                       />{" "}
-                      <button
-                        type="button"
-                        onClick={this.onIntroSubmit.bind(this)}
-                      >
-                        변경
-                      </button>
                       <br />
                       <span
                         style={{
@@ -279,43 +296,57 @@ class MyPage extends React.Component {
                       </span>
                       <br />
                     </td>
-                  ) : (
+                    <td style={{ verticalAlign: "middle" }}>
+                      <Button
+                        type="text"
+                        style={{ float: "right", color: "rgba(245,145,45)" }}
+                        onClick={this.onIntroSubmit.bind(this)}
+                      >
+                        확인
+                      </Button>
+                    </td>
+                  </tr>
+                ) : (
+                  <tr>
+                    <td>소개글</td>
                     <td>
-                      {this.state.introduce}&nbsp;&nbsp;
-                      <button
-                        type="button"
+                      <span style={{ float: "left" }}>
+                        {this.state.introduce}
+                      </span>
+                      &nbsp;&nbsp;
+                    </td>
+                    <td>
+                      <Button
+                        type="text"
+                        style={{
+                          float: "right",
+                          color: "rgba(245,145,45)",
+                        }}
                         onClick={this.onChangeIntro.bind(this)}
                       >
                         수정
-                      </button>
-                    </td>
-                  )}
-                </tr>
-                <tr>
-                  <td>닉네임</td>
-                  {this.state.nickChange ? (
-                    <td>
+                      </Button>
+                    </td>{" "}
+                  </tr>
+                )}{" "}
+                {this.state.nickChange ? (
+                  <tr>
+                    <td>닉네임</td>
+                    <td style={{ paddingBottom: "0" }}>
                       <Input
-                        type="text"
                         ref="nickname"
                         value={this.state.newNickname}
                         name="newNickname"
                         onChange={this.handleInform.bind(this)}
                         onKeyUp={this.checkNickname.bind(this)}
                         style={{
-                          width: "250px",
-                          height: "50px",
+                          width: "18vw",
+                          height: "3.5vw",
                           fontWeight: "normal",
                           outline: "none",
-                          fontSize: "13px",
+                          fontSize: "1vw",
                         }}
                       />{" "}
-                      <button
-                        type="button"
-                        onClick={this.onNicknameSubmit.bind(this)}
-                      >
-                        변경
-                      </button>
                       <br />
                       <span
                         style={{
@@ -330,32 +361,53 @@ class MyPage extends React.Component {
                       </span>
                       <br />
                     </td>
-                  ) : (
                     <td>
-                      {this.state.nickname}&nbsp;&nbsp;
-                      <button type="button" onClick={this.onChangeNick}>
-                        수정
-                      </button>
+                      <Button
+                        type="text"
+                        style={{ color: "rgba(245,145,45)", float: "right" }}
+                        onClick={this.onNicknameSubmit.bind(this)}
+                      >
+                        확인
+                      </Button>
                     </td>
-                  )}
-                </tr>
-                <tr>
-                  <td>비밀번호 변경</td>
-                  {this.state.kUser ? (
-                    <td>카카오 유저는 비밀번호를 변경하실 수 없습니다</td>
-                  ) : (
+                  </tr>
+                ) : (
+                  <tr>
+                    <td>닉네임</td>
+
+                    <td>{this.state.nickname}&nbsp;&nbsp;</td>
                     <td>
+                      <Button
+                        type="text"
+                        style={{ color: "rgba(245,145,45)", float: "right" }}
+                        onClick={this.onChangeNick}
+                      >
+                        수정
+                      </Button>
+                    </td>
+                  </tr>
+                )}
+                <tr>
+                  <td>비밀번호</td>
+                  {this.state.kUser ? (
+                    <td colSpan="2">
+                      <span style={{ fontWeight: "bold" }}>
+                        카카오 유저는 비밀번호를 변경하실 수 없습니다.
+                      </span>
+                    </td>
+                  ) : (
+                    <td colSpan="2">
                       <Input.Password
                         placeholder="비밀번호"
                         name="newPassword"
                         onChange={this.handleInform.bind(this)}
                         onKeyUp={this.checkPW.bind(this)}
                         style={{
-                          width: "250px",
+                          width: "18vw",
                           outline: "none",
-                          height: "50px",
+                          height: "3.5vw",
                           fontWeight: "normal",
-                          fontSize: "13px",
+                          fontSize: "1vw",
                           fontFamily: "none",
                         }}
                       />{" "}
@@ -374,26 +426,23 @@ class MyPage extends React.Component {
                     </td>
                   )}
                 </tr>
-
                 {this.state.kUser ? (
                   ""
                 ) : (
                   <tr>
-                    <td>(비밀번호 확인)</td>
-                    <td>
-                      <Input
-                        type="password"
-                        className="form-control"
+                    <td>비밀번호 확인</td>
+                    <td colSpan="2">
+                      <Input.Password
                         onChange={this.handleInform.bind(this)}
                         onKeyUp={this.checkPW.bind(this)}
                         name="rePassword"
                         placeholder="비밀번호 재입력"
                         style={{
-                          width: "250px",
+                          width: "18vw",
                           outline: "none",
-                          height: "50px",
+                          height: "3.5vw",
                           fontWeight: "normal",
-                          fontSize: "13px",
+                          fontSize: "1vw",
                           fontFamily: "none",
                         }}
                       />
@@ -413,43 +462,37 @@ class MyPage extends React.Component {
                     </td>
                   </tr>
                 )}
-
                 <tr>
-                  {this.state.kUser ? (
-                    ""
-                  ) : (
-                    <td style={{ textAlign: "center" }}>
-                      <button
+                  <td
+                    colSpan="3"
+                    style={{ paddingTop: "3vh", textAlign: "center" }}
+                  >
+                    {this.state.kUser ? (
+                      ""
+                    ) : (
+                      <Button
                         onClick={this.ChangePwd.bind(this)}
-                        type="button"
-                        className="btn"
+                        type="primary"
                         style={{
-                          margin: "5vh 0",
-                          backgroundColor: "rgba(245,145,45)",
-                          color: "white",
-                          height: "40px",
-                          width: "100px",
+                          height: "3vw",
+                          width: "5.5vw",
+                          display: "inline-block",
+                          marginRight: "2vw",
                         }}
                       >
-                        (PW)저장
-                      </button>
-                    </td>
-                  )}
-                  <td style={{ textAlign: "center" }}>
-                    <button
+                        저장
+                      </Button>
+                    )}
+                    <Button
                       onClick={this.dropUser.bind(this)}
-                      type="button"
-                      className="btn"
                       style={{
-                        margin: "5vh 0",
-                        backgroundColor: "rgba(245,145,45)",
-                        color: "white",
-                        height: "40px",
-                        width: "100px",
+                        display: "inline-block",
+                        color: "rgba(0,0,0,.4)",
+                        height: "3vw",
                       }}
                     >
                       회원탈퇴
-                    </button>
+                    </Button>
                   </td>
                 </tr>
               </tbody>
