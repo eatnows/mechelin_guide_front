@@ -3,6 +3,7 @@ import Axios from "util/axios";
 import logo from "images/logo2.png";
 import { Input } from "antd";
 import { NavLink } from "react-router-dom";
+
 export default class SignUp extends Component {
   constructor(props) {
     super(props);

@@ -1,7 +1,5 @@
 import React, { useEffect } from "react";
-
 import "antd/dist/antd.css";
-
 import { List, Avatar, Space } from "antd";
 import { MessageOutlined, LikeOutlined, StarOutlined } from "@ant-design/icons";
 import Axios from "util/axios";
