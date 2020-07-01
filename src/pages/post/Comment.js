@@ -134,7 +134,13 @@ const Comment = ({ postId }) => {
         );
       })}
       {/* 새 댓글 작성 영역 */}
-      <div style={{ marginTop: "10px", padding: "15px 0" }}>
+      <div
+        style={{
+          marginTop: "10px",
+          padding: ".3vw 0 1vw",
+          borderTop: "rgba(0,0,0,.2)",
+        }}
+      >
         <img
           src={profile}
           alt=""
@@ -158,11 +164,16 @@ const Comment = ({ postId }) => {
         {/* 댓글수정 시 내용변경 */}
         <div style={{ marginLeft: "10px", display: "inline-block" }}>
           {updateView ? (
-            <Button type="primary" onClick={(e) => onCommentUpdate()}>
+            <Button
+              type="primary"
+              onClick={(e) => onCommentUpdate()}
+              style={{ backgroundColor: "#9CC557", borderColor: "#9CC557 " }}
+            >
               수정
             </Button>
           ) : (
             <Button
+              type="primary"
               onClick={() =>
                 commentInsert(postId, sessionStorage.getItem("userId"))
               }

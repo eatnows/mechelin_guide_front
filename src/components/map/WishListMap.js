@@ -410,27 +410,27 @@ const WishListMap = (props) => {
     <div>
       <div
         id="wishListMap"
-        style={{ width: "800px", height: "650px", zIndex: "0" }}
+        style={{ width: "35vw", height: "70vh", zIndex: "0" }}
       ></div>
       <div
         id="gps"
         onClick={panTo}
         onMouseDown={panTo}
         style={{
-          width: "30px",
-          height: "30px",
+          width: "1.6vw",
+          height: "1.6vw",
           position: "absolute",
-          top: "0",
-          right: "0",
+          top: "1%",
+          right: "1%",
           bottom: "0",
           zIndex: "0.5",
-          margin: "10px 10px 30px 0",
-          padding: "5px",
-          opacity: "0.8",
+          padding: "0.05vw 0 0 0.25vw",
+          cursor: "pointer",
+          borderRadius: "50%",
+          background: "rgba(255,255,255,.7)",
         }}
-        className="bg_white"
       >
-        <img src={LocationIcon} alt="" style={{ width: "20px" }} />
+        <img src={LocationIcon} alt="" style={{ width: "1.1vw" }} />
       </div>
     </div>
   );

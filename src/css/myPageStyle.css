@@ -2,9 +2,9 @@
 }
 .myPageTable tr {
 }
-.myPageTable > th {
+.myPageTable th {
   padding: 1vw;
 }
-.myPageTable > td {
+.myPageTable td {
   padding: 1vw;
 }
