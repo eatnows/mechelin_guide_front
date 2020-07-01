@@ -8,18 +8,26 @@ import heart_o from "images/heart_o.png";
 import star from "images/star.png";
 import share from "images/share2.png";
 import star_g from "images/star_g.png";
-import { Rate, Button, Input } from "antd";
+import { Rate, Button, Input, Modal } from "antd";
 import StarRate from "components/review/StarRate";
 import WriteFormMap from "components/map/WriteFormMap";
 import ReactQuill, { Quill } from "react-quill";
 import { ImageUpload } from "quill-image-upload";
 import "react-quill/dist/quill.snow.css";
+import { ExclamationCircleOutlined } from "@ant-design/icons";
 const fakeFetch = (delay = 1000) =>
   new Promise((res) => setTimeout(res, delay));
 
 Quill.register("modules/imageUpload", ImageUpload);
-
-const ListItem = ({ contact, i, likesChange, props }) => {
+const { confirm } = Modal;
+const ListItem = ({
+  contact,
+  i,
+  likesChange,
+  props,
+  history,
+  timelinePageMove,
+}) => {
   const [showBtn, setShowBtn] = useState(false);
   const [form, setForm] = useState(false);
   const [checkHeart, setCheckHeart] = useState(false);
@@ -103,7 +111,32 @@ const ListItem = ({ contact, i, likesChange, props }) => {
   };
 
   /*삭제버튼 클릭시 삭제 */
-  const deletePost = () => {};
+  const deletePost = (e) => {
+    const postId = e.target.getAttribute("postId");
+    const userPlaceId = e.target.getAttribute("userPlaceId");
+    console.log("버튼함수");
+    console.log(postId);
+    confirm({
+      title: "정말 삭제 하시겠습니까?",
+      icon: <ExclamationCircleOutlined />,
+      content: "위시리스트에서 삭제하시려면 확인을 눌러주세요",
+      okText: "확인",
+      okType: "danger",
+      cancelText: "취소",
+      onOk() {
+        const url = `/post/delete/${postId}/${userPlaceId}`;
+        Axios.put(url)
+          .then((res) => {
+            console.log(res);
+            //props.onDeletePage(1);
+          })
+          .catch((error) => {
+            console.log(error);
+          });
+      },
+      onCancel() {},
+    });
+  };
 
   /*값 읽어오기 */
   const changeSubject = (e) => {
@@ -279,11 +312,21 @@ const ListItem = ({ contact, i, likesChange, props }) => {
         const id = response.data.id;
         const userPlaceId = response.data.user_place_id;
 
-        this.props.history.push(`/mechelin/review/${userPlaceId}`);
+        props.history.push(`/mechelin/review/${userPlaceId}`);
       })
       .catch((error) => {
         console.log(error);
       });
+  };
+
+  const clickProfile = (e) => {
+    console.log("Dfdf");
+    console.log(e.target.getAttribute("user_id"));
+    const user_id = e.target.getAttribute("user_id");
+    sessionStorage.setItem("targetUser", e.target.getAttribute("user_id"));
+    //timelinePageMove(user_id);
+
+    history.push(`/mechelin/timeline/${user_id}`);
   };
 
   /*
@@ -360,10 +403,25 @@ const ListItem = ({ contact, i, likesChange, props }) => {
                 margin: "7vh auto -7vh",
               }}
             >
-              <Button type="text" onClick={showForm} postId={contact.id}>
+              <span
+                type="text"
+                onClick={showForm}
+                postId={contact.id}
+                style={{ width: "100px", cursor: "pointer" }}
+              >
                 수정
-              </Button>
-              |<Button type="text"> 삭제</Button>
+              </span>
+              |
+              <span
+                type="text"
+                onClick={deletePost}
+                postId={contact.id}
+                userPlaceId={contact.user_place_id}
+                style={{ width: "100px", cursor: "pointer" }}
+              >
+                {" "}
+                삭제
+              </span>
             </div>
           ) : (
             ""
@@ -392,11 +450,6 @@ const ListItem = ({ contact, i, likesChange, props }) => {
                   >
                     {contact.name}
                   </span>
-                  <br />
-
-                  <span style={{ fontSize: "10px" }}>
-                    {contact.post_count - i}번째 리뷰글
-                  </span>
                 </th>
               </tr>{" "}
               <tr>
@@ -409,6 +462,8 @@ const ListItem = ({ contact, i, likesChange, props }) => {
                   <img
                     src={contact.profile_url}
                     alt=""
+                    onClick={clickProfile}
+                    user_id={contact.user_id}
                     style={{
                       width: "3vw",
                       borderRadius: "50%",
@@ -416,7 +471,12 @@ const ListItem = ({ contact, i, likesChange, props }) => {
                     }}
                   />
                 </th>
-                <th colSpan="3" style={{ paddingLeft: "10px" }}>
+                <th
+                  colSpan="3"
+                  style={{ paddingLeft: "10px" }}
+                  onClick={clickProfile}
+                  user_id={contact.user_id}
+                >
                   {contact.nickname}
                   <br />
                   {nowTime(contact.created_at)}
@@ -757,7 +817,9 @@ const Post = (props) => {
       itemCount: prev.itemCount + 3,
       isLoading: false,
     }));
+    item = dataLength;
     item += 3;
+    console.log(item);
   };
   /* initial fetch */
   useEffect(() => {
@@ -811,18 +873,23 @@ const Post = (props) => {
       });
   };
 
+  // 타임라인으로 이동
+  const timelinePageMove = (user_id) => {
+    props.timelinePageMove(user_id);
+  };
+
   return (
     <div>
-      <div
-        className="App"
-        style={{
-          overflow: "auto",
-          height: "100vh",
-        }}
-      >
+      <div className="App">
         {[...result].map((contact, i) => {
           return (
-            <ListItem contact={contact} i={i} likesChange={onClickLikes} />
+            <ListItem
+              contact={contact}
+              i={i}
+              likesChange={onClickLikes}
+              history={props.history}
+              timelinePageMove={timelinePageMove}
+            />
           );
         })}
         <div ref={setRef} className="Loading">

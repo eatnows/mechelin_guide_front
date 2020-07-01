@@ -19,6 +19,7 @@ import logo2 from "images/logo2.png";
 import Axios from "util/axios";
 let keyword;
 let userPlaceId;
+let targetUserId;
 let listData2 = [];
 class View extends React.Component {
   state = {
@@ -33,6 +34,7 @@ class View extends React.Component {
     cc: false,
     userPlaceid: "",
     listData2: [],
+    targetUserId: "",
   };
 
   componentWillMount() {
@@ -166,6 +168,15 @@ class View extends React.Component {
       userPlaceid: user_place_id,
     });
   };
+  /*
+   * 타임라인 페이지로 넘어가기 위한 메소드
+   */
+  timelinePageMove = (target_user_id) => {
+    targetUserId = target_user_id;
+    this.setState({
+      targetUserId: target_user_id,
+    });
+  };
 
   render() {
     return (
@@ -217,6 +228,7 @@ class View extends React.Component {
             history={this.props.history}
             bar={this.state.bar}
             reivewPageMove={this.reivewPageMove.bind(this)}
+            timelinePageMove={this.timelinePageMove.bind(this)}
           />
         ) : (
           ""
@@ -285,6 +297,7 @@ class View extends React.Component {
               <Review
                 getState={this.getState.bind(this)}
                 userPlaceId={userPlaceId}
+                history={this.props.history}
               />
             );
           }}
@@ -297,6 +310,8 @@ class View extends React.Component {
               <Timeline
                 getState={this.getState.bind(this)}
                 userId={this.state.userId}
+                history={this.props.history}
+                targetUserId={this.state.targetUserId}
               />
             );
           }}
