@@ -59,9 +59,9 @@ class FullMap extends React.Component {
     categoryFilter: ["한식", "양식", "중식", "일식"],
     blacklist: false,
     myListModal: false,
-    render: 0,
     frinedsModal: false,
     friendEmail: "",
+    render: 0,
   };
 
   modules = {
