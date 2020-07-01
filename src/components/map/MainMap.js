@@ -478,14 +478,14 @@ const MainMap = (props) => {
         onClick={panTo}
         onMouseDown={panTo}
         style={{
-          width: "2vw",
-          height: "2vw",
+          width: "2.1vw",
+          height: "2.1vw",
           position: "absolute",
           right: "1%",
           bottom: "2.5%",
           zIndex: "0.2",
           cursor: "pointer",
-          padding: "0.25vw 0px 0px 0.3vw",
+          padding: "0.3vw 0px 0px 0.31vw",
           borderRadius: "50%",
           backgroundColor: "rgba(255,255,255,.7)",
         }}

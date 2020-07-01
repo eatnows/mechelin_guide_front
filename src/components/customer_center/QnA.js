@@ -83,6 +83,7 @@ const QnAComponent = () => {
           width: "10vw",
           marginBottom: "1.3vw",
           backgroundColor: "white",
+          color: "rgba(245,145,45)",
         }}
       >
         1:1 문의하기
@@ -90,8 +91,7 @@ const QnAComponent = () => {
       <div
         style={{
           width: "50vw",
-          borderTop: "1px solid rgba(0,0,0,.2)",
-          padding: "3vw 0",
+          padding: "1vw 0",
           textAlign: "center",
         }}
       >
@@ -164,6 +164,7 @@ const QnAComponent = () => {
             width: "40vw",
             marginBottom: "1.3vw",
             backgroundColor: "white",
+            color: "rgba(245,145,45)",
           }}
         >
           내가 한 문의 내역

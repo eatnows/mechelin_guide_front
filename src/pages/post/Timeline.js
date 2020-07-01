@@ -179,7 +179,7 @@ class Timeline extends React.Component {
                   <br />{" "}
                   <span style={{ marginLeft: "5px" }}>
                     {" "}
-                    소개글: {this.state.profile.introduce}
+                    {this.state.profile.introduce}
                   </span>
                 </th>
               </tr>

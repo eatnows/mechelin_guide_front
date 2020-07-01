@@ -141,7 +141,8 @@ class Login extends Component {
                       alt=""
                       style={{
                         width: "auto",
-                        height: "100px",
+                        height: "7vw",
+                        marginLeft: "-2vw",
                       }}
                     />
                   </div>

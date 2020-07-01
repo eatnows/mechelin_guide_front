@@ -77,8 +77,7 @@ const SingleComment = ({
     <div
       key={i}
       style={{
-        borderBottom: "1px solid rgba(0,0,0,.2)",
-        paddingTop: "5px",
+        padding: "0",
         width: "100%",
       }}
     >

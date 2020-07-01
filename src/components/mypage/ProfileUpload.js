@@ -74,7 +74,7 @@ class ProfileUpload extends React.Component {
     );
     const { imageUrl } = this.state;
     return (
-      <div style={{ width: "7vw", height: "auto", margin: "0 auto" }}>
+      <div style={{ width: "7vw", margin: "0 auto" }}>
         <Upload
           name="avatar"
           listType="picture-card"
@@ -85,7 +85,11 @@ class ProfileUpload extends React.Component {
           onChange={this.handleChange}
         >
           {imageUrl ? (
-            <img src={imageUrl} alt="avatar" style={{ width: "100%" }} />
+            <img
+              src={imageUrl}
+              alt="avatar"
+              style={{ width: "5vw", height: "5vw", borderRadius: "50%" }}
+            />
           ) : (
             uploadButton
           )}

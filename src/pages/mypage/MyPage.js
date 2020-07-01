@@ -31,6 +31,7 @@ class MyPage extends React.Component {
     this.userInfo();
   }
 
+  /*유저 정보 가져오기 */
   userInfo = () => {
     console.log("state kuser: " + this.state.kUser);
     const url = `/friends/profile?id=${sessionStorage.getItem("userId")}`;
