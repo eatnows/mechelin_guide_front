@@ -200,7 +200,7 @@ const ListItem = ({
       // handlers: { 'image' : this.handleImage }
     },
     imageUpload: {
-      url: `http://localhost:9000/mechelin/image/add?id=${sessionStorage.getItem(
+      url: `http://ec2-54-180-115-24.ap-northeast-2.compute.amazonaws.com/mechelin/image/add?id=${sessionStorage.getItem(
         "userId"
       )}`, // server url
       method: "POST", // change query method, default 'POST'
@@ -434,15 +434,6 @@ const ListItem = ({
             >
               <span
                 type="text"
-                onClick={showForm}
-                postId={contact.id}
-                style={{ width: "100px", cursor: "pointer" }}
-              >
-                수정
-              </span>
-              |
-              <span
-                type="text"
                 onClick={deletePost}
                 postId={contact.id}
                 userPlaceId={contact.user_place_id}
@@ -594,6 +585,7 @@ const ListItem = ({
                         placeId={contact.place_id}
                         postId={contact.id}
                         style={{ cursor: "pointer", float: "right" }}
+                        userId={contact.user_id}
                       />
                     ) : (
                       <img
@@ -927,21 +919,24 @@ const Post = (props) => {
    * 블랙리스트 버튼 클릭 시
    */
   const blockClick = (e) => {
-    const url = `/userplace/blacklist/${props.userPlaceId}`;
-    console.log("블랙리스트 클릭");
-    Axios.put(url)
-      .then((res) => {
-        console.log(res.data);
-        if (res.data === "블랙리스트에 추가되었습니다.") {
-          success(res.data);
-        } else {
-          info2(res.data);
-        }
-        setRender(render + 1);
-      })
-      .catch((error) => {
-        console.log(error);
-      });
+    if (e.target.getAttribute("userId") === sessionStorage.getItem("userId")) {
+      const url = `/userplace/blacklist/${props.userPlaceId}`;
+      Axios.put(url)
+        .then((res) => {
+          console.log(res.data);
+          if (res.data === "블랙리스트에 추가되었습니다.") {
+            success(res.data);
+          } else {
+            info2(res.data);
+          }
+          setRender(render + 1);
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    } else {
+      alert("방문한적이 없는 맛집은 블랙리스트에 추가할 수 없습니다.");
+    }
   };
 
   function info2(str) {

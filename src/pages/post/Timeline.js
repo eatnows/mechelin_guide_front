@@ -186,7 +186,9 @@ class Timeline extends React.Component {
             </thead>
           </table>{" "}
           <div style={{ marginTop: "2vw" }}>
-            {this.state.following === "언팔하기" ? (
+            {this.state.following === "언팔하기" ||
+            sessionStorage.getItem("targetUser") ===
+              sessionStorage.getItem("userId") ? (
               <Post userId={this.state.profileUser} pathFrom="timeline" />
             ) : (
               ""
