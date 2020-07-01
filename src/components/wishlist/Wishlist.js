@@ -52,12 +52,11 @@ const WishlistComponent = (props) => {
   return (
     <div>
       <div>
-        <h1>가보고 싶은 맛집</h1>
-        {[...props.result].map((contact, i) => {
-          return (
-            <table>
+        <table style={{ width: "34vw", textAlign: "left" }}>
+          {[...props.result].map((contact, i) => {
+            return (
               <tr>
-                <td rowSpan="2">
+                <td style={{ padding: " .5vw 0" }}>
                   <img
                     src={contact.front_image}
                     alt=""
@@ -72,28 +71,25 @@ const WishlistComponent = (props) => {
                   >
                     {contact.name}
                   </span>
+                  <br />
+                  <span>{contact.address}</span>
+                </td>
+                <td style={{ textAlign: "center" }}>
+                  <Button
+                    type="text"
+                    onClick={showDeleteConfirm}
+                    wishlistId={contact.wishlist_id}
+                    style={{ color: "rgba(0,0,0,.4)" }}
+                  >
+                    삭제
+                  </Button>{" "}
                 </td>
               </tr>
-              <tr>
-                <td>{contact.address}</td>
-              </tr>
-              <tr>
-                <td>
-                  <span>
-                    <input
-                      onClick={showDeleteConfirm}
-                      type="button"
-                      wishlistId={contact.wishlist_id}
-                      value="삭제"
-                    />
-                  </span>
-                </td>
-              </tr>
-            </table>
-          );
-        })}
-      </div>
-      <div>
+            );
+          })}
+        </table>
+      </div>{" "}
+      <div style={{ marginTop: "1vw", textAlign: "center" }}>
         <Pagination
           size="small"
           defaultCurrent={1}

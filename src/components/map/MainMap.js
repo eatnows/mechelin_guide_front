@@ -478,18 +478,19 @@ const MainMap = (props) => {
         onClick={panTo}
         onMouseDown={panTo}
         style={{
-          width: "3vw",
-          height: "3vw",
+          width: "2vw",
+          height: "2vw",
           position: "absolute",
           right: "1%",
           bottom: "2.5%",
           zIndex: "0.2",
-          opacity: "0.8",
           cursor: "pointer",
+          padding: "0.25vw 0px 0px 0.3vw",
+          borderRadius: "50%",
+          backgroundColor: "rgba(255,255,255,.7)",
         }}
-        className="bg_white"
       >
-        <img src={LocationIcon} alt="" style={{ width: "50px" }} />
+        <img src={LocationIcon} alt="" style={{ width: "1.5vw" }} />
       </div>
     </div>
   );

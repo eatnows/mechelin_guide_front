@@ -53,12 +53,25 @@ const WishList = (props) => {
   };
 
   return (
-    <div>
+    <div style={{ overflow: "auto" }}>
+      <caption
+        style={{
+          fontWeight: "bold",
+          fontSize: "1.5vw",
+          width: "20vw",
+          marginTop: "5vw",
+          color: "rgba(245,145,45)",
+          marginLeft: "20vw",
+        }}
+      >
+        위시 리스트
+      </caption>
       <div
         style={{
-          position: "absolute",
-          marginTop: "30vh",
-          marginLeft: "40vh",
+          marginTop: "2vw",
+          marginLeft: "20vw",
+          width: "35vw",
+          height: "auto",
         }}
       >
         <WishlistComponent
@@ -74,11 +87,11 @@ const WishList = (props) => {
       <div
         style={{
           border: "1px solid black",
-          width: "800px",
-          height: "650px",
-          position: "absolute",
-          marginTop: "20vh",
-          marginLeft: "90vh",
+          width: "35.1vw",
+          height: "70.3vh",
+          top: "20vh",
+          right: "10vw",
+          position: "fixed",
         }}
       >
         <WishListMap
