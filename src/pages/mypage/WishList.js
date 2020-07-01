@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import WishlistComponent from "components/wishlist/Wishlist";
 import WishListMap from "components/map/WishListMap";
 import Axios from "util/axios";
+import SlideMenu from "components/mypage/SlideMenu";
 
 const WishList = (props) => {
   const perPageNum = 5;
@@ -54,6 +55,17 @@ const WishList = (props) => {
 
   return (
     <div style={{ overflow: "auto" }}>
+      <div
+        style={{
+          width: "10vw",
+          height: "10vw",
+          position: "absolute",
+          left: "3%",
+          top: "25%",
+        }}
+      >
+        <SlideMenu />
+      </div>
       <caption
         style={{
           fontWeight: "bold",

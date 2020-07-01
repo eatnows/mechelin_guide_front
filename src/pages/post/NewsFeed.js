@@ -13,7 +13,6 @@ import e from "cors";
 import { Rate, Modal } from "antd";
 import { RedditSquareFilled } from "@ant-design/icons";
 
-
 const fakeFetch = (delay = 1000) =>
   new Promise((res) => setTimeout(res, delay));
 
@@ -63,29 +62,24 @@ const ListItem = ({ row, i, likesChange, wishClick, render }) => {
 
   /*좋아요 눌렀는지 확인 */
   const heartBoolean = () => {
-
     const url = `/likes/ispost?user_id=${sessionStorage.getItem(
-
       "userId"
     )}&post_id=${row.id}`;
     Axios.get(url)
       .then((res) => {
         console.log(res.data);
         if (res.data === 1) {
-
           checkHearts = true;
           setCheckHeart(checkHearts);
         } else {
           checkHearts = false;
           setCheckHeart(checkHearts);
-
         }
       })
       .catch((error) => {
         console.log("heartBoolean" + error);
       });
   };
-
 
   /* 위시리스트 등록되어있는지 확인 */
   const wishlistBoolean = () => {
@@ -107,7 +101,6 @@ const ListItem = ({ row, i, likesChange, wishClick, render }) => {
         console.log("heartBoolean" + error);
       });
   };
-
 
   return (
     <div key={i}>
@@ -305,7 +298,6 @@ const NewsFeed = (props) => {
   /* fake async fetch */
   const fetchItems = async () => {
     const url = `/post/newsfeed/getallpost?user_id=${sessionStorage.getItem(
-
       "userId"
     )}&row=${item}`;
     Axios.get(url)
@@ -374,7 +366,6 @@ const NewsFeed = (props) => {
     console.log(item);
 
     const url = `/post/newsfeed/getallpost?user_id=${sessionStorage.getItem(
-
       "userId"
     )}&row=${item}`;
     Axios.get(url)
@@ -400,7 +391,7 @@ const NewsFeed = (props) => {
     })
       .then((res) => {
         console.log(res.data);
-        if (res.data === "위시리스트에 추가 되었습니다!") {
+        if (res.data === "위시리스트에 추가되었습니다!") {
           success(res.data);
         } else {
           info(res.data);
@@ -423,7 +414,10 @@ const NewsFeed = (props) => {
       title: str,
       content: (
         <div>
-          <p>위시리스트 혹은 리뷰글이 등록된 맛집입니다.</p>
+          <p>
+            이미 위시리스트에 추가했거나 과거에 방문했던 <br />
+            맛집입니다.
+          </p>
         </div>
       ),
       onOk() {},
@@ -440,7 +434,6 @@ const NewsFeed = (props) => {
         }}
       >
         {[...result].map((contact, i) => {
-
           return (
             <ListItem
               row={contact}
@@ -451,7 +444,6 @@ const NewsFeed = (props) => {
               render={render}
             />
           );
-
         })}
         <div ref={setRef} className="Loading">
           {isLoading && "Loading..."}
