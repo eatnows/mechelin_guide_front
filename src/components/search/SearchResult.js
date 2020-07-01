@@ -159,7 +159,7 @@ const SearchResult = (props) => {
    * 공감 버튼 클릭시 실행되는 메소드
    */
   const onClickLikes = (e) => {
-    const url = `http://localhost:9000/mechelin/likes/post`;
+    const url = `likes/post`;
     Axios.post(url, {
       user_id: sessionStorage.getItem("userId"),
       post_id: e.target.getAttribute("postId"),
@@ -179,7 +179,7 @@ const SearchResult = (props) => {
     console.log(row);
     row = dataLength;
     console.log(row);
-    const url = `http://localhost:9000/mechelin/post/review?user_place_id=${props.userPlaceId}&row=${row}`;
+    const url = `post/review?user_place_id=${props.userPlaceId}&row=${row}`;
     Axios.get(url)
       .then((response) => {
         //setResult(response.data);

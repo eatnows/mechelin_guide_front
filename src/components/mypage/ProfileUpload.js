@@ -30,9 +30,7 @@ function beforeUpload(file) {
 class ProfileUpload extends React.Component {
   state = {
     loading: false,
-    path:
-      "http://localhost:9000/mechelin/image/profile/image?id=" +
-      sessionStorage.getItem("userId"),
+    path: "image/profile/image?id=" + sessionStorage.getItem("userId"),
     imageUrl: "",
   };
 

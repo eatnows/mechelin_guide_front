@@ -1,6 +1,7 @@
 import React from "react";
 import { NavLink } from "react-router-dom";
 import "css/allStyle.css";
+
 class Welcome extends React.Component {
   render() {
     return (

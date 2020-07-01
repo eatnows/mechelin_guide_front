@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Input, Button } from "antd";
-import Axios from "axios";
+import Axios from "util/axios";
 import SingleComment from "./SingleComment";
 import profile from "images/default_profile.png";
 /*
@@ -23,7 +23,7 @@ const Comment = ({ postId }) => {
     댓글 list 갱신 (+재출력)
   */
   const commentList = () => {
-    const url = `http://localhost:9000/mechelin/comment/getcomments`;
+    const url = `comment/getcomments`;
     Axios.post(url, {
       post_id: postId,
       user_id: sessionStorage.getItem("userId"),
@@ -40,7 +40,7 @@ const Comment = ({ postId }) => {
     댓글 좋아요 클릭 시 실행(SingleComment 와 바인드)
   */
   const onCommentLike = (commentId, userId) => {
-    const url = `http://localhost:9000/mechelin/likes/comment`;
+    const url = `likes/comment`;
     Axios.post(url, {
       comment_id: commentId,
       user_id: userId,
@@ -57,9 +57,7 @@ const Comment = ({ postId }) => {
     댓글 삭제 클릭 시 실행(SingleComment 와 바인드)
   */
   const onCommentDelete = (commentId) => {
-    const url =
-      `http://localhost:9000/mechelin/comment/deletecomment` +
-      `?comment_id=${commentId}`;
+    const url = `comment/deletecomment` + `?comment_id=${commentId}`;
     Axios.get(url)
       .then((response) => {
         // 재출력
@@ -77,7 +75,7 @@ const Comment = ({ postId }) => {
     if (writeComment === "") {
       return;
     }
-    const url = `http://localhost:9000/mechelin/comment/insertcomment`;
+    const url = `comment/insertcomment`;
     Axios.post(url, {
       user_id: userId,
       post_id: postId,
@@ -105,7 +103,7 @@ const Comment = ({ postId }) => {
     댓글 수정 제출
   */
   const onCommentUpdate = () => {
-    const url = `http://localhost:9000/mechelin/comment/updatecomment`;
+    const url = `comment/updatecomment`;
     Axios.post(url, {
       id: updateId,
       content: writeComment,

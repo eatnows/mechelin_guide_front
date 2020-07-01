@@ -6,7 +6,8 @@ import useIntersect from "components/review/useIntersect";
 import heart from "images/heart.png";
 import heart_o from "images/heart_o.png";
 import star from "images/star.png";
-import share from "images/share2.png";
+import block from "images/block.png";
+import block_g from "images/block_g.png";
 import star_g from "images/star_g.png";
 
 import e from "cors";
@@ -17,7 +18,7 @@ const fakeFetch = (delay = 1000) =>
   new Promise((res) => setTimeout(res, delay));
 
 let checkHearts = false;
-const ListItem = ({ row, i, likesChange, wishClick, render }) => {
+const ListItem = ({ row, i, likesChange, wishClick, blockClick, render }) => {
   useEffect(() => {
     heartBoolean();
     if (row.user_id === sessionStorage.getItem("userId")) {
@@ -27,13 +28,14 @@ const ListItem = ({ row, i, likesChange, wishClick, render }) => {
 
   useEffect(() => {
     heartBoolean();
-    wishlistBoolean();
+    wishListBoolean();
+    blackListBoolean();
   }, [render]);
 
   const [showBtn, setShowBtn] = useState(false);
   const [checkHeart, setCheckHeart] = useState(false);
   const [checkWishlist, setCheckWishlist] = useState(false);
-
+  const [checkBlock, setCheckBlock] = useState(false);
   /* 게시한 시간 표시*/
   const nowTime = (data) => {
     let now = new Date().getTime();
@@ -82,7 +84,7 @@ const ListItem = ({ row, i, likesChange, wishClick, render }) => {
   };
 
   /* 위시리스트 등록되어있는지 확인 */
-  const wishlistBoolean = () => {
+  const wishListBoolean = () => {
     console.log("실행됨");
     const url = `/wishlist/exist?user_id=${sessionStorage.getItem(
       "userId"
@@ -98,7 +100,28 @@ const ListItem = ({ row, i, likesChange, wishClick, render }) => {
         }
       })
       .catch((error) => {
-        console.log("heartBoolean" + error);
+        console.log("wishListBoolean" + error);
+      });
+  };
+
+  /* 블랙리스트 등록되어있는지 확인 */
+  const blackListBoolean = () => {
+    console.log("실행됨");
+    const url = `/blacklist/exist?user_id=${sessionStorage.getItem(
+      "userId"
+    )}&place_id=${row.place_id}`;
+    Axios.get(url)
+      .then((res) => {
+        console.log("블랙리스트");
+        console.log(res.data);
+        if (res.data === 1) {
+          setCheckBlock(true);
+        } else {
+          setCheckBlock(false);
+        }
+      })
+      .catch((error) => {
+        console.log("blackListBoolean" + error);
       });
   };
 
@@ -223,13 +246,29 @@ const ListItem = ({ row, i, likesChange, wishClick, render }) => {
                   >
                     {row.likes}
                   </span>
-                  <img
-                    src={share}
-                    width="30"
-                    height="30"
-                    alt=""
-                    style={{ cursor: "pointer", float: "right" }}
-                  />
+                  {checkBlock ? (
+                    <img
+                      src={block}
+                      width="30"
+                      height="30"
+                      alt=""
+                      onClick={blockClick}
+                      placeId={row.place_id}
+                      postId={row.id}
+                      style={{ cursor: "pointer", float: "right" }}
+                    />
+                  ) : (
+                    <img
+                      src={block_g}
+                      width="30"
+                      height="30"
+                      alt=""
+                      onClick={blockClick}
+                      placeId={row.place_id}
+                      postId={row.id}
+                      style={{ cursor: "pointer", float: "right" }}
+                    />
+                  )}
                   {checkWishlist ? (
                     <img
                       src={star}
@@ -403,6 +442,32 @@ const NewsFeed = (props) => {
       });
   };
 
+  /*
+   * 블랙리스트 버튼 클릭 시
+   */
+  const blockClick = (e) => {
+    const url = `/blacklist/add`;
+    console.log("블랙리스트 클릭");
+    console.log(e.target.getAttribute("placeId"));
+    Axios.post(url, {
+      user_id: sessionStorage.getItem("userId"),
+      place_id: e.target.getAttribute("placeId"),
+      post_id: e.target.getAttribute("postId"),
+    })
+      .then((res) => {
+        console.log(res.data);
+        if (res.data === "블랙리스트에 추가되었습니다.") {
+          success(res.data);
+        } else {
+          info(res.data);
+        }
+        setRender(render + 1);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  };
+
   function success(str) {
     Modal.success({
       content: str,
@@ -440,6 +505,7 @@ const NewsFeed = (props) => {
               i={i}
               likesChange={onClickLikes}
               wishClick={wishClick}
+              blockClick={blockClick}
               key={i}
               render={render}
             />
