@@ -30,6 +30,7 @@ const MainMap = (props) => {
   const [markers, setMarkers] = useState([]);
 
   useEffect(() => {
+    console.log(props.render);
     // gps 받아오는 메소드 실행
     getLocation();
     const url = `/place/allplace?user_id=${sessionStorage.getItem("userId")}`;
@@ -62,7 +63,7 @@ const MainMap = (props) => {
       .catch((error) => {
         console.log(error);
       });
-  }, []);
+  }, [props.render]);
   useEffect(() => {
     const script = document.createElement("script");
 
@@ -478,19 +479,19 @@ const MainMap = (props) => {
         onClick={panTo}
         onMouseDown={panTo}
         style={{
-          width: "60px",
-          height: "60px",
+          width: "2.1vw",
+          height: "2.1vw",
           position: "absolute",
-          right: "0",
-          bottom: "0",
+          right: "1%",
+          bottom: "2.5%",
           zIndex: "0.2",
-          margin: "10px 10px 30px 0",
-          padding: "5px",
-          opacity: "0.8",
+          cursor: "pointer",
+          padding: "0.3vw 0px 0px 0.31vw",
+          borderRadius: "50%",
+          backgroundColor: "rgba(255,255,255,.7)",
         }}
-        className="bg_white"
       >
-        <img src={LocationIcon} alt="" style={{ width: "50px" }} />
+        <img src={LocationIcon} alt="" style={{ width: "1.5vw" }} />
       </div>
     </div>
   );

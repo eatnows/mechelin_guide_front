@@ -1,33 +1,22 @@
 import React from "react";
-import { Switch, Checkbox } from "antd";
+import { Switch, Checkbox, Input, Select, Button } from "antd";
 import ReactQuill, { Quill } from "react-quill";
 import { ImageUpload } from "quill-image-upload";
 import "react-quill/dist/quill.snow.css";
-//import e from "cors";
 import StarRate from "components/review/StarRate";
 import WriteFormMap from "components/map/WriteFormMap";
 import Axios from "util/axios";
-import {
-  useHistory,
-  withRouter,
-  Route,
-  BrowserRouter,
-  Redirect,
-} from "react-router-dom";
 import filter from "images/filter2.png";
 import friend from "images/friend2.png";
-import message from "images/messag2.png";
+import list from "images/list.png";
 import review from "images/review2.png";
 import MainMap from "components/map/MainMap";
+import MyListComponent from "../../components/mypage/MyList";
 
 Quill.register("modules/imageUpload", ImageUpload);
 
 let MyFilter = true;
 let FriendFilter = true;
-let koreanFilter = true;
-let westernFilter = true;
-let chineseFilter = true;
-let japaneseFilter = true;
 const categoryOptions = [
   { label: "한식", value: "한식" },
   { label: "양식", value: "양식" },
@@ -36,6 +25,7 @@ const categoryOptions = [
 ];
 let categoryFilter = ["한식", "양식", "중식", "일식"];
 let blacklist = false;
+let render = 0;
 class FullMap extends React.Component {
   constructor(props) {
     super();
@@ -68,6 +58,10 @@ class FullMap extends React.Component {
     japaneseFilter: true,
     categoryFilter: ["한식", "양식", "중식", "일식"],
     blacklist: false,
+    myListModal: false,
+    frinedsModal: false,
+    friendEmail: "",
+    render: 0,
   };
 
   modules = {
@@ -93,7 +87,7 @@ class FullMap extends React.Component {
     },
     imageUpload: {
       url:
-        "http://localhost:9000/mechelin/image/add?id=" +
+        "http://localhost:9000/image/add?id=" +
         sessionStorage.getItem("userId"), // server url
       method: "POST", // change query method, default 'POST'
       name: "images", // 아래 설정으로 image upload form의 key 값을 변경할 수 있다.
@@ -195,7 +189,6 @@ class FullMap extends React.Component {
   /*
    * 리뷰작성 폼 지도에서 넘어온 데이터
    */
-
   mapData = (x, y, placeName, address) => {
     this.setState({
       x: x,
@@ -204,6 +197,7 @@ class FullMap extends React.Component {
       address: address,
     });
   };
+
   /*
    * value 변경시 스테이트 값 변경
    */
@@ -212,13 +206,16 @@ class FullMap extends React.Component {
       [e.target.name]: e.target.value,
     });
   };
+
   /*리뷰 모달창 보이게 */
   showReviewForm = () => {
     this.setState({
       reviewModal: true,
       filterModal: false,
+      myListModal: false,
     });
   };
+
   /*필터 모달창 보이게 */
   showFilterForm = () => {
     if (this.state.filterModal) {
@@ -228,6 +225,38 @@ class FullMap extends React.Component {
     } else {
       this.setState({
         filterModal: true,
+        myListModal: false,
+        friendModal: false,
+      });
+    }
+  };
+
+  /*마이리스트 모달창 보이게 */
+  showMyListForm = () => {
+    if (this.state.myListModal) {
+      this.setState({
+        myListModal: false,
+      });
+    } else {
+      this.setState({
+        myListModal: true,
+        filterModal: false,
+        friendModal: false,
+      });
+    }
+  };
+
+  /*친구 추가 모달창 보이게 */
+  showfriendForm = () => {
+    if (this.state.myListModal) {
+      this.setState({
+        friendModal: false,
+      });
+    } else {
+      this.setState({
+        friendModal: true,
+        filterModal: false,
+        myListModal: false,
       });
     }
   };
@@ -270,7 +299,7 @@ class FullMap extends React.Component {
       return false;
     }
 
-    const url = "http://localhost:9000/mechelin/post/add";
+    const url = "/post/add";
     Axios.post(url, {
       user_id: sessionStorage.getItem("userId"),
       latitude_x: this.state.x,
@@ -302,6 +331,7 @@ class FullMap extends React.Component {
         const userPlaceId = response.data.user_place_id;
 
         this.setState({ reviewModal: false, fullMap: false });
+        this.props.reivewPageMove(userPlaceId);
         this.props.history.push(`/mechelin/review/${userPlaceId}`);
       })
       .catch((error) => {
@@ -335,6 +365,12 @@ class FullMap extends React.Component {
       blacklist: checked,
     });
   };
+  myPlaceRender = (num) => {
+    render = render + num;
+    this.setState({
+      render: this.state.render + num,
+    });
+  };
 
   render() {
     return (
@@ -348,6 +384,7 @@ class FullMap extends React.Component {
               categoryFilter={categoryFilter}
               blacklistFilter={blacklist}
               reivewPageMove={this.reivewPageMove.bind(this)}
+              render={render}
             />
             {/*하단 메뉴바 */}
             <div style={{ cursor: "pointer" }}>
@@ -387,7 +424,8 @@ class FullMap extends React.Component {
                   />
                 </div>
                 <div
-                  className="message"
+                  className="list"
+                  onClick={this.showMyListForm.bind(this)}
                   style={{
                     bottom: this.state.bottomMenu ? "12.5%" : "-20%",
                     right: this.state.bottomMenu ? "43.1%" : "50%",
@@ -395,7 +433,7 @@ class FullMap extends React.Component {
                 >
                   <img
                     style={{ marginLeft: "1px" }}
-                    src={message}
+                    src={list}
                     width="30px"
                     height="27px"
                     alt=""
@@ -403,6 +441,7 @@ class FullMap extends React.Component {
                 </div>
                 <div
                   className="friend"
+                  onClick={this.showfriendForm.bind(this)}
                   style={{
                     bottom: this.state.bottomMenu ? "1.5%" : "-20%",
                     right: this.state.bottomMenu ? "37%" : "50%",
@@ -477,8 +516,7 @@ class FullMap extends React.Component {
                     paddingRight: "2vw",
                   }}
                 >
-                  <input
-                    className="form-control"
+                  <Input
                     name="subject"
                     style={{
                       marginLeft: "0.15vw",
@@ -540,7 +578,7 @@ class FullMap extends React.Component {
                         rating={this.state.rating}
                         cacheIdx={this.state.cacheIdx}
                         cacheRating={this.state.cacheRating}
-                        score={this.state.score}
+                        score={this.state.starScore}
                       />
                     </div>
                     <div
@@ -550,7 +588,7 @@ class FullMap extends React.Component {
                         lineHeight: "5vh",
                         display: "inline-block",
                         fontSize: "1.5em",
-                        color: "rgba(0, 0, 0, 0.65)",
+                        color: "rgba(0, 0, 0, 0.4)",
                       }}
                     >
                       {this.state.starScore === 0
@@ -593,28 +631,23 @@ class FullMap extends React.Component {
                   </div>
                 </div>
 
-                <button
-                  type="button"
-                  className="btn btn-warning"
+                <Button
                   style={{
                     clear: "both",
                     width: "10vw",
                     height: "5vh",
-                    color: "white",
                     marginLeft: "12vw",
                   }}
                   onClick={this.onSubmitReview.bind(this)}
                 >
                   등록하기
-                </button>
-                <button
-                  type="reset"
-                  className="btn btn-warning"
+                </Button>
+                <Button
+                  htmltpe="reset"
                   style={{
                     clear: "both",
                     width: "10vw",
                     height: "5vh ",
-                    color: "white",
                     marginLeft: "4vw",
                   }}
                   onClick={() => {
@@ -624,7 +657,7 @@ class FullMap extends React.Component {
                   }}
                 >
                   취소
-                </button>
+                </Button>
               </section>
             ) : (
               ""
@@ -734,6 +767,160 @@ class FullMap extends React.Component {
                 />
                 <br />
               </div>
+            </div>
+          </div>
+        </section>
+
+        {/*마이리스트 모달창*/}
+        <section>
+          <div
+            className="mylist"
+            style={{
+              display:
+                this.state.myListModal && !this.props.bar ? "block" : "none",
+              clear: "both",
+              background: "white",
+              border: "1px solid rgba(0,0,0,.2)",
+              borderRadius: "10px",
+              width: "20vw",
+              height: "72vh",
+              boxShadow: "5px 5px 5px rgba(0,0,0,.1)",
+              position: "absolute",
+              zIndex: "9999",
+              left: "3%",
+              bottom: "5%",
+            }}
+          >
+            <div
+              style={{
+                fontSize: "2.5vh",
+                margin: "2vh 0 1.5vh 3vh",
+                textAlign: "left",
+              }}
+            >
+              나의 맛집 리스트
+            </div>
+            <hr
+              style={{
+                borderColor: "rgba(0,0,0,.2)",
+                margin: "1vh 0 3vh",
+              }}
+            />
+            <div
+              style={{
+                width: "18vw",
+                height: "51vh",
+                margin: "0 auto",
+              }}
+            >
+              <MyListComponent
+                reivewPageMove={this.reivewPageMove.bind(this)}
+                history={this.props.history}
+                myPlaceRender={this.myPlaceRender.bind(this)}
+              />
+            </div>
+            <Button
+              type="primary"
+              onClick={() => {
+                this.setState({ myListModal: false });
+              }}
+              style={{
+                transform: "translateX(-50%)",
+                position: "absolute",
+                top: "90%",
+                left: "50%",
+              }}
+            >
+              닫기
+            </Button>
+          </div>
+        </section>
+
+        {/*친구 추가 모달창 */}
+        <section>
+          <div
+            className="friendModal"
+            style={{
+              display:
+                this.state.friendModal && !this.props.bar ? "block" : "none",
+              clear: "both",
+              background: "white",
+              border: "1px solid rgba(0,0,0,.2)",
+              borderRadius: "10px",
+              width: "20vw",
+              height: "25vh",
+              boxShadow: "5px 5px 5px rgba(0,0,0,.1)",
+              position: "absolute",
+              zIndex: "9999",
+              right: "10%",
+              bottom: "15%",
+            }}
+          >
+            <div
+              className="closeFilter xi-close"
+              onClick={() => {
+                this.setState({ friendModal: false });
+              }}
+              style={{
+                position: "absolute",
+                right: "4%",
+                top: "8%",
+                fontSize: "3vh",
+                color: "rgba(245,145,45)",
+                cursor: "pointer",
+                zIndex: "1",
+              }}
+            ></div>
+            <div
+              id="content"
+              style={{
+                width: "20vw",
+                height: "20vh",
+                position: "absolute",
+                left: "50%",
+                top: "50%",
+                transform: "translate(-50%,-50%)",
+              }}
+            >
+              <div
+                style={{
+                  fontSize: "2.5vh",
+                  marginLeft: "2vh",
+                  textAlign: "left",
+                }}
+              >
+                친구 추가
+              </div>
+              <hr
+                style={{
+                  borderColor: "rgba(0,0,0,.2)",
+                  margin: "1vh 0 3vh",
+                }}
+              />
+              <Input
+                name="friendEmail"
+                onChange={this.changeState.bind(this)}
+                placeholder="상대방의 이메일 입력하세요."
+                style={{
+                  width: "15vw",
+                  margin: "0 2.5vw",
+                  textAlign: "center",
+                }}
+              ></Input>
+              <button
+                className="form-control"
+                style={{
+                  width: "8vw",
+                  height: "5vh",
+                  marginTop: "5vh",
+                  color: "white",
+                  margin: "3vh auto 0",
+                  border: "none",
+                  backgroundColor: "rgba(245,145,45)",
+                }}
+              >
+                친구 요청
+              </button>
             </div>
           </div>
         </section>

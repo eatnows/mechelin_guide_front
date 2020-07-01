@@ -9,9 +9,20 @@ const Review = (props) => {
     console.log(props.userPlaceId);
   }, []);
 
+  const timelinePageMove = (user_id) => {
+    props.timelinePageMove(user_id);
+  };
+
   return (
     <div>
-      <Post userPlaceId={props.userPlaceId} pathFrom="review" />
+      <div style={{ overflow: "auto", height: "100vh" }}>
+        <Post
+          userPlaceId={props.userPlaceId}
+          pathFrom="review"
+          history={props.history}
+          timelinePageMove={timelinePageMove}
+        />
+      </div>
     </div>
   );
 };

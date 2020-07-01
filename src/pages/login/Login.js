@@ -121,7 +121,11 @@ class Login extends Component {
     return (
       <div>
         <form onSubmit={this.userLogin.bind(this)}>
-          <table align="center" style={{ width: "200px", marginTop: "30px" }}>
+          <table
+            className="loginTable"
+            align="center"
+            style={{ width: "200px", marginTop: "30px" }}
+          >
             <tbody>
               <tr>
                 <td>
@@ -137,7 +141,8 @@ class Login extends Component {
                       alt=""
                       style={{
                         width: "auto",
-                        height: "100px",
+                        height: "7vw",
+                        marginLeft: "-2vw",
                       }}
                     />
                   </div>

@@ -8,19 +8,60 @@ import heart_o from "images/heart_o.png";
 import star from "images/star.png";
 import share from "images/share2.png";
 import star_g from "images/star_g.png";
-import { Rate, Button } from "antd";
-
+import block from "images/block.png";
+import block_g from "images/block_g.png";
+import { Rate, Button, Input, Modal, Spin } from "antd";
+import StarRate from "components/review/StarRate";
+import WriteFormMap from "components/map/WriteFormMap";
+import ReactQuill, { Quill } from "react-quill";
+import { ImageUpload } from "quill-image-upload";
+import "react-quill/dist/quill.snow.css";
+import { ExclamationCircleOutlined, LoadingOutlined } from "@ant-design/icons";
 const fakeFetch = (delay = 1000) =>
   new Promise((res) => setTimeout(res, delay));
 
-const ListItem = ({ contact, i, likesChange }) => {
+Quill.register("modules/imageUpload", ImageUpload);
+const { confirm } = Modal;
+const ListItem = ({
+  contact,
+  i,
+  likesChange,
+  props,
+  history,
+  timelinePageMove,
+  render,
+  wishClick,
+  blockClick,
+  userPlaceId,
+}) => {
   const [showBtn, setShowBtn] = useState(false);
+  const [form, setForm] = useState(false);
   const [checkHeart, setCheckHeart] = useState(false);
+  const [sIdx, setSIdx] = useState(0);
+  const [rating, setRating] = useState(contact.rating);
+  const [cacheIdx, setCacheIdx] = useState(0);
+  const [cacheRating, setCacheRating] = useState(0);
+  const [starScore, setStarScore] = useState(0.0);
+  const [x, setX] = useState(0);
+  const [y, setY] = useState(0);
+  const [placeName, setPlaceName] = useState(contact.name);
+  const [address, setAddress] = useState("");
+  const [subject, setSubject] = useState(contact.subject);
+  const [category, setCategory] = useState(contact.category);
+  const [content, setContent] = useState(contact.content);
+  const [front_image, setFront_image] = useState(null);
+  const [imageId, setImageId] = useState([]);
+  const [postId, setPostId] = useState("");
+  const [checkBlock, setCheckBlock] = useState(false);
   useEffect(() => {
-    if (contact.user_id === sessionStorage.getItem("userId")) {
+    console.log(showBtn);
+    console.log(typeof contact.user_id);
+    console.log(typeof sessionStorage.getItem("userId"));
+    if (contact.user_id.toString() === sessionStorage.getItem("userId")) {
       setShowBtn(true);
+      console.log(showBtn);
     }
-    heartBoolean();
+    console.log(showBtn);
   }, []);
 
   /* 게시한 시간 표시*/
@@ -49,11 +90,14 @@ const ListItem = ({ contact, i, likesChange }) => {
     return `${simpleTime}`;
   };
 
+  useEffect(() => {
+    heartBoolean();
+    blackListBoolean();
+  }, [render]);
+
   /*좋아요 눌렀는지 확인 */
   const heartBoolean = () => {
-
     const url = `likes/ispost?user_id=${sessionStorage.getItem(
-
       "userId"
     )}&post_id=${contact.id}`;
     Axios.get(url)
@@ -70,189 +114,729 @@ const ListItem = ({ contact, i, likesChange }) => {
       });
   };
 
+  /*수정버튼 클릭시 수정 폼 나옴 */
+  const showForm = (e) => {
+    setPostId(e.target.getAttribute("postId"));
+    setForm(true);
+  };
+
+  /*삭제버튼 클릭시 삭제 */
+  const deletePost = (e) => {
+    const postId = e.target.getAttribute("postId");
+    const userPlaceId = e.target.getAttribute("userPlaceId");
+    console.log("버튼함수");
+    console.log(postId);
+    confirm({
+      title: "정말 삭제 하시겠습니까?",
+      icon: <ExclamationCircleOutlined />,
+      content: "리뷰를 삭제하시려면 확인을 눌러주세요",
+      okText: "확인",
+      okType: "danger",
+      cancelText: "취소",
+      onCancel() {},
+      onOk() {
+        const url = `/post/delete/${postId}/${userPlaceId}`;
+        Axios.put(url)
+          .then((res) => {
+            console.log(res);
+            //props.onDeletePage(1);
+          })
+          .catch((error) => {
+            console.log(error);
+          });
+      },
+    });
+  };
+
+  /* 블랙리스트 등록되어있는지 확인 */
+  const blackListBoolean = () => {
+    console.log("실행됨");
+    const url = `/userplace/blacklist/exist?user_place_id=${userPlaceId}`;
+    Axios.get(url)
+      .then((res) => {
+        console.log("블랙리스트");
+        console.log(res.data);
+        if (res.data === 1) {
+          setCheckBlock(true);
+        } else {
+          setCheckBlock(false);
+        }
+      })
+      .catch((error) => {
+        console.log("blackListBoolean" + error);
+      });
+  };
+
+  /*값 읽어오기 */
+  const changeSubject = (e) => {
+    console.log(e.target.value);
+    setSubject(e.target.value);
+  };
+
+  const changeCategory = (e) => {
+    setCategory(e.target.value);
+  };
+  const changeState = (e) => {};
+
+  const modules = {
+    toolbar: {
+      container: [
+        [{ header: [1, 2, false] }, { font: [] }],
+        [{ size: [] }],
+        ["bold", "italic", "underline", "strike", "blockquote"],
+        [
+          { list: "ordered" },
+          { list: "bullet" },
+          { indent: "-1" },
+          { indent: "+1" },
+        ],
+        ["link", "image", "video"],
+        ["clean"],
+      ],
+      // container:  [['bold', 'italic', 'underline', 'blockquote'],
+      // [{'list': 'ordered'}, {'list': 'bullet'}],
+      // ['formula','link', 'image'],
+      // ['clean']],
+      // handlers: { 'image' : this.handleImage }
+    },
+    imageUpload: {
+      url: `http://localhost:9000/mechelin/image/add?id=${sessionStorage.getItem(
+        "userId"
+      )}`, // server url
+      method: "POST", // change query method, default 'POST'
+      name: "images", // 아래 설정으로 image upload form의 key 값을 변경할 수 있다.
+      headers: {
+        //Authorization: `Bearer ${}`,
+        "X-Total-Count": 0,
+      },
+      callbackOK: (serverResponse, next) => {
+        // 성공하면 리턴되는 함수
+        console.log(serverResponse);
+        next(serverResponse.data);
+        imageId.push(serverResponse.image_id);
+      },
+      callbackKO: (serverError) => {
+        // 실패하면 리턴되는 함수
+        console.log(serverError);
+        // alert(serverError);
+      },
+      // optional
+      // add callback when a image have been chosen
+      checkBeforeSend: (file, next) => {
+        console.log("ceckbeforesend");
+        console.log(file);
+        next(file); // go back to component and send to the server
+      },
+    },
+    clipboard: {
+      // toggle to add extra line breaks when pasting HTML:
+      matchVisual: false,
+    },
+    //imageDrop: true, // imageDrop 등록
+    //imageResize: {}, // imageResize 등록
+  };
+
+  const formats = [
+    "header",
+    "font",
+    "size",
+    "bold",
+    "italic",
+    "underline",
+    "strike",
+    "blockquote",
+    "list",
+    "bullet",
+    "indent",
+    "link",
+    "image",
+    "video",
+  ];
+  /*
+   * 내용을 기입했을때 실행
+   */
+  const changeEditor = (e) => {
+    console.log(e);
+    setContent(e);
+  };
+  const onMouseOver = (e, i) => {
+    e.persist();
+    let offsetX = e.nativeEvent.offsetX;
+    let clientX = e.target.clientWidth;
+
+    if (offsetX > clientX / 2) {
+      let value = 2;
+      setSIdx(i);
+      setRating(value);
+    } else {
+      let value = 1;
+      setSIdx(i);
+      setRating(value);
+    }
+  };
+  const handleChange = (i, v, s) => {
+    setSIdx(0);
+    setRating(0);
+    setCacheIdx(i);
+    setCacheRating(v);
+    setStarScore(s);
+  };
+  /*
+   * 리뷰글 등록 버튼 클릭시 실행
+   */
+  const onSubmitReview = (e) => {
+    e.preventDefault();
+    //데이터 유효성 검사
+    if (subject === "") {
+      alert("제목을 입력해주세요.");
+      return false;
+    }
+    if (content === "") {
+      alert("내용을 입력해주세요.");
+      return false;
+    }
+    if (category === "") {
+      alert("카테고리를 선택해주세요.");
+      return false;
+    }
+    if (starScore === 0) {
+      alert("맛집 평가를 해주세요.");
+      return false;
+    }
+    if (x === 0 && y === 0) {
+      alert("맛집을 등록해주세요.");
+      return false;
+    }
+    if (placeName === "") {
+      alert("상호명을 입력해주세요.");
+      return false;
+    }
+
+    const url = "post/add";
+    Axios.post(url, {
+      user_id: sessionStorage.getItem("userId"),
+      latitude_x: x,
+      longitude_y: y,
+      name: placeName,
+      address: address,
+      subject: subject,
+      content: content,
+      category: category,
+      rating: starScore,
+      front_image: front_image,
+      image_id: imageId,
+    })
+      .then((response) => {
+        // 리뷰글 등록후 state값 초기화
+        setX("");
+        setY("");
+        setPlaceName("");
+        setAddress("");
+        setSubject("");
+        setContent("");
+        setCategory("");
+        setStarScore(0);
+        setFront_image(null);
+        setImageId([]);
+        const id = response.data.id;
+        const userPlaceId = response.data.user_place_id;
+
+        props.history.push(`/mechelin/review/${userPlaceId}`);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  };
+
+  const clickProfile = (e) => {
+    console.log("Dfdf");
+    console.log(e.target.getAttribute("user_id"));
+    const user_id = e.target.getAttribute("user_id");
+    sessionStorage.setItem("targetUser", e.target.getAttribute("user_id"));
+    //timelinePageMove(user_id);
+
+    history.push(`/mechelin/timeline/${user_id}`);
+  };
+
+  /*
+   * 리뷰글 수정 버튼 눌렀을 시
+   */
+  const reviewModifyBtn = () => {
+    console.log("ㅎㅎ");
+    if (subject === "") {
+      alert("제목을 입력해주세요.");
+      return false;
+    }
+    if (content === "") {
+      alert("내용을 입력해주세요.");
+      return false;
+    }
+    if (category === "") {
+      alert("카테고리를 선택해주세요.");
+      return false;
+    }
+    if (starScore === 0) {
+      alert("맛집 평가를 해주세요.");
+      return false;
+    }
+    const url = "post/update";
+    Axios.post(url, {
+      id: postId,
+      subject: subject,
+      content: content,
+      category: category,
+      rating: starScore,
+      image_id: imageId,
+    })
+      .then((response) => {
+        // 리뷰글 등록후 state값 초기화
+        setX("");
+        setY("");
+        setPlaceName("");
+        setAddress("");
+        setSubject("");
+        setContent("");
+        setCategory("");
+        setStarScore(0);
+        setFront_image(null);
+        setImageId([]);
+        const id = response.data.id;
+        const userPlaceId = response.data.user_place_id;
+
+        this.props.history.push(`/mechelin/review/${userPlaceId}`);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  };
+
+  /*
+   * 리뷰작성 폼 지도에서 넘어온 데이터
+   */
+  const mapData = (x, y, placeName, address) => {
+    setX(x);
+    setY(y);
+    setPlaceName(placeName);
+    setAddress(address);
+  };
+
   return (
     <div key={i}>
-      <form>
-        {showBtn
-          ? <Button type="text"> 수정</Button> |
-            <Button type="text"> 삭제</Button>
-          : ""}
-        <table className="postTable">
-          <thead>
-            <tr style={{ backgroundColor: "rgba(0, 0, 0, 0.05)" }}>
-              <th
-                colSpan="4"
-                style={{
-                  fontWeight: "bold",
-                }}
+      {!form ? (
+        <form>
+          {showBtn ? (
+            <div
+              style={{
+                textAlign: "right",
+                width: "52vw",
+                margin: "7vh auto -7vh",
+              }}
+            >
+              <span
+                type="text"
+                onClick={showForm}
+                postId={contact.id}
+                style={{ width: "100px", cursor: "pointer" }}
+              >
+                수정
+              </span>
+              |
+              <span
+                type="text"
+                onClick={deletePost}
+                postId={contact.id}
+                userPlaceId={contact.user_place_id}
+                style={{ width: "100px", cursor: "pointer" }}
               >
                 {" "}
-                {contact.subject}{" "}
-              </th>
-              <th
-                style={{
-                  textAlign: "right",
-                }}
-              >
-                <span
+                삭제
+              </span>
+            </div>
+          ) : (
+            ""
+          )}
+          <table className="postTable">
+            <thead>
+              <tr style={{ backgroundColor: "rgba(0, 0, 0, 0.05)" }}>
+                <th
+                  colSpan="4"
                   style={{
                     fontWeight: "bold",
                   }}
                 >
-                  {contact.name}
-                </span>
-                <br />
-
-                <span style={{ fontSize: "10px" }}>
-                  {contact.post_count - i}번째 리뷰글
-                </span>
-              </th>
-            </tr>{" "}
-            <tr>
-              <th
-                style={{
-                  paddingRight: "0",
-                  width: "65px",
-                }}
-              >
-                <img
-                  src={contact.profile_url}
-                  alt=""
+                  {" "}
+                  {contact.subject}{" "}
+                </th>
+                <th
                   style={{
-                    width: "3vw",
-                    borderRadius: "50%",
-                    height: "3vw",
-                  }}
-                />
-              </th>
-              <th colSpan="3" style={{ paddingLeft: "10px" }}>
-                {contact.nickname}
-                <br />
-                {nowTime(contact.created_at)}
-              </th>
-              <th>
-                <div style={{ float: "right" }}>
-                  <Rate
-                    allowHalf
-                    value={contact.rating}
-                    disabled="disabled"
-                    style={{
-                      pointerEvents: "none",
-                      fontSize: "15px",
-                    }}
-                  />
-                </div>
-              </th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td colSpan="5">
-                <div
-                  className="content"
-                  dangerouslySetInnerHTML={{ __html: contact.content }}
-                ></div>
-              </td>
-            </tr>
-            <tr>
-              <td colSpan="5">
-                <div
-                  style={{
-                    height: "30px",
-                    width: "100%",
-                    lineHeight: "30px",
-                    marginBottom: "10px",
+                    textAlign: "right",
                   }}
                 >
-                  {checkHeart ? (
-                    <img
-                      src={heart}
-                      alt=""
-                      width="30"
-                      height="27"
-                      onClick={likesChange}
-                      postId={contact.id}
-                      style={{
-                        cursor: "pointer",
-                        display: "inline-block",
-                      }}
-                    />
-                  ) : (
-                    <img
-                      src={heart_o}
-                      alt=""
-                      width="30"
-                      height="27"
-                      onClick={likesChange}
-                      postId={contact.id}
-                      style={{
-                        cursor: "pointer",
-                        display: "inline-block",
-                      }}
-                    />
-                  )}
-
                   <span
                     style={{
-                      display: "inline-block",
-                      color: "#999",
-                      fontSize: "15px",
-                      verticalAlign: "middle",
-                      marginLeft: "5px",
+                      fontWeight: "bold",
                     }}
                   >
-                    {contact.likes}
+                    {contact.name}
                   </span>
+                </th>
+              </tr>{" "}
+              <tr>
+                <th
+                  style={{
+                    paddingRight: "0",
+                    width: "65px",
+                  }}
+                >
                   <img
-                    src={share}
-                    width="30"
-                    height="30"
+                    src={contact.profile_url}
                     alt=""
-                    style={{ cursor: "pointer", float: "right" }}
-                  />
-                  <img
-                    src={star}
-                    width="28.5"
-                    height="28.5"
-                    alt=""
+                    onClick={clickProfile}
+                    user_id={contact.user_id}
                     style={{
-                      float: "right",
+                      width: "3vw",
+                      borderRadius: "50%",
+                      height: "3vw",
                       cursor: "pointer",
-                      marginRight: "10px",
                     }}
                   />
-                </div>
+                </th>
+                <th
+                  colSpan="3"
+                  style={{ paddingLeft: "10px", cursor: "pointer" }}
+                  onClick={clickProfile}
+                  user_id={contact.user_id}
+                >
+                  {contact.nickname}
+                  <br />
+                  {nowTime(contact.created_at)}
+                </th>
+                <th>
+                  <div style={{ float: "right" }}>
+                    <Rate
+                      allowHalf
+                      value={contact.rating}
+                      disabled="disabled"
+                      style={{
+                        pointerEvents: "none",
+                        fontSize: "15px",
+                      }}
+                    />
+                  </div>
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td colSpan="5">
+                  <div
+                    className="content"
+                    dangerouslySetInnerHTML={{ __html: contact.content }}
+                  ></div>
+                </td>
+              </tr>
+              <tr>
+                <td colSpan="5">
+                  <div
+                    style={{
+                      height: "30px",
+                      width: "100%",
+                      lineHeight: "30px",
+                      marginBottom: "10px",
+                    }}
+                  >
+                    {checkHeart ? (
+                      <img
+                        src={heart}
+                        alt=""
+                        width="30"
+                        height="27"
+                        onClick={likesChange}
+                        postId={contact.id}
+                        style={{
+                          cursor: "pointer",
+                          display: "inline-block",
+                        }}
+                      />
+                    ) : (
+                      <img
+                        src={heart_o}
+                        alt=""
+                        width="30"
+                        height="27"
+                        onClick={likesChange}
+                        postId={contact.id}
+                        style={{
+                          cursor: "pointer",
+                          display: "inline-block",
+                        }}
+                      />
+                    )}
 
-                <div
-                  style={{
-                    width: "100%",
-                    height: "10px",
-                    borderBottom: "1px solid rgba(0,0,0,.2) ",
-                    textAlign: "center",
-                    marginBottom: "-25px",
-                    clear: "both",
-                  }}
-                ></div>
-              </td>
-            </tr>{" "}
-            <tr>
-              <td colSpan="5">
-                <Comment postId={contact.id} />
-              </td>
-            </tr>
-          </tbody>
-        </table>
-      </form>
+                    <span
+                      style={{
+                        display: "inline-block",
+                        color: "#999",
+                        fontSize: "15px",
+                        verticalAlign: "middle",
+                        marginLeft: "5px",
+                      }}
+                    >
+                      {contact.likes}
+                    </span>
+                    {checkBlock ? (
+                      <img
+                        src={block}
+                        width="30"
+                        height="30"
+                        alt=""
+                        onClick={blockClick}
+                        placeId={contact.place_id}
+                        postId={contact.id}
+                        style={{ cursor: "pointer", float: "right" }}
+                      />
+                    ) : (
+                      <img
+                        src={block_g}
+                        width="30"
+                        height="30"
+                        alt=""
+                        onClick={blockClick}
+                        placeId={contact.place_id}
+                        postId={contact.id}
+                        style={{ cursor: "pointer", float: "right" }}
+                      />
+                    )}
+                    <img
+                      src={star}
+                      width="28.5"
+                      height="28.5"
+                      alt=""
+                      style={{
+                        float: "right",
+                        cursor: "pointer",
+                        marginRight: "10px",
+                      }}
+                      onClick={wishClick}
+                      placeId={contact.place_id}
+                      postId={contact.id}
+                    />
+                  </div>
+
+                  <div
+                    style={{
+                      width: "100%",
+                      height: "10px",
+                      borderBottom: "1px solid rgba(0,0,0,.2) ",
+                      textAlign: "center",
+                      marginBottom: "-25px",
+                      clear: "both",
+                    }}
+                  ></div>
+                </td>
+              </tr>{" "}
+              <tr>
+                <td colSpan="5">
+                  <Comment postId={contact.id} />
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </form>
+      ) : (
+        <form
+          style={{
+            height: "90vw",
+            padding: "2vw",
+            width: "60vw",
+            margin: "4vh auto",
+            fontSize: "1vw",
+          }}
+        >
+          <caption
+            style={{
+              color: "rgba(0, 0, 0, 0.4)",
+              width: "10vw",
+              fontSize: "1.5vw",
+              fontWeight: "bold",
+            }}
+          >
+            리뷰 수정
+          </caption>
+          <hr
+            style={{
+              borderColor: "rgba(0,0,0,.2)",
+              marginBottom: "4.5vh",
+            }}
+          />
+          <div
+            className="formInner"
+            style={{
+              width: "50vw",
+              height: "60vh",
+              margin: "7vh auto 3vh",
+            }}
+          >
+            <Input
+              name="subject"
+              style={{
+                marginLeft: "1vw",
+                width: "24vw",
+                height: "5vh",
+                float: "left",
+              }}
+              placeholder="제목"
+              onChange={changeSubject}
+              value={subject}
+            />
+            <select
+              className="form-control"
+              name="category"
+              style={{
+                marginLeft: "1.2vw",
+                width: "12vw",
+                height: "5vh",
+                float: "left",
+                fontSize: "12px",
+                paddingLeft: "3px",
+                paddingRight: "3px",
+                color: "rgba(0, 0, 0, 0.65)",
+              }}
+              onChange={changeCategory}
+              value={category}
+            >
+              <option selected disabled hidden>
+                카테고리
+              </option>
+              <option>한식</option>
+              <option>중식</option>
+              <option>양식</option>
+              <option>일식</option>
+            </select>
+            <div
+              className="rate"
+              style={{
+                textAlign: "center",
+                width: "10vw",
+                float: "left",
+                height: "5vh",
+                marginTop: "0.5vh",
+                marginLeft: "0.5vw",
+              }}
+            >
+              <div
+                className="star"
+                style={{
+                  clear: "both",
+                  display: "inline-block",
+                  width: "7vw",
+                  marginLeft: "0.2vw",
+                }}
+              >
+                <StarRate
+                  onMouseOver={onMouseOver}
+                  onChange={handleChange}
+                  sIdx={sIdx}
+                  rating={rating}
+                  cacheIdx={cacheIdx}
+                  cacheRating={cacheRating}
+                  score={starScore}
+                />
+              </div>
+              <div
+                style={{
+                  width: "2vw",
+                  marginLeft: "0.2vw",
+                  lineHeight: "5vh",
+                  display: "inline-block",
+                  fontSize: "1.5em",
+                  color: "rgba(0, 0, 0, 0.4)",
+                }}
+              >
+                {starScore === 0
+                  ? starScore
+                  : starScore % 1 === 0
+                  ? `${starScore}.0`
+                  : starScore}
+              </div>
+            </div>
+            <br />
+            <div
+              className="text-editor"
+              style={{ height: "53vh", marginTop: "6vh", clear: "both" }}
+              value={content} // state 값
+            >
+              <ReactQuill
+                theme="snow"
+                name="content"
+                onChange={changeEditor}
+                ref={(el) => (Quill.quillRef = el)}
+                modules={modules}
+                formats={formats}
+                style={{
+                  margin: "0 auto",
+                  width: "48vw",
+                  height: "52vh",
+                }}
+              />
+            </div>
+            {/* <div
+              className="map"
+              style={{
+                margin: "6vw auto 3vh",
+                width: "48vw",
+                height: "50vh",
+                border: "0px solid #999",
+              }}
+            >
+              <WriteFormMap mapData={mapData} />
+            </div> */}
+          </div>
+          <div
+            style={{
+              marginTop: "42.5vw",
+              width: "50vw",
+              height: "auto",
+              textAlign: "center",
+            }}
+          >
+            <Button
+              type="primary"
+              style={{
+                width: "10vw",
+                height: "5vh",
+                marginLeft: "4vw",
+              }}
+              onClick={reviewModifyBtn}
+            >
+              수정
+            </Button>
+
+            <Button
+              style={{
+                width: "10vw",
+                height: "5vh ",
+                marginLeft: "4vw",
+              }}
+              onClick={() => {
+                setForm(false);
+              }}
+            >
+              취소
+            </Button>
+          </div>
+        </form>
+      )}
     </div>
   );
 };
-
+const antIcon = <LoadingOutlined style={{ fontSize: 24 }} spin />;
 let item = 3;
 let dataLength = 0;
 const Post = (props) => {
   const [state, setState] = useState({ itemCount: 3, isLoading: false });
   const [result, setResult] = useState([]);
-
+  const [render, setRender] = useState(0);
   console.log("state구역");
   /* fake async fetch */
   const fetchItems = async () => {
@@ -282,7 +866,9 @@ const Post = (props) => {
       itemCount: prev.itemCount + 3,
       isLoading: false,
     }));
+    item = dataLength;
     item += 3;
+    console.log(item);
   };
   /* initial fetch */
   useEffect(() => {
@@ -308,6 +894,7 @@ const Post = (props) => {
       .then((response) => {
         console.log(response.data);
         onClickLikesRender();
+        setRender(render + 1);
       })
       .catch((error) => {
         console.log(error);
@@ -336,22 +923,114 @@ const Post = (props) => {
       });
   };
 
+  /*
+   * 블랙리스트 버튼 클릭 시
+   */
+  const blockClick = (e) => {
+    const url = `/userplace/blacklist/${props.userPlaceId}`;
+    console.log("블랙리스트 클릭");
+    Axios.put(url)
+      .then((res) => {
+        console.log(res.data);
+        if (res.data === "블랙리스트에 추가되었습니다.") {
+          success(res.data);
+        } else {
+          info2(res.data);
+        }
+        setRender(render + 1);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  };
+
+  function info2(str) {
+    Modal.info({
+      title: str,
+      content: (
+        <div>
+          <p>해당 맛집은 블랙리스트에서 제외되었습니다.</p>
+        </div>
+      ),
+      onOk() {},
+    });
+  }
+
+  /*
+   * 위시리스트 버튼 클릭 시
+   */
+  const wishClick = (e) => {
+    const url = `/wishlist/add`;
+    console.log("위시리스트 클릭");
+    console.log(e.target.getAttribute("placeId"));
+    Axios.post(url, {
+      user_id: sessionStorage.getItem("userId"),
+      place_id: e.target.getAttribute("placeId"),
+      post_id: e.target.getAttribute("postId"),
+    })
+      .then((res) => {
+        console.log(res.data);
+        if (res.data === "위시리스트에 추가되었습니다!") {
+          success(res.data);
+        } else {
+          info(res.data);
+        }
+        setRender(render + 1);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  };
+  function success(str) {
+    Modal.success({
+      content: str,
+    });
+  }
+
+  function info(str) {
+    Modal.info({
+      title: str,
+      content: (
+        <div>
+          <p>
+            이미 위시리스트에 추가했거나 과거에 방문했던 <br />
+            맛집입니다.
+          </p>
+        </div>
+      ),
+      onOk() {},
+    });
+  }
+
+  // 타임라인으로 이동
+  const timelinePageMove = (user_id) => {
+    props.timelinePageMove(user_id);
+  };
+
   return (
     <div>
-      <div
-        className="App"
-        style={{
-          overflow: "auto",
-          height: "100vh",
-        }}
-      >
+      <div className="App">
         {[...result].map((contact, i) => {
           return (
-            <ListItem contact={contact} i={i} likesChange={onClickLikes} />
+            <ListItem
+              contact={contact}
+              i={i}
+              likesChange={onClickLikes}
+              history={props.history}
+              timelinePageMove={timelinePageMove}
+              render={render}
+              wishClick={wishClick}
+              blockClick={blockClick}
+              userPlaceId={props.userPlaceId}
+            />
           );
         })}
         <div ref={setRef} className="Loading">
-          {isLoading && "Loading..."}
+          {isLoading && (
+            <span style={{ marginLeft: "50%" }}>
+              <Spin indicator={antIcon} />
+            </span>
+          )}
         </div>
       </div>
     </div>

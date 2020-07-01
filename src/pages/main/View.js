@@ -19,6 +19,7 @@ import logo2 from "images/logo2.png";
 import Axios from "util/axios";
 let keyword;
 let userPlaceId;
+let targetUserId;
 let listData2 = [];
 class View extends React.Component {
   state = {
@@ -33,6 +34,7 @@ class View extends React.Component {
     cc: false,
     userPlaceid: "",
     listData2: [],
+    targetUserId: "",
   };
 
   componentWillMount() {
@@ -58,6 +60,7 @@ class View extends React.Component {
 
   /*다른 페이지로 이동할 때 메뉴화면 제거 */
   goAnotherPage = () => {
+    sessionStorage.setItem("targetUser", sessionStorage.getItem("userId"));
     this.setState({ bar: false });
   };
 
@@ -164,6 +167,15 @@ class View extends React.Component {
     userPlaceId = user_place_id;
     this.setState({
       userPlaceid: user_place_id,
+    });
+  };
+  /*
+   * 타임라인 페이지로 넘어가기 위한 메소드
+   */
+  timelinePageMove = (target_user_id) => {
+    targetUserId = target_user_id;
+    this.setState({
+      targetUserId: target_user_id,
     });
   };
 
@@ -274,6 +286,7 @@ class View extends React.Component {
               <NewsFeed
                 getState={this.getState.bind(this)}
                 userId={this.state.userId}
+                history={this.props.history}
               />
             );
           }}
@@ -285,6 +298,8 @@ class View extends React.Component {
               <Review
                 getState={this.getState.bind(this)}
                 userPlaceId={userPlaceId}
+                history={this.props.history}
+                timelinePageMove={this.timelinePageMove.bind(this)}
               />
             );
           }}
@@ -297,6 +312,8 @@ class View extends React.Component {
               <Timeline
                 getState={this.getState.bind(this)}
                 userId={this.state.userId}
+                history={this.props.history}
+                targetUserId={this.state.targetUserId}
               />
             );
           }}
@@ -442,7 +459,7 @@ class View extends React.Component {
                       this.state.mypage || this.state.cc ? "4vw" : "6vw",
                     marginBottom:
                       this.state.mypage || this.state.cc ? "-5vh" : "-2vh",
-                    marginTop: this.state.cc ? "2vh" : "0",
+                    marginTop: this.state.cc || this.state.mypage ? "2vh" : "0",
                   }}
                 >
                   뉴스 피드
@@ -457,7 +474,7 @@ class View extends React.Component {
                       this.state.mypage || this.state.cc ? "4vw" : "6vw",
                     marginBottom:
                       this.state.mypage || this.state.cc ? "-5vh" : "-2vh",
-                    marginTop: this.state.cc ? "2vh" : "0",
+                    marginTop: this.state.cc || this.state.mypage ? "2vh" : "0",
                   }}
                 >
                   타임라인
@@ -472,10 +489,10 @@ class View extends React.Component {
                   marginBottom: this.state.cc
                     ? "-5vh"
                     : this.state.mypage
-                    ? "22vh"
+                    ? "15vh"
                     : "-2vh",
                   cursor: "pointer",
-                  marginTop: this.state.cc ? "2vh" : "0",
+                  marginTop: this.state.cc || this.state.mypage ? "2vh" : "0",
                   color: this.state.mypage ? "rgba(245, 145, 45)" : "black",
                 }}
               >
@@ -507,7 +524,7 @@ class View extends React.Component {
               className="mypage"
               style={{
                 position: "fixed",
-                top: "48%",
+                top: "53%",
                 right: "50%",
                 transform: "translate(50%)",
                 opacity: this.state.mypage ? "1" : "0",
@@ -516,11 +533,6 @@ class View extends React.Component {
                 textAlign: "center",
               }}
             >
-              <NavLink to={"/mechelin/mylist/" + this.state.userId}>
-                <li onClick={this.goAnotherPage.bind(this)}>나만의 맛집</li>
-                <br />
-                <br />
-              </NavLink>
               <NavLink to={"/mechelin/wishlist/" + this.state.userId}>
                 <li onClick={this.goAnotherPage.bind(this)}>위시 리스트</li>{" "}
                 <br /> <br />

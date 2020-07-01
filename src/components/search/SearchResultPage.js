@@ -1,7 +1,5 @@
 import React, { useEffect } from "react";
-
 import "antd/dist/antd.css";
-
 import { List, Avatar, Space } from "antd";
 import { MessageOutlined, LikeOutlined, StarOutlined } from "@ant-design/icons";
 import Axios from "util/axios";
@@ -28,7 +26,14 @@ const SearchResultPage = (props) => {
   };
 
   return (
-    <div>
+    <div
+      style={{
+        height: "auto",
+        marginLeft: "25vw",
+        marginTop: "2vw",
+        marginBottom: "2vw",
+      }}
+    >
       <List
         itemLayout="vertical"
         size="small"
@@ -64,7 +69,13 @@ const SearchResultPage = (props) => {
                 key="list-vertical-message"
               />,
             ]}
-            extra={<img width={100} alt="logo" src={item.frontImage} />}
+            extra={
+              <img
+                style={{ width: "10vw", height: "10vw" }}
+                alt="logo"
+                src={item.frontImage}
+              />
+            }
           >
             <List.Item.Meta
               avatar={
@@ -88,11 +99,8 @@ const SearchResultPage = (props) => {
           </List.Item>
         )}
         style={{
-          width: "800px",
-          height: "1000px",
-          position: "absolute",
-          marginTop: "200px",
-          marginLeft: "500px",
+          width: "50vw",
+          height: "auto",
         }}
       />
       ,
