@@ -27,6 +27,7 @@ const ListItem = ({
   props,
   history,
   timelinePageMove,
+  render,
 }) => {
   const [showBtn, setShowBtn] = useState(false);
   const [form, setForm] = useState(false);
@@ -55,8 +56,6 @@ const ListItem = ({
       console.log(showBtn);
     }
     console.log(showBtn);
-
-    heartBoolean();
   }, []);
 
   /* 게시한 시간 표시*/
@@ -84,6 +83,10 @@ const ListItem = ({
 
     return `${simpleTime}`;
   };
+
+  useEffect(() => {
+    heartBoolean();
+  }, [render]);
 
   /*좋아요 눌렀는지 확인 */
   const heartBoolean = () => {
@@ -788,7 +791,7 @@ let dataLength = 0;
 const Post = (props) => {
   const [state, setState] = useState({ itemCount: 3, isLoading: false });
   const [result, setResult] = useState([]);
-
+  const [render, setRender] = useState(0);
   console.log("state구역");
   /* fake async fetch */
   const fetchItems = async () => {
@@ -846,6 +849,7 @@ const Post = (props) => {
       .then((response) => {
         console.log(response.data);
         onClickLikesRender();
+        setRender(render + 1);
       })
       .catch((error) => {
         console.log(error);
@@ -890,6 +894,7 @@ const Post = (props) => {
               likesChange={onClickLikes}
               history={props.history}
               timelinePageMove={timelinePageMove}
+              render={render}
             />
           );
         })}
