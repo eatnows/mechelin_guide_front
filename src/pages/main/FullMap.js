@@ -798,7 +798,7 @@ class FullMap extends React.Component {
                 textAlign: "left",
               }}
             >
-              맛집 목록
+              나의 맛집 리스트
             </div>
             <hr
               style={{
@@ -808,8 +808,7 @@ class FullMap extends React.Component {
             />
             <div
               style={{
-                border: "1px solid rgba(0,0,0,0.2)",
-                width: "16.5vw",
+                width: "18vw",
                 height: "51vh",
                 margin: "0 auto",
               }}

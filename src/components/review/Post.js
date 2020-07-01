@@ -32,6 +32,7 @@ const ListItem = ({
   render,
   wishClick,
   blockClick,
+  userPlaceId,
 }) => {
   const [showBtn, setShowBtn] = useState(false);
   const [form, setForm] = useState(false);
@@ -91,6 +92,7 @@ const ListItem = ({
 
   useEffect(() => {
     heartBoolean();
+    blackListBoolean();
   }, [render]);
 
   /*좋아요 눌렀는지 확인 */
@@ -149,9 +151,7 @@ const ListItem = ({
   /* 블랙리스트 등록되어있는지 확인 */
   const blackListBoolean = () => {
     console.log("실행됨");
-    const url = `/blacklist/exist?user_id=${sessionStorage.getItem(
-      "userId"
-    )}&place_id=${contact.place_id}`;
+    const url = `/userplace/blacklist/exist?user_place_id=${userPlaceId}`;
     Axios.get(url)
       .then((res) => {
         console.log("블랙리스트");
@@ -927,14 +927,9 @@ const Post = (props) => {
    * 블랙리스트 버튼 클릭 시
    */
   const blockClick = (e) => {
-    const url = `/blacklist/add`;
+    const url = `/userplace/blacklist/${props.userPlaceId}`;
     console.log("블랙리스트 클릭");
-    console.log(e.target.getAttribute("placeId"));
-    Axios.post(url, {
-      user_id: sessionStorage.getItem("userId"),
-      place_id: e.target.getAttribute("placeId"),
-      post_id: e.target.getAttribute("postId"),
-    })
+    Axios.put(url)
       .then((res) => {
         console.log(res.data);
         if (res.data === "블랙리스트에 추가되었습니다.") {
@@ -954,10 +949,7 @@ const Post = (props) => {
       title: str,
       content: (
         <div>
-          <p>
-            이미 블랙리스트에 추가했거나 과거에 방문했던 <br />
-            맛집입니다.
-          </p>
+          <p>해당 맛집은 블랙리스트에서 제외되었습니다.</p>
         </div>
       ),
       onOk() {},
@@ -1029,6 +1021,7 @@ const Post = (props) => {
               render={render}
               wishClick={wishClick}
               blockClick={blockClick}
+              userPlaceId={props.userPlaceId}
             />
           );
         })}
