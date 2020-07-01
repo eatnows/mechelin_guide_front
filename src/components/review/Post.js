@@ -8,6 +8,8 @@ import heart_o from "images/heart_o.png";
 import star from "images/star.png";
 import share from "images/share2.png";
 import star_g from "images/star_g.png";
+import block from "images/block.png";
+import block_g from "images/block_g.png";
 import { Rate, Button, Input, Modal, Spin } from "antd";
 import StarRate from "components/review/StarRate";
 import WriteFormMap from "components/map/WriteFormMap";
@@ -28,6 +30,8 @@ const ListItem = ({
   history,
   timelinePageMove,
   render,
+  wishClick,
+  blockClick,
 }) => {
   const [showBtn, setShowBtn] = useState(false);
   const [form, setForm] = useState(false);
@@ -47,6 +51,7 @@ const ListItem = ({
   const [front_image, setFront_image] = useState(null);
   const [imageId, setImageId] = useState([]);
   const [postId, setPostId] = useState("");
+  const [checkBlock, setCheckBlock] = useState(false);
   useEffect(() => {
     console.log(showBtn);
     console.log(typeof contact.user_id);
@@ -122,10 +127,11 @@ const ListItem = ({
     confirm({
       title: "정말 삭제 하시겠습니까?",
       icon: <ExclamationCircleOutlined />,
-      content: "위시리스트에서 삭제하시려면 확인을 눌러주세요",
+      content: "리뷰를 삭제하시려면 확인을 눌러주세요",
       okText: "확인",
       okType: "danger",
       cancelText: "취소",
+      onCancel() {},
       onOk() {
         const url = `/post/delete/${postId}/${userPlaceId}`;
         Axios.put(url)
@@ -137,8 +143,28 @@ const ListItem = ({
             console.log(error);
           });
       },
-      onCancel() {},
     });
+  };
+
+  /* 블랙리스트 등록되어있는지 확인 */
+  const blackListBoolean = () => {
+    console.log("실행됨");
+    const url = `/blacklist/exist?user_id=${sessionStorage.getItem(
+      "userId"
+    )}&place_id=${contact.place_id}`;
+    Axios.get(url)
+      .then((res) => {
+        console.log("블랙리스트");
+        console.log(res.data);
+        if (res.data === 1) {
+          setCheckBlock(true);
+        } else {
+          setCheckBlock(false);
+        }
+      })
+      .catch((error) => {
+        console.log("blackListBoolean" + error);
+      });
   };
 
   /*값 읽어오기 */
@@ -558,13 +584,29 @@ const ListItem = ({
                     >
                       {contact.likes}
                     </span>
-                    <img
-                      src={share}
-                      width="30"
-                      height="30"
-                      alt=""
-                      style={{ cursor: "pointer", float: "right" }}
-                    />
+                    {checkBlock ? (
+                      <img
+                        src={block}
+                        width="30"
+                        height="30"
+                        alt=""
+                        onClick={blockClick}
+                        placeId={contact.place_id}
+                        postId={contact.id}
+                        style={{ cursor: "pointer", float: "right" }}
+                      />
+                    ) : (
+                      <img
+                        src={block_g}
+                        width="30"
+                        height="30"
+                        alt=""
+                        onClick={blockClick}
+                        placeId={contact.place_id}
+                        postId={contact.id}
+                        style={{ cursor: "pointer", float: "right" }}
+                      />
+                    )}
                     <img
                       src={star}
                       width="28.5"
@@ -575,6 +617,9 @@ const ListItem = ({
                         cursor: "pointer",
                         marginRight: "10px",
                       }}
+                      onClick={wishClick}
+                      placeId={contact.place_id}
+                      postId={contact.id}
                     />
                   </div>
 
@@ -878,6 +923,93 @@ const Post = (props) => {
       });
   };
 
+  /*
+   * 블랙리스트 버튼 클릭 시
+   */
+  const blockClick = (e) => {
+    const url = `/blacklist/add`;
+    console.log("블랙리스트 클릭");
+    console.log(e.target.getAttribute("placeId"));
+    Axios.post(url, {
+      user_id: sessionStorage.getItem("userId"),
+      place_id: e.target.getAttribute("placeId"),
+      post_id: e.target.getAttribute("postId"),
+    })
+      .then((res) => {
+        console.log(res.data);
+        if (res.data === "블랙리스트에 추가되었습니다.") {
+          success(res.data);
+        } else {
+          info2(res.data);
+        }
+        setRender(render + 1);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  };
+
+  function info2(str) {
+    Modal.info({
+      title: str,
+      content: (
+        <div>
+          <p>
+            이미 블랙리스트에 추가했거나 과거에 방문했던 <br />
+            맛집입니다.
+          </p>
+        </div>
+      ),
+      onOk() {},
+    });
+  }
+
+  /*
+   * 위시리스트 버튼 클릭 시
+   */
+  const wishClick = (e) => {
+    const url = `/wishlist/add`;
+    console.log("위시리스트 클릭");
+    console.log(e.target.getAttribute("placeId"));
+    Axios.post(url, {
+      user_id: sessionStorage.getItem("userId"),
+      place_id: e.target.getAttribute("placeId"),
+      post_id: e.target.getAttribute("postId"),
+    })
+      .then((res) => {
+        console.log(res.data);
+        if (res.data === "위시리스트에 추가되었습니다!") {
+          success(res.data);
+        } else {
+          info(res.data);
+        }
+        setRender(render + 1);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  };
+  function success(str) {
+    Modal.success({
+      content: str,
+    });
+  }
+
+  function info(str) {
+    Modal.info({
+      title: str,
+      content: (
+        <div>
+          <p>
+            이미 위시리스트에 추가했거나 과거에 방문했던 <br />
+            맛집입니다.
+          </p>
+        </div>
+      ),
+      onOk() {},
+    });
+  }
+
   // 타임라인으로 이동
   const timelinePageMove = (user_id) => {
     props.timelinePageMove(user_id);
@@ -895,6 +1027,8 @@ const Post = (props) => {
               history={props.history}
               timelinePageMove={timelinePageMove}
               render={render}
+              wishClick={wishClick}
+              blockClick={blockClick}
             />
           );
         })}

@@ -89,18 +89,19 @@ const MyListComponent = (props) => {
   return (
     <div>
       <div>
-        {[...result].map((contact, i) => {
-          return (
-            <table>
+        {" "}
+        <table style={{ width: "100%" }}>
+          {[...result].map((contact, i) => {
+            return (
               <tr>
-                <td rowSpan="2">
+                <td style={{ padding: " .5vw 0" }}>
                   <img
                     src={contact.front_image}
                     alt=""
                     style={{ width: "50px", height: "50px" }}
                   />
                 </td>
-                <td>
+                <td style={{ paddingLeft: "0.5vw", fontSize: "13px" }}>
                   <span
                     onClick={onClickPlaceName}
                     style={{ cursor: "pointer" }}
@@ -108,28 +109,32 @@ const MyListComponent = (props) => {
                   >
                     {contact.name}
                   </span>
+                  <br />
+                  <span>{contact.address}</span>
+                </td>
+                <td style={{ textAlign: "right" }}>
+                  <span
+                    type="text"
+                    onClick={showDeleteConfirm}
+                    userPlaceId={contact.user_place_id}
+                    style={{
+                      color: "rgba(245,145,45,.7)",
+                      border: "1px solid rgba(245,145,45,.7)",
+                      padding: "3px",
+                      borderRadius: "5px",
+                      cursor: "pointer",
+                      fontSize: "13px",
+                    }}
+                  >
+                    삭제
+                  </span>{" "}
                 </td>
               </tr>
-              <tr>
-                <td>{contact.address}</td>
-              </tr>
-              <tr>
-                <td>
-                  <span>
-                    <input
-                      onClick={showDeleteConfirm}
-                      type="button"
-                      userPlaceId={contact.user_place_id}
-                      value="삭제"
-                    />
-                  </span>
-                </td>
-              </tr>
-            </table>
-          );
-        })}
+            );
+          })}{" "}
+        </table>
       </div>
-      <div>
+      <div style={{ marginTop: "1vw", textAlign: "center" }}>
         <Pagination
           size="small"
           defaultCurrent={1}

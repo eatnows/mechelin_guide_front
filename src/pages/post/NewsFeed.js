@@ -8,6 +8,8 @@ import heart_o from "images/heart_o.png";
 import star from "images/star.png";
 import block from "images/block.png";
 import block_g from "images/block_g.png";
+import report from "images/report.png";
+import report_g from "images/report_g.png";
 import star_g from "images/star_g.png";
 
 import e from "cors";
@@ -44,6 +46,8 @@ const ListItem = ({
   const [checkHeart, setCheckHeart] = useState(false);
   const [checkWishlist, setCheckWishlist] = useState(false);
   const [checkBlock, setCheckBlock] = useState(false);
+  const [checkReport, setCheckReport] = useState(false);
+
   /* 게시한 시간 표시*/
   const nowTime = (data) => {
     let now = new Date().getTime();
@@ -272,24 +276,23 @@ const ListItem = ({
                   >
                     {row.likes}
                   </span>
-                  {checkBlock ? (
+
+                  {checkReport ? (
                     <img
-                      src={block}
+                      src={report}
                       width="30"
                       height="30"
                       alt=""
-                      onClick={blockClick}
                       placeId={row.place_id}
                       postId={row.id}
                       style={{ cursor: "pointer", float: "right" }}
                     />
                   ) : (
                     <img
-                      src={block_g}
+                      src={report_g}
                       width="30"
                       height="30"
                       alt=""
-                      onClick={blockClick}
                       placeId={row.place_id}
                       postId={row.id}
                       style={{ cursor: "pointer", float: "right" }}
