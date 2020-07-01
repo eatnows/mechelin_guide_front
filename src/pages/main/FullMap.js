@@ -8,7 +8,7 @@ import WriteFormMap from "components/map/WriteFormMap";
 import Axios from "util/axios";
 import filter from "images/filter2.png";
 import friend from "images/friend2.png";
-import message from "images/messag2.png";
+import list from "images/list.png";
 import review from "images/review2.png";
 import MainMap from "components/map/MainMap";
 
@@ -61,6 +61,7 @@ class FullMap extends React.Component {
     japaneseFilter: true,
     categoryFilter: ["한식", "양식", "중식", "일식"],
     blacklist: false,
+    myListModal: false,
   };
 
   modules = {
@@ -209,6 +210,7 @@ class FullMap extends React.Component {
     this.setState({
       reviewModal: true,
       filterModal: false,
+      myListModal: false,
     });
   };
 
@@ -221,6 +223,21 @@ class FullMap extends React.Component {
     } else {
       this.setState({
         filterModal: true,
+        myListModal: false,
+      });
+    }
+  };
+
+  /*마이리스트 모달창 보이게 */
+  showMyListForm = () => {
+    if (this.state.myListModal) {
+      this.setState({
+        myListModal: false,
+      });
+    } else {
+      this.setState({
+        myListModal: true,
+        filterModal: false,
       });
     }
   };
@@ -380,7 +397,8 @@ class FullMap extends React.Component {
                   />
                 </div>
                 <div
-                  className="message"
+                  className="list"
+                  onClick={this.showMyListForm.bind(this)}
                   style={{
                     bottom: this.state.bottomMenu ? "12.5%" : "-20%",
                     right: this.state.bottomMenu ? "43.1%" : "50%",
@@ -388,7 +406,7 @@ class FullMap extends React.Component {
                 >
                   <img
                     style={{ marginLeft: "1px" }}
-                    src={message}
+                    src={list}
                     width="30px"
                     height="27px"
                     alt=""
@@ -722,6 +740,66 @@ class FullMap extends React.Component {
                 <br />
               </div>
             </div>
+          </div>
+        </section>
+
+        {/*마이리스트 모달창*/}
+        <section>
+          <div
+            className="mylist"
+            style={{
+              display:
+                this.state.myListModal && !this.props.bar ? "block" : "none",
+              clear: "both",
+              background: "white",
+              border: "1px solid rgba(0,0,0,.2)",
+              borderRadius: "10px",
+              width: "20vw",
+              height: "72vh",
+              boxShadow: "5px 5px 5px rgba(0,0,0,.1)",
+              position: "absolute",
+              zIndex: "9999",
+              left: "3%",
+              bottom: "5%",
+            }}
+          >
+            <div
+              style={{
+                fontSize: "2.5vh",
+                margin: "2vh 0 1.5vh 3vh",
+                textAlign: "left",
+              }}
+            >
+              맛집 목록
+            </div>
+            <hr
+              style={{
+                borderColor: "rgba(0,0,0,.2)",
+                margin: "1vh 0 3vh",
+              }}
+            />
+            <div
+              style={{
+                border: "1px solid rgba(0,0,0,0.2)",
+                width: "16.5vw",
+                height: "51vh",
+                margin: "0 auto",
+              }}
+            ></div>
+            <Button
+              type="primary"
+              onClick={() => {
+                this.setState({ myListModal: false });
+              }}
+              style={{
+                transform: "translateX(-50%)",
+                position: "absolute",
+                top: "90%",
+                left: "50%",
+              }}
+            >
+              닫기
+            </Button>
           </div>
         </section>
       </div>

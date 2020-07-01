@@ -16,7 +16,20 @@ class Result extends React.Component {
   }
   render() {
     return (
-      <div>
+      <div style={{ overflow: "auto", height: "100vh" }}>
+        <caption
+          style={{
+            fontWeight: "bold",
+            fontSize: "1.5vw",
+            width: "10vw",
+            marginTop: "5vw",
+            color: "rgba(245,145,45)",
+            marginLeft: "25vw",
+          }}
+        >
+          검색 결과{" "}
+        </caption>
+
         <SearchResultPage
           keyword={this.props.search}
           listData2={this.props.listData2}

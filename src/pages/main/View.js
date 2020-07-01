@@ -442,7 +442,7 @@ class View extends React.Component {
                       this.state.mypage || this.state.cc ? "4vw" : "6vw",
                     marginBottom:
                       this.state.mypage || this.state.cc ? "-5vh" : "-2vh",
-                    marginTop: this.state.cc ? "2vh" : "0",
+                    marginTop: this.state.cc || this.state.mypage ? "2vh" : "0",
                   }}
                 >
                   뉴스 피드
@@ -457,7 +457,7 @@ class View extends React.Component {
                       this.state.mypage || this.state.cc ? "4vw" : "6vw",
                     marginBottom:
                       this.state.mypage || this.state.cc ? "-5vh" : "-2vh",
-                    marginTop: this.state.cc ? "2vh" : "0",
+                    marginTop: this.state.cc || this.state.mypage ? "2vh" : "0",
                   }}
                 >
                   타임라인
@@ -472,10 +472,10 @@ class View extends React.Component {
                   marginBottom: this.state.cc
                     ? "-5vh"
                     : this.state.mypage
-                    ? "22vh"
+                    ? "15vh"
                     : "-2vh",
                   cursor: "pointer",
-                  marginTop: this.state.cc ? "2vh" : "0",
+                  marginTop: this.state.cc || this.state.mypage ? "2vh" : "0",
                   color: this.state.mypage ? "rgba(245, 145, 45)" : "black",
                 }}
               >
@@ -507,7 +507,7 @@ class View extends React.Component {
               className="mypage"
               style={{
                 position: "fixed",
-                top: "48%",
+                top: "53%",
                 right: "50%",
                 transform: "translate(50%)",
                 opacity: this.state.mypage ? "1" : "0",
@@ -516,11 +516,6 @@ class View extends React.Component {
                 textAlign: "center",
               }}
             >
-              <NavLink to={"/mechelin/mylist/" + this.state.userId}>
-                <li onClick={this.goAnotherPage.bind(this)}>나만의 맛집</li>
-                <br />
-                <br />
-              </NavLink>
               <NavLink to={"/mechelin/wishlist/" + this.state.userId}>
                 <li onClick={this.goAnotherPage.bind(this)}>위시 리스트</li>{" "}
                 <br /> <br />
