@@ -147,6 +147,11 @@ const ListItem = ({
     history.push(`/mechelin/timeline/${user_id}`);
   };
 
+  // 임시로 넣은것
+  const onClickReport = (e) => {
+    alert("준비중인 서비스입니다.");
+  };
+
   return (
     <div key={i}>
       <form>
@@ -286,6 +291,7 @@ const ListItem = ({
                       placeId={row.place_id}
                       postId={row.id}
                       style={{ cursor: "pointer", float: "right" }}
+                      onClick={onClickReport}
                     />
                   ) : (
                     <img
@@ -296,6 +302,7 @@ const ListItem = ({
                       placeId={row.place_id}
                       postId={row.id}
                       style={{ cursor: "pointer", float: "right" }}
+                      onClick={onClickReport}
                     />
                   )}
                   {checkWishlist ? (
