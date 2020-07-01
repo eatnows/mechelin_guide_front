@@ -31,10 +31,10 @@ const MyListComponent = (props) => {
       .catch((error) => {
         console.log(error);
       });
-  }, []);
+  }, [render]);
 
   useEffect(() => {
-    const url = `/post/timeline?user_id=${sessionStorage.getItem(
+    const url = `/userplace/myplace?user_id=${sessionStorage.getItem(
       "userId"
     )}&pageStart=${pageStart}&perPageNum=${perPageNum}`;
     Axios.get(url)
@@ -45,7 +45,7 @@ const MyListComponent = (props) => {
       .catch((error) => {
         console.log(error);
       });
-  }, [pageStart, deleteRender]);
+  }, [pageStart, deleteRender, render]);
 
   /*
    * 상호명 눌렀을 시 상세페이지로 이동
@@ -75,7 +75,8 @@ const MyListComponent = (props) => {
         Axios.put(url)
           .then((res) => {
             console.log(res);
-            props.myPlaceRender(num);
+            props.myPlaceRender(render);
+            setRender(render + 1);
             num = num + 1;
           })
           .catch((error) => {
