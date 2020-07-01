@@ -109,6 +109,7 @@ const Comment = ({ postId }) => {
       content: writeComment,
     })
       .then((response) => {
+        setUpdateView(false);
         setWriteComment("");
         commentList();
       })

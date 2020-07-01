@@ -75,14 +75,14 @@ const WishlistComponent = (props) => {
                   <span>{contact.address}</span>
                 </td>
                 <td style={{ textAlign: "center" }}>
-                  <Button
+                  <span
                     type="text"
                     onClick={showDeleteConfirm}
                     wishlistId={contact.wishlist_id}
-                    style={{ color: "rgba(0,0,0,.4)" }}
+                    style={{ color: "rgba(0,0,0,.4)", cursor: "pointer" }}
                   >
                     삭제
-                  </Button>{" "}
+                  </span>{" "}
                 </td>
               </tr>
             );

@@ -11,15 +11,12 @@ import friend from "images/friend2.png";
 import list from "images/list.png";
 import review from "images/review2.png";
 import MainMap from "components/map/MainMap";
+import MyListComponent from "../../components/mypage/MyList";
 
 Quill.register("modules/imageUpload", ImageUpload);
 
 let MyFilter = true;
 let FriendFilter = true;
-let koreanFilter = true;
-let westernFilter = true;
-let chineseFilter = true;
-let japaneseFilter = true;
 const categoryOptions = [
   { label: "한식", value: "한식" },
   { label: "양식", value: "양식" },
@@ -28,7 +25,7 @@ const categoryOptions = [
 ];
 let categoryFilter = ["한식", "양식", "중식", "일식"];
 let blacklist = false;
-
+let render = 0;
 class FullMap extends React.Component {
   constructor(props) {
     super();
@@ -64,6 +61,7 @@ class FullMap extends React.Component {
     myListModal: false,
     frinedsModal: false,
     friendEmail: "",
+    render: 0,
   };
 
   modules = {
@@ -364,6 +362,12 @@ class FullMap extends React.Component {
       blacklist: checked,
     });
   };
+  myPlaceRender = (num) => {
+    render = render + num;
+    this.setState({
+      render: this.state.render + num,
+    });
+  };
 
   render() {
     return (
@@ -377,6 +381,7 @@ class FullMap extends React.Component {
               categoryFilter={categoryFilter}
               blacklistFilter={blacklist}
               reivewPageMove={this.reivewPageMove.bind(this)}
+              render={render}
             />
             {/*하단 메뉴바 */}
             <div style={{ cursor: "pointer" }}>
@@ -805,7 +810,13 @@ class FullMap extends React.Component {
                 height: "51vh",
                 margin: "0 auto",
               }}
-            ></div>
+            >
+              <MyListComponent
+                reivewPageMove={this.reivewPageMove.bind(this)}
+                history={this.props.history}
+                myPlaceRender={this.myPlaceRender.bind(this)}
+              />
+            </div>
             <Button
               type="primary"
               onClick={() => {

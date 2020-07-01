@@ -30,6 +30,7 @@ const MainMap = (props) => {
   const [markers, setMarkers] = useState([]);
 
   useEffect(() => {
+    console.log(props.render);
     // gps 받아오는 메소드 실행
     getLocation();
     const url = `/place/allplace?user_id=${sessionStorage.getItem("userId")}`;
@@ -62,7 +63,7 @@ const MainMap = (props) => {
       .catch((error) => {
         console.log(error);
       });
-  }, []);
+  }, [props.render]);
   useEffect(() => {
     const script = document.createElement("script");
 
