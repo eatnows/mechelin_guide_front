@@ -18,6 +18,7 @@ const fakeFetch = (delay = 1000) =>
   new Promise((res) => setTimeout(res, delay));
 
 Quill.register("modules/imageUpload", ImageUpload);
+
 const ListItem = ({ contact, i, likesChange, props }) => {
   const [showBtn, setShowBtn] = useState(false);
   const [form, setForm] = useState(false);
@@ -31,11 +32,12 @@ const ListItem = ({ contact, i, likesChange, props }) => {
   const [y, setY] = useState(0);
   const [placeName, setPlaceName] = useState(contact.name);
   const [address, setAddress] = useState("");
-  const [subject, setSubject] = useState(contact.name);
+  const [subject, setSubject] = useState(contact.subject);
   const [category, setCategory] = useState(contact.category);
   const [content, setContent] = useState(contact.content);
   const [front_image, setFront_image] = useState(null);
   const [imageId, setImageId] = useState([]);
+  const [postId, setPostId] = useState("");
   useEffect(() => {
     console.log(showBtn);
     console.log(typeof contact.user_id);
@@ -95,7 +97,8 @@ const ListItem = ({ contact, i, likesChange, props }) => {
   };
 
   /*수정버튼 클릭시 수정 폼 나옴 */
-  const showForm = () => {
+  const showForm = (e) => {
+    setPostId(e.target.getAttribute("postId"));
     setForm(true);
   };
 
@@ -103,9 +106,15 @@ const ListItem = ({ contact, i, likesChange, props }) => {
   const deletePost = () => {};
 
   /*값 읽어오기 */
-  const changeState = (e) => {
-    [e.target.name] = e.target.value;
+  const changeSubject = (e) => {
+    console.log(e.target.value);
+    setSubject(e.target.value);
   };
+
+  const changeCategory = (e) => {
+    setCategory(e.target.value);
+  };
+  const changeState = (e) => {};
 
   const modules = {
     toolbar: {
@@ -129,7 +138,9 @@ const ListItem = ({ contact, i, likesChange, props }) => {
       // handlers: { 'image' : this.handleImage }
     },
     imageUpload: {
-      url: "image/add?id=" + sessionStorage.getItem("userId"), // server url
+      url: `http://localhost:9000/mechelin/image/add?id=${sessionStorage.getItem(
+        "userId"
+      )}`, // server url
       method: "POST", // change query method, default 'POST'
       name: "images", // 아래 설정으로 image upload form의 key 값을 변경할 수 있다.
       headers: {
@@ -138,9 +149,9 @@ const ListItem = ({ contact, i, likesChange, props }) => {
       },
       callbackOK: (serverResponse, next) => {
         // 성공하면 리턴되는 함수
+        console.log(serverResponse);
         next(serverResponse.data);
-        const { imageId } = this.state;
-        setImageId(imageId.concat(serverResponse.image_id));
+        imageId.push(serverResponse.image_id);
       },
       callbackKO: (serverError) => {
         // 실패하면 리턴되는 함수
@@ -183,6 +194,7 @@ const ListItem = ({ contact, i, likesChange, props }) => {
    * 내용을 기입했을때 실행
    */
   const changeEditor = (e) => {
+    console.log(e);
     setContent(e);
   };
   const onMouseOver = (e, i) => {
@@ -275,6 +287,58 @@ const ListItem = ({ contact, i, likesChange, props }) => {
   };
 
   /*
+   * 리뷰글 수정 버튼 눌렀을 시
+   */
+  const reviewModifyBtn = () => {
+    console.log("ㅎㅎ");
+    if (subject === "") {
+      alert("제목을 입력해주세요.");
+      return false;
+    }
+    if (content === "") {
+      alert("내용을 입력해주세요.");
+      return false;
+    }
+    if (category === "") {
+      alert("카테고리를 선택해주세요.");
+      return false;
+    }
+    if (starScore === 0) {
+      alert("맛집 평가를 해주세요.");
+      return false;
+    }
+    const url = "post/update";
+    Axios.post(url, {
+      id: postId,
+      subject: subject,
+      content: content,
+      category: category,
+      rating: starScore,
+      image_id: imageId,
+    })
+      .then((response) => {
+        // 리뷰글 등록후 state값 초기화
+        setX("");
+        setY("");
+        setPlaceName("");
+        setAddress("");
+        setSubject("");
+        setContent("");
+        setCategory("");
+        setStarScore(0);
+        setFront_image(null);
+        setImageId([]);
+        const id = response.data.id;
+        const userPlaceId = response.data.user_place_id;
+
+        this.props.history.push(`/mechelin/review/${userPlaceId}`);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  };
+
+  /*
    * 리뷰작성 폼 지도에서 넘어온 데이터
    */
   const mapData = (x, y, placeName, address) => {
@@ -296,11 +360,10 @@ const ListItem = ({ contact, i, likesChange, props }) => {
                 margin: "7vh auto -7vh",
               }}
             >
-              <Button type="text" onClick={showForm}>
-                {" "}
+              <Button type="text" onClick={showForm} postId={contact.id}>
                 수정
-              </Button>{" "}
-              |<Button type="text"> 삭제</Button>{" "}
+              </Button>
+              |<Button type="text"> 삭제</Button>
             </div>
           ) : (
             ""
@@ -514,7 +577,7 @@ const ListItem = ({ contact, i, likesChange, props }) => {
                 float: "left",
               }}
               placeholder="제목"
-              onChange={changeState}
+              onChange={changeSubject}
               value={subject}
             />
             <select
@@ -530,8 +593,8 @@ const ListItem = ({ contact, i, likesChange, props }) => {
                 paddingRight: "3px",
                 color: "rgba(0, 0, 0, 0.65)",
               }}
+              onChange={changeCategory}
               value={category}
-              onChange={changeState}
             >
               <option selected disabled hidden>
                 카테고리
@@ -592,22 +655,23 @@ const ListItem = ({ contact, i, likesChange, props }) => {
             <div
               className="text-editor"
               style={{ height: "53vh", marginTop: "6vh", clear: "both" }}
+              value={content} // state 값
             >
               <ReactQuill
                 theme="snow"
                 name="content"
-                value={content} // state 값
                 onChange={changeEditor}
+                ref={(el) => (Quill.quillRef = el)}
                 modules={modules}
                 formats={formats}
                 style={{
                   margin: "0 auto",
                   width: "48vw",
-                  height: "50vh",
+                  height: "52vh",
                 }}
               />
             </div>
-            <div
+            {/* <div
               className="map"
               style={{
                 margin: "6vw auto 3vh",
@@ -617,7 +681,7 @@ const ListItem = ({ contact, i, likesChange, props }) => {
               }}
             >
               <WriteFormMap mapData={mapData} />
-            </div>
+            </div> */}
           </div>
           <div
             style={{
@@ -634,7 +698,7 @@ const ListItem = ({ contact, i, likesChange, props }) => {
                 height: "5vh",
                 marginLeft: "4vw",
               }}
-              onClick={onSubmitReview}
+              onClick={reviewModifyBtn}
             >
               수정
             </Button>
