@@ -3,6 +3,7 @@ import ProfileUpload from "components/mypage/ProfileUpload";
 import { Input, Button } from "antd";
 import Axios from "util/axios";
 import "css/myPageStyle.css";
+import SlideMenu from "components/mypage/SlideMenu";
 
 class MyPage extends React.Component {
   constructor(props) {
@@ -232,288 +233,283 @@ class MyPage extends React.Component {
   render() {
     return (
       <div>
-        <div>
-          {" "}
-          <form>
-            {" "}
-            <caption
-              style={{
-                position: "absolute",
-                fontSize: "1.5vw",
-                fontWeight: "bold",
-                top: "10vw",
-                left: "3.5vw",
-                color: "rgba(245,145,45)",
-              }}
-            >
-              회원정보 수정
-            </caption>
-            <table
-              className="myPageTable"
-              style={{
-                width: "40vw",
-                position: "absolute",
-                top: "50%",
-                left: "50%",
-                transform: "translate(-50%,-50%)",
-              }}
-            >
-              <thead>
+        <div
+          style={{
+            width: "10vw",
+            height: "10vw",
+            position: "absolute",
+            left: "3%",
+            top: "25%",
+          }}
+        >
+          <SlideMenu />
+        </div>
+        <form>
+          <table
+            className="myPageTable"
+            style={{
+              width: "40vw",
+              position: "absolute",
+              top: "50%",
+              left: "50%",
+              transform: "translate(-50%,-50%)",
+            }}
+          >
+            <thead>
+              <tr>
+                <th
+                  colSpan="3"
+                  align="center"
+                  style={{
+                    margin: "0 auto",
+                    paddingBottom: "4vh",
+                    align: "center",
+                  }}
+                >
+                  {" "}
+                  <ProfileUpload />
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>이메일</td>
+                <td colSpan="2" style={{ fontWeight: "bold" }}>
+                  {this.state.email}
+                </td>
+              </tr>
+              {this.state.introChange ? (
                 <tr>
-                  <th
-                    colSpan="3"
-                    align="center"
-                    style={{
-                      margin: "0 auto",
-                      paddingBottom: "4vh",
-                      align: "center",
-                    }}
-                  >
-                    {" "}
-                    <ProfileUpload />
-                  </th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr>
-                  <td>이메일</td>
-                  <td colSpan="2" style={{ fontWeight: "bold" }}>
-                    {this.state.email}
-                  </td>
-                </tr>
-                {this.state.introChange ? (
-                  <tr>
-                    <td>소개글</td>
-                    <td style={{ paddingBottom: "0" }}>
-                      <Input
-                        value={this.state.newIntro}
-                        name="newIntro"
-                        onChange={this.handleInform.bind(this)}
-                        style={{
-                          width: "18vw",
-                          height: "3.5vw",
-                          fontWeight: "normal",
-                          outline: "none",
-                          fontSize: "1vw",
-                        }}
-                      />{" "}
-                      <br />
-                      <span
-                        style={{
-                          color: "red",
-                          fontSize: "10px",
-                          fontWeight: "normal",
-                          textAlign: "center",
-                          margin: "10px auto",
-                        }}
-                      >
-                        {this.state.nicknameCkMsg}
-                      </span>
-                      <br />
-                    </td>
-                    <td style={{ verticalAlign: "middle" }}>
-                      <Button
-                        type="text"
-                        style={{ float: "right", color: "rgba(245,145,45)" }}
-                        onClick={this.onIntroSubmit.bind(this)}
-                      >
-                        확인
-                      </Button>
-                    </td>
-                  </tr>
-                ) : (
-                  <tr>
-                    <td>소개글</td>
-                    <td>
-                      <span style={{ float: "left" }}>
-                        {this.state.introduce}
-                      </span>
-                      &nbsp;&nbsp;
-                    </td>
-                    <td>
-                      <Button
-                        type="text"
-                        style={{
-                          float: "right",
-                          color: "rgba(245,145,45)",
-                        }}
-                        onClick={this.onChangeIntro.bind(this)}
-                      >
-                        수정
-                      </Button>
-                    </td>{" "}
-                  </tr>
-                )}{" "}
-                {this.state.nickChange ? (
-                  <tr>
-                    <td>닉네임</td>
-                    <td style={{ paddingBottom: "0" }}>
-                      <Input
-                        ref="nickname"
-                        value={this.state.newNickname}
-                        name="newNickname"
-                        onChange={this.handleInform.bind(this)}
-                        onKeyUp={this.checkNickname.bind(this)}
-                        style={{
-                          width: "18vw",
-                          height: "3.5vw",
-                          fontWeight: "normal",
-                          outline: "none",
-                          fontSize: "1vw",
-                        }}
-                      />{" "}
-                      <br />
-                      <span
-                        style={{
-                          color: "red",
-                          fontSize: "10px",
-                          fontWeight: "normal",
-                          textAlign: "center",
-                          margin: "10px auto",
-                        }}
-                      >
-                        {this.state.nicknameCkMsg}
-                      </span>
-                      <br />
-                    </td>
-                    <td>
-                      <Button
-                        type="text"
-                        style={{ color: "rgba(245,145,45)", float: "right" }}
-                        onClick={this.onNicknameSubmit.bind(this)}
-                      >
-                        확인
-                      </Button>
-                    </td>
-                  </tr>
-                ) : (
-                  <tr>
-                    <td>닉네임</td>
-
-                    <td>{this.state.nickname}&nbsp;&nbsp;</td>
-                    <td>
-                      <Button
-                        type="text"
-                        style={{ color: "rgba(245,145,45)", float: "right" }}
-                        onClick={this.onChangeNick}
-                      >
-                        수정
-                      </Button>
-                    </td>
-                  </tr>
-                )}
-                <tr>
-                  <td>비밀번호</td>
-                  {this.state.kUser ? (
-                    <td colSpan="2">
-                      <span style={{ fontWeight: "bold" }}>
-                        카카오 유저는 비밀번호를 변경하실 수 없습니다.
-                      </span>
-                    </td>
-                  ) : (
-                    <td colSpan="2">
-                      <Input.Password
-                        placeholder="비밀번호"
-                        name="newPassword"
-                        onChange={this.handleInform.bind(this)}
-                        onKeyUp={this.checkPW.bind(this)}
-                        style={{
-                          width: "18vw",
-                          outline: "none",
-                          height: "3.5vw",
-                          fontWeight: "normal",
-                          fontSize: "1vw",
-                          fontFamily: "none",
-                        }}
-                      />{" "}
-                      <br />
-                      <span
-                        style={{
-                          color: this.state.pwSuccess ? "green" : "red",
-                          fontSize: "10px",
-                          fontWeight: "normal",
-                          textAlign: "center",
-                          margin: "10px auto",
-                        }}
-                      >
-                        {this.state.possiblePwCkMsg}
-                      </span>
-                    </td>
-                  )}
-                </tr>
-                {this.state.kUser ? (
-                  ""
-                ) : (
-                  <tr>
-                    <td>비밀번호 확인</td>
-                    <td colSpan="2">
-                      <Input.Password
-                        onChange={this.handleInform.bind(this)}
-                        onKeyUp={this.checkPW.bind(this)}
-                        name="rePassword"
-                        placeholder="비밀번호 재입력"
-                        style={{
-                          width: "18vw",
-                          outline: "none",
-                          height: "3.5vw",
-                          fontWeight: "normal",
-                          fontSize: "1vw",
-                          fontFamily: "none",
-                        }}
-                      />
-                      <br />
-                      <span
-                        style={{
-                          color: this.state.samePwSuccess ? "green" : "red",
-                          fontSize: "10px",
-                          fontWeight: "normal",
-                          textAlign: "center",
-                          margin: "10px auto",
-                        }}
-                      >
-                        {this.state.samePwCkMsg}
-                      </span>{" "}
-                      <br />
-                    </td>
-                  </tr>
-                )}
-                <tr>
-                  <td
-                    colSpan="3"
-                    style={{ paddingTop: "3vh", textAlign: "center" }}
-                  >
-                    {this.state.kUser ? (
-                      ""
-                    ) : (
-                      <Button
-                        onClick={this.ChangePwd.bind(this)}
-                        type="primary"
-                        style={{
-                          height: "3vw",
-                          width: "5.5vw",
-                          display: "inline-block",
-                          marginRight: "2vw",
-                        }}
-                      >
-                        저장
-                      </Button>
-                    )}
-                    <Button
-                      onClick={this.dropUser.bind(this)}
+                  <td>소개글</td>
+                  <td style={{ paddingBottom: "0" }}>
+                    <Input
+                      value={this.state.newIntro}
+                      name="newIntro"
+                      onChange={this.handleInform.bind(this)}
                       style={{
-                        display: "inline-block",
-                        color: "rgba(0,0,0,.4)",
-                        height: "3vw",
+                        width: "18vw",
+                        height: "3.5vw",
+                        fontWeight: "normal",
+                        outline: "none",
+                        fontSize: "1vw",
+                      }}
+                    />{" "}
+                    <br />
+                    <span
+                      style={{
+                        color: "red",
+                        fontSize: "10px",
+                        fontWeight: "normal",
+                        textAlign: "center",
+                        margin: "10px auto",
                       }}
                     >
-                      회원탈퇴
+                      {this.state.nicknameCkMsg}
+                    </span>
+                    <br />
+                  </td>
+                  <td style={{ verticalAlign: "middle" }}>
+                    <Button
+                      type="text"
+                      style={{ float: "right", color: "rgba(245,145,45)" }}
+                      onClick={this.onIntroSubmit.bind(this)}
+                    >
+                      확인
                     </Button>
                   </td>
                 </tr>
-              </tbody>
-            </table>
-          </form>
-        </div>
+              ) : (
+                <tr>
+                  <td>소개글</td>
+                  <td>
+                    <span style={{ float: "left" }}>
+                      {this.state.introduce}
+                    </span>
+                    &nbsp;&nbsp;
+                  </td>
+                  <td>
+                    <Button
+                      type="text"
+                      style={{
+                        float: "right",
+                        color: "rgba(245,145,45)",
+                      }}
+                      onClick={this.onChangeIntro.bind(this)}
+                    >
+                      수정
+                    </Button>
+                  </td>{" "}
+                </tr>
+              )}{" "}
+              {this.state.nickChange ? (
+                <tr>
+                  <td>닉네임</td>
+                  <td style={{ paddingBottom: "0" }}>
+                    <Input
+                      ref="nickname"
+                      value={this.state.newNickname}
+                      name="newNickname"
+                      onChange={this.handleInform.bind(this)}
+                      onKeyUp={this.checkNickname.bind(this)}
+                      style={{
+                        width: "18vw",
+                        height: "3.5vw",
+                        fontWeight: "normal",
+                        outline: "none",
+                        fontSize: "1vw",
+                      }}
+                    />{" "}
+                    <br />
+                    <span
+                      style={{
+                        color: "red",
+                        fontSize: "10px",
+                        fontWeight: "normal",
+                        textAlign: "center",
+                        margin: "10px auto",
+                      }}
+                    >
+                      {this.state.nicknameCkMsg}
+                    </span>
+                    <br />
+                  </td>
+                  <td>
+                    <Button
+                      type="text"
+                      style={{ color: "rgba(245,145,45)", float: "right" }}
+                      onClick={this.onNicknameSubmit.bind(this)}
+                    >
+                      확인
+                    </Button>
+                  </td>
+                </tr>
+              ) : (
+                <tr>
+                  <td>닉네임</td>
+
+                  <td>{this.state.nickname}&nbsp;&nbsp;</td>
+                  <td>
+                    <Button
+                      type="text"
+                      style={{ color: "rgba(245,145,45)", float: "right" }}
+                      onClick={this.onChangeNick}
+                    >
+                      수정
+                    </Button>
+                  </td>
+                </tr>
+              )}
+              <tr>
+                <td>비밀번호</td>
+                {this.state.kUser ? (
+                  <td colSpan="2">
+                    <span style={{ fontWeight: "bold" }}>
+                      카카오 유저는 비밀번호를 변경하실 수 없습니다.
+                    </span>
+                  </td>
+                ) : (
+                  <td colSpan="2">
+                    <Input.Password
+                      placeholder="비밀번호"
+                      name="newPassword"
+                      onChange={this.handleInform.bind(this)}
+                      onKeyUp={this.checkPW.bind(this)}
+                      style={{
+                        width: "18vw",
+                        outline: "none",
+                        height: "3.5vw",
+                        fontWeight: "normal",
+                        fontSize: "1vw",
+                        fontFamily: "none",
+                      }}
+                    />{" "}
+                    <br />
+                    <span
+                      style={{
+                        color: this.state.pwSuccess ? "green" : "red",
+                        fontSize: "10px",
+                        fontWeight: "normal",
+                        textAlign: "center",
+                        margin: "10px auto",
+                      }}
+                    >
+                      {this.state.possiblePwCkMsg}
+                    </span>
+                  </td>
+                )}
+              </tr>
+              {this.state.kUser ? (
+                ""
+              ) : (
+                <tr>
+                  <td>비밀번호 확인</td>
+                  <td colSpan="2">
+                    <Input.Password
+                      onChange={this.handleInform.bind(this)}
+                      onKeyUp={this.checkPW.bind(this)}
+                      name="rePassword"
+                      placeholder="비밀번호 재입력"
+                      style={{
+                        width: "18vw",
+                        outline: "none",
+                        height: "3.5vw",
+                        fontWeight: "normal",
+                        fontSize: "1vw",
+                        fontFamily: "none",
+                      }}
+                    />
+                    <br />
+                    <span
+                      style={{
+                        color: this.state.samePwSuccess ? "green" : "red",
+                        fontSize: "10px",
+                        fontWeight: "normal",
+                        textAlign: "center",
+                        margin: "10px auto",
+                      }}
+                    >
+                      {this.state.samePwCkMsg}
+                    </span>{" "}
+                    <br />
+                  </td>
+                </tr>
+              )}
+              <tr>
+                <td
+                  colSpan="3"
+                  style={{ paddingTop: "3vh", textAlign: "center" }}
+                >
+                  {this.state.kUser ? (
+                    ""
+                  ) : (
+                    <Button
+                      onClick={this.ChangePwd.bind(this)}
+                      type="primary"
+                      style={{
+                        height: "3vw",
+                        width: "5.5vw",
+                        display: "inline-block",
+                        marginRight: "2vw",
+                      }}
+                    >
+                      저장
+                    </Button>
+                  )}
+                  <Button
+                    onClick={this.dropUser.bind(this)}
+                    style={{
+                      display: "inline-block",
+                      color: "rgba(0,0,0,.4)",
+                      height: "3vw",
+                    }}
+                  >
+                    회원탈퇴
+                  </Button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </form>
       </div>
     );
   }

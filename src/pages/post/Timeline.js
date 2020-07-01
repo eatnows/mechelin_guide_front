@@ -185,7 +185,7 @@ class Timeline extends React.Component {
               </tr>
             </thead>
           </table>{" "}
-          <div style={{ marginTop: "-1.5vw" }}>
+          <div style={{ marginTop: "2vw" }}>
             {this.state.following === "언팔하기" ? (
               <Post userId={this.state.profileUser} pathFrom="timeline" />
             ) : (

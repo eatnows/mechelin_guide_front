@@ -100,6 +100,7 @@ const QnAComponent = () => {
           <Form.Item
             name="subject"
             label="제목"
+            style={{ textAlign: "left" }}
             labelCol={{
               span: 6,
             }}

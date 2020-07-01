@@ -62,6 +62,8 @@ class FullMap extends React.Component {
     categoryFilter: ["한식", "양식", "중식", "일식"],
     blacklist: false,
     myListModal: false,
+    frinedsModal: false,
+    friendEmail: "",
   };
 
   modules = {
@@ -224,6 +226,7 @@ class FullMap extends React.Component {
       this.setState({
         filterModal: true,
         myListModal: false,
+        friendModal: false,
       });
     }
   };
@@ -238,6 +241,22 @@ class FullMap extends React.Component {
       this.setState({
         myListModal: true,
         filterModal: false,
+        friendModal: false,
+      });
+    }
+  };
+
+  /*친구 추가 모달창 보이게 */
+  showfriendForm = () => {
+    if (this.state.myListModal) {
+      this.setState({
+        friendModal: false,
+      });
+    } else {
+      this.setState({
+        friendModal: true,
+        filterModal: false,
+        myListModal: false,
       });
     }
   };
@@ -414,6 +433,7 @@ class FullMap extends React.Component {
                 </div>
                 <div
                   className="friend"
+                  onClick={this.showfriendForm.bind(this)}
                   style={{
                     bottom: this.state.bottomMenu ? "1.5%" : "-20%",
                     right: this.state.bottomMenu ? "37%" : "50%",
@@ -800,6 +820,95 @@ class FullMap extends React.Component {
             >
               닫기
             </Button>
+          </div>
+        </section>
+
+        {/*친구 추가 모달창 */}
+        <section>
+          <div
+            className="friendModal"
+            style={{
+              display:
+                this.state.friendModal && !this.props.bar ? "block" : "none",
+              clear: "both",
+              background: "white",
+              border: "1px solid rgba(0,0,0,.2)",
+              borderRadius: "10px",
+              width: "20vw",
+              height: "25vh",
+              boxShadow: "5px 5px 5px rgba(0,0,0,.1)",
+              position: "absolute",
+              zIndex: "9999",
+              right: "10%",
+              bottom: "15%",
+            }}
+          >
+            <div
+              className="closeFilter xi-close"
+              onClick={() => {
+                this.setState({ friendModal: false });
+              }}
+              style={{
+                position: "absolute",
+                right: "4%",
+                top: "8%",
+                fontSize: "3vh",
+                color: "rgba(245,145,45)",
+                cursor: "pointer",
+                zIndex: "1",
+              }}
+            ></div>
+            <div
+              id="content"
+              style={{
+                width: "20vw",
+                height: "20vh",
+                position: "absolute",
+                left: "50%",
+                top: "50%",
+                transform: "translate(-50%,-50%)",
+              }}
+            >
+              <div
+                style={{
+                  fontSize: "2.5vh",
+                  marginLeft: "2vh",
+                  textAlign: "left",
+                }}
+              >
+                친구 추가
+              </div>
+              <hr
+                style={{
+                  borderColor: "rgba(0,0,0,.2)",
+                  margin: "1vh 0 3vh",
+                }}
+              />
+              <Input
+                name="friendEmail"
+                onChange={this.changeState.bind(this)}
+                placeholder="상대방의 이메일 입력하세요."
+                style={{
+                  width: "15vw",
+                  margin: "0 2.5vw",
+                  textAlign: "center",
+                }}
+              ></Input>
+              <button
+                className="form-control"
+                style={{
+                  width: "8vw",
+                  height: "5vh",
+                  marginTop: "5vh",
+                  color: "white",
+                  margin: "3vh auto 0",
+                  border: "none",
+                  backgroundColor: "rgba(245,145,45)",
+                }}
+              >
+                친구 요청
+              </button>
+            </div>
           </div>
         </section>
       </div>
