@@ -86,7 +86,9 @@ class FullMap extends React.Component {
       // handlers: { 'image' : this.handleImage }
     },
     imageUpload: {
-      url: "image/add?id=" + sessionStorage.getItem("userId"), // server url
+      url:
+        "http://localhost:9000/image/add?id=" +
+        sessionStorage.getItem("userId"), // server url
       method: "POST", // change query method, default 'POST'
       name: "images", // 아래 설정으로 image upload form의 key 값을 변경할 수 있다.
       headers: {
@@ -297,7 +299,7 @@ class FullMap extends React.Component {
       return false;
     }
 
-    const url = "post/add";
+    const url = "/post/add";
     Axios.post(url, {
       user_id: sessionStorage.getItem("userId"),
       latitude_x: this.state.x,
@@ -329,6 +331,7 @@ class FullMap extends React.Component {
         const userPlaceId = response.data.user_place_id;
 
         this.setState({ reviewModal: false, fullMap: false });
+        this.props.reivewPageMove(userPlaceId);
         this.props.history.push(`/mechelin/review/${userPlaceId}`);
       })
       .catch((error) => {

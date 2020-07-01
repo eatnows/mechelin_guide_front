@@ -12,6 +12,7 @@ const Review = (props) => {
   const timelinePageMove = (user_id) => {
     props.timelinePageMove(user_id);
   };
+
   return (
     <div>
       <div style={{ overflow: "auto", height: "100vh" }}>

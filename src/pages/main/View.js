@@ -60,6 +60,7 @@ class View extends React.Component {
 
   /*다른 페이지로 이동할 때 메뉴화면 제거 */
   goAnotherPage = () => {
+    sessionStorage.setItem("targetUser", sessionStorage.getItem("userId"));
     this.setState({ bar: false });
   };
 
@@ -228,7 +229,6 @@ class View extends React.Component {
             history={this.props.history}
             bar={this.state.bar}
             reivewPageMove={this.reivewPageMove.bind(this)}
-            timelinePageMove={this.timelinePageMove.bind(this)}
           />
         ) : (
           ""
@@ -298,6 +298,7 @@ class View extends React.Component {
                 getState={this.getState.bind(this)}
                 userPlaceId={userPlaceId}
                 history={this.props.history}
+                timelinePageMove={this.timelinePageMove.bind(this)}
               />
             );
           }}
