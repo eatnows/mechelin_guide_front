@@ -1,19 +1,11 @@
 import React from "react";
-import { Switch, Checkbox } from "antd";
+import { Switch, Checkbox, Input, Select, Button } from "antd";
 import ReactQuill, { Quill } from "react-quill";
 import { ImageUpload } from "quill-image-upload";
 import "react-quill/dist/quill.snow.css";
-//import e from "cors";
 import StarRate from "components/review/StarRate";
 import WriteFormMap from "components/map/WriteFormMap";
 import Axios from "util/axios";
-import {
-  useHistory,
-  withRouter,
-  Route,
-  BrowserRouter,
-  Redirect,
-} from "react-router-dom";
 import filter from "images/filter2.png";
 import friend from "images/friend2.png";
 import message from "images/messag2.png";
@@ -36,6 +28,7 @@ const categoryOptions = [
 ];
 let categoryFilter = ["한식", "양식", "중식", "일식"];
 let blacklist = false;
+
 class FullMap extends React.Component {
   constructor(props) {
     super();
@@ -92,9 +85,7 @@ class FullMap extends React.Component {
       // handlers: { 'image' : this.handleImage }
     },
     imageUpload: {
-      url:
-        "http://localhost:9000/mechelin/image/add?id=" +
-        sessionStorage.getItem("userId"), // server url
+      url: "image/add?id=" + sessionStorage.getItem("userId"), // server url
       method: "POST", // change query method, default 'POST'
       name: "images", // 아래 설정으로 image upload form의 key 값을 변경할 수 있다.
       headers: {
@@ -195,7 +186,6 @@ class FullMap extends React.Component {
   /*
    * 리뷰작성 폼 지도에서 넘어온 데이터
    */
-
   mapData = (x, y, placeName, address) => {
     this.setState({
       x: x,
@@ -204,6 +194,7 @@ class FullMap extends React.Component {
       address: address,
     });
   };
+
   /*
    * value 변경시 스테이트 값 변경
    */
@@ -212,6 +203,7 @@ class FullMap extends React.Component {
       [e.target.name]: e.target.value,
     });
   };
+
   /*리뷰 모달창 보이게 */
   showReviewForm = () => {
     this.setState({
@@ -219,6 +211,7 @@ class FullMap extends React.Component {
       filterModal: false,
     });
   };
+
   /*필터 모달창 보이게 */
   showFilterForm = () => {
     if (this.state.filterModal) {
@@ -270,7 +263,7 @@ class FullMap extends React.Component {
       return false;
     }
 
-    const url = "http://localhost:9000/mechelin/post/add";
+    const url = "post/add";
     Axios.post(url, {
       user_id: sessionStorage.getItem("userId"),
       latitude_x: this.state.x,
@@ -477,8 +470,7 @@ class FullMap extends React.Component {
                     paddingRight: "2vw",
                   }}
                 >
-                  <input
-                    className="form-control"
+                  <Input
                     name="subject"
                     style={{
                       marginLeft: "0.15vw",
@@ -540,7 +532,7 @@ class FullMap extends React.Component {
                         rating={this.state.rating}
                         cacheIdx={this.state.cacheIdx}
                         cacheRating={this.state.cacheRating}
-                        score={this.state.score}
+                        score={this.state.starScore}
                       />
                     </div>
                     <div
@@ -550,7 +542,7 @@ class FullMap extends React.Component {
                         lineHeight: "5vh",
                         display: "inline-block",
                         fontSize: "1.5em",
-                        color: "rgba(0, 0, 0, 0.65)",
+                        color: "rgba(0, 0, 0, 0.4)",
                       }}
                     >
                       {this.state.starScore === 0
@@ -593,28 +585,23 @@ class FullMap extends React.Component {
                   </div>
                 </div>
 
-                <button
-                  type="button"
-                  className="btn btn-warning"
+                <Button
                   style={{
                     clear: "both",
                     width: "10vw",
                     height: "5vh",
-                    color: "white",
                     marginLeft: "12vw",
                   }}
                   onClick={this.onSubmitReview.bind(this)}
                 >
                   등록하기
-                </button>
-                <button
-                  type="reset"
-                  className="btn btn-warning"
+                </Button>
+                <Button
+                  htmltpe="reset"
                   style={{
                     clear: "both",
                     width: "10vw",
                     height: "5vh ",
-                    color: "white",
                     marginLeft: "4vw",
                   }}
                   onClick={() => {
@@ -624,7 +611,7 @@ class FullMap extends React.Component {
                   }}
                 >
                   취소
-                </button>
+                </Button>
               </section>
             ) : (
               ""
