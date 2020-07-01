@@ -8,13 +8,13 @@ import heart_o from "images/heart_o.png";
 import star from "images/star.png";
 import share from "images/share2.png";
 import star_g from "images/star_g.png";
-import { Rate, Button, Input, Modal } from "antd";
+import { Rate, Button, Input, Modal, Spin } from "antd";
 import StarRate from "components/review/StarRate";
 import WriteFormMap from "components/map/WriteFormMap";
 import ReactQuill, { Quill } from "react-quill";
 import { ImageUpload } from "quill-image-upload";
 import "react-quill/dist/quill.snow.css";
-import { ExclamationCircleOutlined } from "@ant-design/icons";
+import { ExclamationCircleOutlined, LoadingOutlined } from "@ant-design/icons";
 const fakeFetch = (delay = 1000) =>
   new Promise((res) => setTimeout(res, delay));
 
@@ -782,7 +782,7 @@ const ListItem = ({
     </div>
   );
 };
-
+const antIcon = <LoadingOutlined style={{ fontSize: 24 }} spin />;
 let item = 3;
 let dataLength = 0;
 const Post = (props) => {
@@ -894,7 +894,11 @@ const Post = (props) => {
           );
         })}
         <div ref={setRef} className="Loading">
-          {isLoading && "Loading..."}
+          {isLoading && (
+            <span style={{ marginLeft: "50%" }}>
+              <Spin indicator={antIcon} />
+            </span>
+          )}
         </div>
       </div>
     </div>

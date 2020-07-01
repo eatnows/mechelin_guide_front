@@ -11,8 +11,8 @@ import block_g from "images/block_g.png";
 import star_g from "images/star_g.png";
 
 import e from "cors";
-import { Rate, Modal } from "antd";
-import { RedditSquareFilled } from "@ant-design/icons";
+import { Rate, Modal, Spin } from "antd";
+import { RedditSquareFilled, LoadingOutlined } from "@ant-design/icons";
 
 const fakeFetch = (delay = 1000) =>
   new Promise((res) => setTimeout(res, delay));
@@ -351,7 +351,7 @@ const ListItem = ({
     </div>
   );
 };
-
+const antIcon = <LoadingOutlined style={{ fontSize: 24 }} spin />;
 let item = 3;
 let dataLength = 0;
 const NewsFeed = (props) => {
@@ -539,7 +539,11 @@ const NewsFeed = (props) => {
           );
         })}
         <div ref={setRef} className="Loading">
-          {isLoading && "Loading..."}
+          {isLoading && (
+            <span style={{ marginLeft: "50%" }}>
+              <Spin indicator={antIcon} />
+            </span>
+          )}
         </div>
       </div>
     </div>
