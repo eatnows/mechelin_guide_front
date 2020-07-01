@@ -2,8 +2,8 @@ import { useState, useEffect, useCallback } from "react";
 
 const baseOption = {
   root: null,
-  threshold: 0,
-  rootMargin: "0px",
+  threshold: 1,
+  rootMargin: "20px",
 };
 const useIntersect = (onIntersect, option) => {
   const [ref, setRef] = useState(null);

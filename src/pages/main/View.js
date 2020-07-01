@@ -286,6 +286,7 @@ class View extends React.Component {
               <NewsFeed
                 getState={this.getState.bind(this)}
                 userId={this.state.userId}
+                history={this.props.history}
               />
             );
           }}

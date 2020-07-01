@@ -18,7 +18,15 @@ const fakeFetch = (delay = 1000) =>
   new Promise((res) => setTimeout(res, delay));
 
 let checkHearts = false;
-const ListItem = ({ row, i, likesChange, wishClick, blockClick, render }) => {
+const ListItem = ({
+  row,
+  i,
+  likesChange,
+  wishClick,
+  blockClick,
+  render,
+  history,
+}) => {
   useEffect(() => {
     heartBoolean();
     if (row.user_id === sessionStorage.getItem("userId")) {
@@ -107,7 +115,7 @@ const ListItem = ({ row, i, likesChange, wishClick, blockClick, render }) => {
   /* 블랙리스트 등록되어있는지 확인 */
   const blackListBoolean = () => {
     console.log("실행됨");
-    const url = `/blacklist/exist?user_id=${sessionStorage.getItem(
+    const url = `/userplace/blacklist/exist?user_id=${sessionStorage.getItem(
       "userId"
     )}&place_id=${row.place_id}`;
     Axios.get(url)
@@ -123,6 +131,16 @@ const ListItem = ({ row, i, likesChange, wishClick, blockClick, render }) => {
       .catch((error) => {
         console.log("blackListBoolean" + error);
       });
+  };
+  /*
+   * 닉네임, 프로필 사진 클릭시 타임라인으로 이동
+   */
+  const onClickmoveTL = (e) => {
+    const user_id = e.target.getAttribute("user_id");
+    sessionStorage.setItem("targetUser", e.target.getAttribute("user_id"));
+    //timelinePageMove(user_id);
+
+    history.push(`/mechelin/timeline/${user_id}`);
   };
 
   return (
@@ -163,10 +181,18 @@ const ListItem = ({ row, i, likesChange, wishClick, blockClick, render }) => {
                     width: "3vw",
                     borderRadius: "50%",
                     height: "3vw",
+                    cursor: "pointer",
                   }}
+                  onClick={onClickmoveTL}
+                  user_id={row.user_id}
                 />
               </th>
-              <th colSpan="3" style={{ paddingLeft: "10px" }}>
+              <th
+                colSpan="3"
+                style={{ paddingLeft: "10px", cursor: "pointer" }}
+                onClick={onClickmoveTL}
+                user_id={row.user_id}
+              >
                 {row.nickname}
                 <br />
                 {nowTime(row.created_at)}
@@ -508,6 +534,7 @@ const NewsFeed = (props) => {
               blockClick={blockClick}
               key={i}
               render={render}
+              history={props.history}
             />
           );
         })}

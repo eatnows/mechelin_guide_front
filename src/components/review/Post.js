@@ -468,12 +468,13 @@ const ListItem = ({
                       width: "3vw",
                       borderRadius: "50%",
                       height: "3vw",
+                      cursor: "pointer",
                     }}
                   />
                 </th>
                 <th
                   colSpan="3"
-                  style={{ paddingLeft: "10px" }}
+                  style={{ paddingLeft: "10px", cursor: "pointer" }}
                   onClick={clickProfile}
                   user_id={contact.user_id}
                 >
