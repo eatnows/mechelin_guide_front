@@ -17,8 +17,8 @@ const WishlistComponent = (props) => {
   const onClickPlaceName = (e) => {
     const userPlaceId = e.target.getAttribute("userPlaceId");
     console.log(e.target);
-    // props.reivewPageMove(userPlaceId);
-    // props.history.push(`/mechelin/review/${userPlaceId}`);
+    props.reivewPageMove(userPlaceId);
+    props.history.push(`/mechelin/review/${userPlaceId}`);
   };
   /*
    * 삭제 버튼 클릭시 실행되는 함수
