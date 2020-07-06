@@ -1,6 +1,7 @@
 import React from "react";
 import Axios from "util/axios";
 import { Input } from "antd";
+import { NavLink } from "react-router-dom";
 class ChangePwd extends React.Component {
   state = {
     email: "",
@@ -420,6 +421,26 @@ class ChangePwd extends React.Component {
                   >
                     수정하기
                   </button>
+                </td>
+              </tr>{" "}
+              <tr>
+                <td>
+                  <br />
+                  <NavLink to="/">
+                    <button
+                      type="button"
+                      className="btn"
+                      style={{
+                        backgroundColor: "white",
+                        color: "#9CC557 ",
+                        width: "250px",
+                        height: "30px",
+                        border: "1px solid #9CC557 ",
+                      }}
+                    >
+                      돌아가기
+                    </button>
+                  </NavLink>
                 </td>
               </tr>
             </tbody>

@@ -428,7 +428,7 @@ const ListItem = ({
             <div
               style={{
                 textAlign: "right",
-                width: "52vw",
+                width: "50vw",
                 margin: "7vh auto -7vh",
               }}
             >

@@ -154,33 +154,35 @@ class Timeline extends React.Component {
                   />
                 </th>
                 <th style={{ width: "44vw" }}>
-                  <span style={{ fontSize: "1.3vw", marginRight: "0.7vw" }}>
+                  <div
+                    style={{
+                      fontSize: "1.3vw",
+                      marginRight: "0.7vw",
+                      display: "inline-block",
+                    }}
+                  >
                     {this.state.profile.nickname}
-                  </span>
-                  <span>
-                    {/* 팔로우버튼은 자신과 다른 유저일 때만 노출 */}
-                    {this.state.sameUser ? (
-                      ""
-                    ) : this.state.following !== "팔로우 수락" ? (
-                      <Button onClick={this.onFollowClick}>
-                        {this.state.following}
+                  </div>
+                  {/* 팔로우버튼은 자신과 다른 유저일 때만 노출 */}
+                  {this.state.sameUser ? (
+                    ""
+                  ) : this.state.following !== "팔로우 수락" ? (
+                    <Button onClick={this.onFollowClick}>
+                      {this.state.following}
+                    </Button>
+                  ) : (
+                    <div>
+                      <Button onClick={this.onFollowClick}>팔로우 수락</Button>
+                      <Button onClick={this.onFollowClick} value="refuse">
+                        팔로우 거절
                       </Button>
-                    ) : (
-                      <div>
-                        <Button onClick={this.onFollowClick}>
-                          팔로우 수락
-                        </Button>
-                        <Button onClick={this.onFollowClick} value="refuse">
-                          팔로우 거절
-                        </Button>
-                      </div>
-                    )}
-                  </span>
+                    </div>
+                  )}
                   <br />{" "}
-                  <span style={{ marginLeft: "5px" }}>
+                  <div style={{ marginLeft: "5px", marginTop: "10px" }}>
                     {" "}
                     {this.state.profile.introduce}
-                  </span>
+                  </div>
                 </th>
               </tr>
             </thead>

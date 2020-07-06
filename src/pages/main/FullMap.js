@@ -213,6 +213,7 @@ class FullMap extends React.Component {
       reviewModal: true,
       filterModal: false,
       myListModal: false,
+      friendModal: false,
     });
   };
 
@@ -248,7 +249,7 @@ class FullMap extends React.Component {
 
   /*친구 추가 모달창 보이게 */
   showfriendForm = () => {
-    if (this.state.myListModal) {
+    if (this.state.friendModal) {
       this.setState({
         friendModal: false,
       });
