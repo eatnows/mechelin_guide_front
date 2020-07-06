@@ -200,7 +200,7 @@ const ListItem = ({
       // handlers: { 'image' : this.handleImage }
     },
     imageUpload: {
-      url: `http://ec2-54-180-115-24.ap-northeast-2.compute.amazonaws.com/mechelin/image/add?id=${sessionStorage.getItem(
+      url: `http://localhost:9000/mechelin/image/add?id=${sessionStorage.getItem(
         "userId"
       )}`, // server url
       method: "POST", // change query method, default 'POST'

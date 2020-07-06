@@ -31,7 +31,7 @@ class ProfileUpload extends React.Component {
   state = {
     loading: false,
     path:
-      "http://ec2-54-180-115-24.ap-northeast-2.compute.amazonaws.com/mechelin/image/profile/image?id=" +
+      "http://localhost:9000/mechelin/image/profile/image?id=" +
       sessionStorage.getItem("userId"),
     imageUrl: "",
   };
