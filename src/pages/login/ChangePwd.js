@@ -2,6 +2,7 @@ import React from "react";
 import Axios from "util/axios";
 import { Input } from "antd";
 import { NavLink } from "react-router-dom";
+let go = "";
 class ChangePwd extends React.Component {
   state = {
     email: "",
@@ -92,6 +93,7 @@ class ChangePwd extends React.Component {
 
   //이메일 입력창 변경시 버튼 활성화
   changeBtn = () => {
+    clearInterval(go);
     this.setState({
       finishSending: false,
     });
@@ -133,7 +135,7 @@ class ChangePwd extends React.Component {
         }
       }
     };
-    let go = setInterval(runTime, 1000);
+    go = setInterval(runTime, 1000);
   };
 
   //비밀번호 형식 확인
@@ -289,10 +291,11 @@ class ChangePwd extends React.Component {
                       ? "이메일 발송 완료"
                       : "인증하기"}
                   </button>
+                  <br />
                 </td>
               </tr>
               <tr
-                style={{ display: this.state.finishSending ? "block" : "none" }}
+                style={{ display: this.state.timer !== "" ? "block" : "none" }}
               >
                 <td>
                   <br />
@@ -311,10 +314,19 @@ class ChangePwd extends React.Component {
                   />
                   <span
                     style={{
-                      float:
+                      position: "absolute",
+                      right:
                         this.state.timer === "인증시간이 초과되었습니다."
-                          ? "none"
-                          : "right",
+                          ? "48%"
+                          : "0",
+                      top:
+                        this.state.timer === "인증시간이 초과되었습니다." &&
+                        this.state.possiblePwCkMsg ===
+                          "영문, 숫자, 특수문자를 혼합하여 8~20자 이내로 입력해주십시오."
+                          ? "46%"
+                          : this.state.timer === "인증시간이 초과되었습니다."
+                          ? "48%"
+                          : "48.5%",
                       fontWeight: "normal",
                       color:
                         this.state.timer === "인증시간이 초과되었습니다."
@@ -326,8 +338,12 @@ class ChangePwd extends React.Component {
                           : "-33px 15px",
                       fontSize:
                         this.state.timer === "인증시간이 초과되었습니다."
-                          ? "11px"
+                          ? "10px"
                           : "13px",
+                      width:
+                        this.state.timer === "인증시간이 초과되었습니다."
+                          ? "130px"
+                          : "auto",
                     }}
                   >
                     {this.state.timer}
@@ -341,11 +357,7 @@ class ChangePwd extends React.Component {
               >
                 <td>
                   {" "}
-                  {this.state.timer === "인증시간이 초과되었습니다." ? (
-                    ""
-                  ) : (
-                    <br />
-                  )}
+                  <br />
                   <Input.Password
                     onChange={this.handleInform.bind(this)}
                     onKeyUp={this.checkPW.bind(this)}
