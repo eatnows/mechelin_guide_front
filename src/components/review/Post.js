@@ -34,6 +34,7 @@ const ListItem = ({
   blockClick,
   userPlaceId,
   fetchItems,
+  pathFrom,
 }) => {
   const [showBtn, setShowBtn] = useState(false);
   const [form, setForm] = useState(false);
@@ -153,8 +154,13 @@ const ListItem = ({
 
   /* 블랙리스트 등록되어있는지 확인 */
   const blackListBoolean = () => {
+    let url;
     console.log("실행됨");
-    const url = `/userplace/blacklist/exist?user_place_id=${userPlaceId}`;
+    if (pathFrom === "timeline") {
+      url = `/userplace/blacklist/exist?user_place_id=${contact.user_place_id}`;
+    } else {
+      url = `/userplace/blacklist/exist?user_place_id=${userPlaceId}`;
+    }
     Axios.get(url)
       .then((res) => {
         console.log("블랙리스트");
@@ -941,6 +947,7 @@ const Post = (props) => {
       Axios.put(url)
         .then((res) => {
           console.log(res.data);
+          item -= 3;
           if (res.data === "블랙리스트에 추가되었습니다.") {
             success(res.data);
           } else {
@@ -1045,6 +1052,7 @@ const Post = (props) => {
               blockClick={blockClick}
               userPlaceId={props.userPlaceId}
               fetchItems={fetchItems}
+              pathFrom={props.pathFrom}
             />
           );
         })}
