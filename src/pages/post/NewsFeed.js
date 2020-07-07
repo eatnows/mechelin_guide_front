@@ -51,7 +51,9 @@ const ListItem = ({
   const [modalLoading, setModalLoading] = useState(false);
   const [radioValue, setRadioValue] = useState(1);
   const [reportRadioGroup, setReportRadioGroup] = useState("");
-
+  const [reportUserId, setReportUserId] = useState("");
+  const [reportPostId, setReportPostId] = useState("");
+  const [reportContent, setReportContent] = useState("");
   /* 게시한 시간 표시*/
   const nowTime = (data) => {
     let now = new Date().getTime();
@@ -151,16 +153,43 @@ const ListItem = ({
     history.push(`/mechelin/timeline/${user_id}`);
   };
 
-  // 임시로 넣은것
+  // 신고하기 아이콘 클릭시 모달창 보임
   const onClickReport = (e) => {
-    // alert("준비중인 서비스입니다.");
+    setReportPostId(e.target.getAttribute("postId"));
+    setReportUserId(e.target.getAttribute("userId"));
     setModalVisible(true);
   };
 
-  const showModal = () => {};
-
+  /*
+   * 신고하기 버튼을 눌렀을때 실행되는 메소드
+   */
   const handleOk = () => {
-    this.setState({ loading: true });
+    console.log("gggg");
+    setModalLoading(true);
+    const postId = reportPostId;
+    const userId = reportUserId;
+    let content = "";
+    if (reportContent === "") {
+      content = reportRadioGroup;
+    } else {
+      content = reportContent;
+    }
+    const url = `/report/add`;
+    Axios.post(url, {
+      register_user_id: sessionStorage.getItem("userId"),
+      reported_user_id: userId,
+      post_id: postId,
+      content: content,
+    })
+      .then((res) => {
+        setReportContent("");
+        setReportPostId("");
+        setReportUserId("");
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+
     setTimeout(() => {
       setModalLoading(false);
       setModalVisible(false);
@@ -175,6 +204,13 @@ const ListItem = ({
     console.log("radio checked", e.target.value);
     setRadioValue(e.target.value);
     setReportRadioGroup(e.target.value);
+  };
+
+  /*
+   * 신고 내용
+   */
+  const reportContentChange = (e) => {
+    setReportContent(e.target.value);
   };
 
   return (
@@ -315,6 +351,7 @@ const ListItem = ({
                       alt=""
                       placeId={row.place_id}
                       postId={row.id}
+                      userId={row.user_id}
                       style={{ cursor: "pointer", float: "right" }}
                       onClick={onClickReport}
                     />
@@ -326,6 +363,7 @@ const ListItem = ({
                       alt=""
                       placeId={row.place_id}
                       postId={row.id}
+                      userId={row.user_id}
                       style={{ cursor: "pointer", float: "right" }}
                       onClick={onClickReport}
                     />
@@ -385,7 +423,7 @@ const ListItem = ({
       </form>
       <Modal
         visible={modalVisible}
-        title="Title"
+        title="리뷰글 신고하기"
         onOk={handleOk}
         onCancel={handleCancel}
         footer={[
@@ -402,6 +440,9 @@ const ListItem = ({
           </Button>,
         ]}
       >
+        <p>제목 : {row.subject}</p>
+        <p>작성자 : {row.nickname}</p>
+        <p>신고 사유</p>
         <Radio.Group onChange={reportRadio} value={radioValue}>
           <Radio value={"부적절한 홍보 게시물"}>부적절한 홍보 게시물</Radio>
           <Radio value={"음란 / 불법 게시물"}>음란 / 불법 게시물</Radio>
@@ -410,7 +451,7 @@ const ListItem = ({
         {reportRadioGroup === "기타" ? (
           <div>
             <hr /> <p>신고내용 : </p>
-            <textarea type="text" />
+            <textarea type="text" onChange={reportContentChange} />
           </div>
         ) : (
           ""
