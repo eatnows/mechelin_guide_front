@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef, forwardRef } from "react";
 import Axios from "util/axios";
 import Comment from "./Comment";
 import "css/postStyle.css";
@@ -13,7 +13,7 @@ import report_g from "images/report_g.png";
 import star_g from "images/star_g.png";
 
 import e from "cors";
-import { Rate, Modal, Spin } from "antd";
+import { Rate, Modal, Spin, Button, Radio } from "antd";
 import { RedditSquareFilled, LoadingOutlined } from "@ant-design/icons";
 
 const fakeFetch = (delay = 1000) =>
@@ -47,6 +47,10 @@ const ListItem = ({
   const [checkWishlist, setCheckWishlist] = useState(false);
   const [checkBlock, setCheckBlock] = useState(false);
   const [checkReport, setCheckReport] = useState(false);
+  const [modalVisible, setModalVisible] = useState(false);
+  const [modalLoading, setModalLoading] = useState(false);
+  const [radioValue, setRadioValue] = useState(1);
+  const [reportRadioGroup, setReportRadioGroup] = useState("");
 
   /* 게시한 시간 표시*/
   const nowTime = (data) => {
@@ -149,7 +153,28 @@ const ListItem = ({
 
   // 임시로 넣은것
   const onClickReport = (e) => {
-    alert("준비중인 서비스입니다.");
+    // alert("준비중인 서비스입니다.");
+    setModalVisible(true);
+  };
+
+  const showModal = () => {};
+
+  const handleOk = () => {
+    this.setState({ loading: true });
+    setTimeout(() => {
+      setModalLoading(false);
+      setModalVisible(false);
+    }, 3000);
+  };
+
+  const handleCancel = () => {
+    setModalVisible(false);
+  };
+
+  const reportRadio = (e) => {
+    console.log("radio checked", e.target.value);
+    setRadioValue(e.target.value);
+    setReportRadioGroup(e.target.value);
   };
 
   return (
@@ -358,6 +383,39 @@ const ListItem = ({
           </tbody>
         </table>
       </form>
+      <Modal
+        visible={modalVisible}
+        title="Title"
+        onOk={handleOk}
+        onCancel={handleCancel}
+        footer={[
+          <Button key="back" onClick={handleCancel}>
+            취소하기
+          </Button>,
+          <Button
+            key="submit"
+            type="primary"
+            loading={modalLoading}
+            onClick={handleOk}
+          >
+            신고하기
+          </Button>,
+        ]}
+      >
+        <Radio.Group onChange={reportRadio} value={radioValue}>
+          <Radio value={"부적절한 홍보 게시물"}>부적절한 홍보 게시물</Radio>
+          <Radio value={"음란 / 불법 게시물"}>음란 / 불법 게시물</Radio>
+          <Radio value={"기타"}>기타</Radio>
+        </Radio.Group>
+        {reportRadioGroup === "기타" ? (
+          <div>
+            <hr /> <p>신고내용 : </p>
+            <textarea type="text" />
+          </div>
+        ) : (
+          ""
+        )}
+      </Modal>
     </div>
   );
 };
