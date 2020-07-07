@@ -117,6 +117,15 @@ class Timeline extends React.Component {
       });
   };
 
+  /*
+   * 친구 타임라인에서 메뉴 타임라인을 눌렀을 시 프로필 내용 변경
+   */
+  timelineToTimeLine = (targetUser) => {
+    this.setState({
+      profileUser: targetUser,
+    });
+  };
+
   render() {
     return (
       <div
@@ -195,6 +204,7 @@ class Timeline extends React.Component {
                 userId={this.state.profileUser}
                 pathFrom="timeline"
                 history={this.props.history}
+                timelineToTimeLine={this.timelineToTimeLine.bind(this)}
               />
             ) : (
               ""

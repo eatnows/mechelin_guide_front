@@ -33,6 +33,7 @@ const ListItem = ({
   wishClick,
   blockClick,
   userPlaceId,
+  fetchItems,
 }) => {
   const [showBtn, setShowBtn] = useState(false);
   const [form, setForm] = useState(false);
@@ -93,6 +94,8 @@ const ListItem = ({
   useEffect(() => {
     heartBoolean();
     blackListBoolean();
+    fetchItems();
+    // timelineToTimeLine();
   }, [render]);
 
   /*좋아요 눌렀는지 확인 */
@@ -825,6 +828,7 @@ const ListItem = ({
 const antIcon = <LoadingOutlined style={{ fontSize: 24 }} spin />;
 let item = 3;
 let dataLength = 0;
+
 const Post = (props) => {
   const [state, setState] = useState({ itemCount: 3, isLoading: false });
   const [result, setResult] = useState([]);
@@ -832,8 +836,16 @@ const Post = (props) => {
   console.log("state구역");
   /* fake async fetch */
   const fetchItems = async () => {
+    console.log("펫치아이템 실행");
     let url = ``;
-    if (props.pathFrom === "timeline") {
+    if (
+      props.pathFrom === "timeline" &&
+      sessionStorage.getItem("userId") === sessionStorage.getItem("targetUser")
+    ) {
+      url = `/post/timeline?user_id=${sessionStorage.getItem(
+        "userId"
+      )}&row=${item}`;
+    } else if (props.pathFrom === "timeline") {
       url = `/post/timeline?user_id=${props.userId}&row=${item}`;
     } else {
       url = `/post/review?user_place_id=${props.userPlaceId}&row=${item}`;
@@ -1002,6 +1014,16 @@ const Post = (props) => {
     props.timelinePageMove(user_id);
   };
 
+  /*
+   * 친구 타임라인에서 메뉴 타임라인을 눌렀을 시 프로필 변경
+   */
+
+  // const timelineToTimeLine = () => {
+  //   if (props.pathFrom === "timeline") {
+  //     props.timelineToTimeLine(sessionStorage.getItem("targetUser"));
+  //   }
+  // };
+
   return (
     <div>
       <div className="App">
@@ -1017,6 +1039,7 @@ const Post = (props) => {
               wishClick={wishClick}
               blockClick={blockClick}
               userPlaceId={props.userPlaceId}
+              fetchItems={fetchItems}
             />
           );
         })}
