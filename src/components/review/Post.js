@@ -589,6 +589,7 @@ const ListItem = ({
                         postId={contact.id}
                         style={{ cursor: "pointer", float: "right" }}
                         userId={contact.user_id}
+                        userPlaceId={contact.user_place_id}
                       />
                     ) : (
                       <img
@@ -599,7 +600,9 @@ const ListItem = ({
                         onClick={blockClick}
                         placeId={contact.place_id}
                         postId={contact.id}
+                        userId={contact.user_id}
                         style={{ cursor: "pointer", float: "right" }}
+                        userPlaceId={contact.user_place_id}
                       />
                     )}
                     <img
@@ -932,7 +935,9 @@ const Post = (props) => {
    */
   const blockClick = (e) => {
     if (e.target.getAttribute("userId") === sessionStorage.getItem("userId")) {
-      const url = `/userplace/blacklist/${props.userPlaceId}`;
+      const url = `/userplace/blacklist/${e.target.getAttribute(
+        "userPlaceId"
+      )}`;
       Axios.put(url)
         .then((res) => {
           console.log(res.data);
