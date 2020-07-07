@@ -43,6 +43,7 @@ export default class SignUp extends Component {
       if (chkEmail(this.state.email) !== true) {
         this.setState({
           emailCkMsg: "이메일 형식이 유효하지 않습니다.",
+          emailSuccess: false,
         });
       } else {
         //형식이 맞으면 중복 체크
@@ -73,6 +74,7 @@ export default class SignUp extends Component {
     } else {
       this.setState({
         emailCkMsg: "",
+        emailSuccess: false,
       });
     }
   };
@@ -97,6 +99,7 @@ export default class SignUp extends Component {
     } else if (this.state.email === "") {
       this.setState({
         emailCkMsg: "이메일을 입력해주세요.",
+        clickAuthBtn: false,
       });
     }
   };
@@ -130,6 +133,7 @@ export default class SignUp extends Component {
     } else {
       this.setState({
         nicknameCkMsg: "",
+        nicknameSuccess: false,
       });
     }
   };

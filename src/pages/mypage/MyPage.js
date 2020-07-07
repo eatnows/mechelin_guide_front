@@ -4,7 +4,6 @@ import { Input, Button } from "antd";
 import Axios from "util/axios";
 import "css/myPageStyle.css";
 import SlideMenu from "components/mypage/SlideMenu";
-import { NavLink } from "react-router-dom";
 
 class MyPage extends React.Component {
   constructor(props) {
@@ -506,26 +505,6 @@ class MyPage extends React.Component {
                   >
                     회원탈퇴
                   </Button>
-                </td>
-              </tr>
-              <tr>
-                <td>
-                  <br />
-                  <NavLink to="/">
-                    <button
-                      type="button"
-                      className="btn"
-                      style={{
-                        backgroundColor: "white",
-                        color: "#9CC557 ",
-                        width: "250px",
-                        height: "30px",
-                        border: "1px solid #9CC557 ",
-                      }}
-                    >
-                      돌아가기
-                    </button>
-                  </NavLink>
                 </td>
               </tr>
             </tbody>

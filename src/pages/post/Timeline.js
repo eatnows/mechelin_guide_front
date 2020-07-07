@@ -117,6 +117,15 @@ class Timeline extends React.Component {
       });
   };
 
+  /*
+   * 친구 타임라인에서 메뉴 타임라인을 눌렀을 시 프로필 내용 변경
+   */
+  timelineToTimeLine = (targetUser) => {
+    this.setState({
+      profileUser: targetUser,
+    });
+  };
+
   render() {
     return (
       <div
@@ -154,40 +163,49 @@ class Timeline extends React.Component {
                   />
                 </th>
                 <th style={{ width: "44vw" }}>
-                  <span style={{ fontSize: "1.3vw", marginRight: "0.7vw" }}>
+                  <div
+                    style={{
+                      fontSize: "1.3vw",
+                      marginRight: "0.7vw",
+                      display: "inline-block",
+                    }}
+                  >
                     {this.state.profile.nickname}
-                  </span>
-                  <span>
-                    {/* 팔로우버튼은 자신과 다른 유저일 때만 노출 */}
-                    {this.state.sameUser ? (
-                      ""
-                    ) : this.state.following !== "팔로우 수락" ? (
-                      <Button onClick={this.onFollowClick}>
-                        {this.state.following}
+                  </div>
+                  {/* 팔로우버튼은 자신과 다른 유저일 때만 노출 */}
+                  {this.state.sameUser ? (
+                    ""
+                  ) : this.state.following !== "팔로우 수락" ? (
+                    <Button onClick={this.onFollowClick}>
+                      {this.state.following}
+                    </Button>
+                  ) : (
+                    <div>
+                      <Button onClick={this.onFollowClick}>팔로우 수락</Button>
+                      <Button onClick={this.onFollowClick} value="refuse">
+                        팔로우 거절
                       </Button>
-                    ) : (
-                      <div>
-                        <Button onClick={this.onFollowClick}>
-                          팔로우 수락
-                        </Button>
-                        <Button onClick={this.onFollowClick} value="refuse">
-                          팔로우 거절
-                        </Button>
-                      </div>
-                    )}
-                  </span>
+                    </div>
+                  )}
                   <br />{" "}
-                  <span style={{ marginLeft: "5px" }}>
+                  <div style={{ marginLeft: "5px", marginTop: "10px" }}>
                     {" "}
                     {this.state.profile.introduce}
-                  </span>
+                  </div>
                 </th>
               </tr>
             </thead>
           </table>{" "}
           <div style={{ marginTop: "2vw" }}>
-            {this.state.following === "언팔하기" ? (
-              <Post userId={this.state.profileUser} pathFrom="timeline" />
+            {this.state.following === "언팔하기" ||
+            sessionStorage.getItem("targetUser") ===
+              sessionStorage.getItem("userId") ? (
+              <Post
+                userId={this.state.profileUser}
+                pathFrom="timeline"
+                history={this.props.history}
+                timelineToTimeLine={this.timelineToTimeLine.bind(this)}
+              />
             ) : (
               ""
             )}

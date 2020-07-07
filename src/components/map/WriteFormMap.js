@@ -547,7 +547,9 @@ const WriteFormMap2 = (props) => {
             zIndex: "1",
             margin: "10px 10px 30px 0",
             padding: "5px",
-            opacity: "0.8",
+            opacity: "0.7",
+            cursor: "pointer",
+            borderRadius: "50%",
           }}
           className="bg_white"
         >

@@ -87,7 +87,7 @@ class FullMap extends React.Component {
     },
     imageUpload: {
       url:
-        "http://localhost:9000/image/add?id=" +
+        "http://localhost:9000/mechelin/image/add?id=" +
         sessionStorage.getItem("userId"), // server url
       method: "POST", // change query method, default 'POST'
       name: "images", // 아래 설정으로 image upload form의 key 값을 변경할 수 있다.
@@ -213,6 +213,7 @@ class FullMap extends React.Component {
       reviewModal: true,
       filterModal: false,
       myListModal: false,
+      friendModal: false,
     });
   };
 
@@ -248,7 +249,7 @@ class FullMap extends React.Component {
 
   /*친구 추가 모달창 보이게 */
   showfriendForm = () => {
-    if (this.state.myListModal) {
+    if (this.state.friendModal) {
       this.setState({
         friendModal: false,
       });

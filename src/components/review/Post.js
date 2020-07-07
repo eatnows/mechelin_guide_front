@@ -33,6 +33,7 @@ const ListItem = ({
   wishClick,
   blockClick,
   userPlaceId,
+  fetchItems,
 }) => {
   const [showBtn, setShowBtn] = useState(false);
   const [form, setForm] = useState(false);
@@ -93,6 +94,8 @@ const ListItem = ({
   useEffect(() => {
     heartBoolean();
     blackListBoolean();
+    fetchItems();
+    // timelineToTimeLine();
   }, [render]);
 
   /*좋아요 눌렀는지 확인 */
@@ -428,19 +431,10 @@ const ListItem = ({
             <div
               style={{
                 textAlign: "right",
-                width: "52vw",
+                width: "50vw",
                 margin: "7vh auto -7vh",
               }}
             >
-              <span
-                type="text"
-                onClick={showForm}
-                postId={contact.id}
-                style={{ width: "100px", cursor: "pointer" }}
-              >
-                수정
-              </span>
-              |
               <span
                 type="text"
                 onClick={deletePost}
@@ -594,6 +588,7 @@ const ListItem = ({
                         placeId={contact.place_id}
                         postId={contact.id}
                         style={{ cursor: "pointer", float: "right" }}
+                        userId={contact.user_id}
                       />
                     ) : (
                       <img
@@ -833,6 +828,7 @@ const ListItem = ({
 const antIcon = <LoadingOutlined style={{ fontSize: 24 }} spin />;
 let item = 3;
 let dataLength = 0;
+
 const Post = (props) => {
   const [state, setState] = useState({ itemCount: 3, isLoading: false });
   const [result, setResult] = useState([]);
@@ -840,8 +836,16 @@ const Post = (props) => {
   console.log("state구역");
   /* fake async fetch */
   const fetchItems = async () => {
+    console.log("펫치아이템 실행");
     let url = ``;
-    if (props.pathFrom === "timeline") {
+    if (
+      props.pathFrom === "timeline" &&
+      sessionStorage.getItem("userId") === sessionStorage.getItem("targetUser")
+    ) {
+      url = `/post/timeline?user_id=${sessionStorage.getItem(
+        "userId"
+      )}&row=${item}`;
+    } else if (props.pathFrom === "timeline") {
       url = `/post/timeline?user_id=${props.userId}&row=${item}`;
     } else {
       url = `/post/review?user_place_id=${props.userPlaceId}&row=${item}`;
@@ -927,21 +931,24 @@ const Post = (props) => {
    * 블랙리스트 버튼 클릭 시
    */
   const blockClick = (e) => {
-    const url = `/userplace/blacklist/${props.userPlaceId}`;
-    console.log("블랙리스트 클릭");
-    Axios.put(url)
-      .then((res) => {
-        console.log(res.data);
-        if (res.data === "블랙리스트에 추가되었습니다.") {
-          success(res.data);
-        } else {
-          info2(res.data);
-        }
-        setRender(render + 1);
-      })
-      .catch((error) => {
-        console.log(error);
-      });
+    if (e.target.getAttribute("userId") === sessionStorage.getItem("userId")) {
+      const url = `/userplace/blacklist/${props.userPlaceId}`;
+      Axios.put(url)
+        .then((res) => {
+          console.log(res.data);
+          if (res.data === "블랙리스트에 추가되었습니다.") {
+            success(res.data);
+          } else {
+            info2(res.data);
+          }
+          setRender(render + 1);
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    } else {
+      alert("방문한적이 없는 맛집은 블랙리스트에 추가할 수 없습니다.");
+    }
   };
 
   function info2(str) {
@@ -1007,6 +1014,16 @@ const Post = (props) => {
     props.timelinePageMove(user_id);
   };
 
+  /*
+   * 친구 타임라인에서 메뉴 타임라인을 눌렀을 시 프로필 변경
+   */
+
+  // const timelineToTimeLine = () => {
+  //   if (props.pathFrom === "timeline") {
+  //     props.timelineToTimeLine(sessionStorage.getItem("targetUser"));
+  //   }
+  // };
+
   return (
     <div>
       <div className="App">
@@ -1022,6 +1039,7 @@ const Post = (props) => {
               wishClick={wishClick}
               blockClick={blockClick}
               userPlaceId={props.userPlaceId}
+              fetchItems={fetchItems}
             />
           );
         })}
