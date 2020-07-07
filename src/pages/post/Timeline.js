@@ -191,7 +191,11 @@ class Timeline extends React.Component {
             {this.state.following === "언팔하기" ||
             sessionStorage.getItem("targetUser") ===
               sessionStorage.getItem("userId") ? (
-              <Post userId={this.state.profileUser} pathFrom="timeline" />
+              <Post
+                userId={this.state.profileUser}
+                pathFrom="timeline"
+                history={this.props.history}
+              />
             ) : (
               ""
             )}
