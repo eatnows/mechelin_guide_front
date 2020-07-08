@@ -451,7 +451,11 @@ const ListItem = ({
         {reportRadioGroup === "기타" ? (
           <div>
             <hr /> <p>신고내용 : </p>
-            <textarea type="text" onChange={reportContentChange} />
+            <textarea
+              type="text"
+              onChange={reportContentChange}
+              style={{ width: "100%", height: "20vh" }}
+            />
           </div>
         ) : (
           ""
