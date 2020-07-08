@@ -12,7 +12,7 @@ import report from "images/report.png";
 import report_g from "images/report_g.png";
 import block from "images/block.png";
 import block_g from "images/block_g.png";
-import { Rate, Button, Input, Modal, Spin } from "antd";
+import { Rate, Button, Input, Modal, Spin, Radio } from "antd";
 import StarRate from "components/review/StarRate";
 import WriteFormMap from "components/map/WriteFormMap";
 import ReactQuill, { Quill } from "react-quill";
@@ -914,6 +914,46 @@ const ListItem = ({
           </div>
         </form>
       )}
+      <Modal
+        visible={modalVisible}
+        title="리뷰글 신고하기"
+        onOk={handleOk}
+        onCancel={handleCancel}
+        footer={[
+          <Button key="back" onClick={handleCancel}>
+            취소하기
+          </Button>,
+          <Button
+            key="submit"
+            type="primary"
+            loading={modalLoading}
+            onClick={handleOk}
+          >
+            신고하기
+          </Button>,
+        ]}
+      >
+        <p>제목 : {contact.subject}</p>
+        <p>작성자 : {contact.nickname}</p>
+        <p>신고 사유</p>
+        <Radio.Group onChange={reportRadio} value={radioValue}>
+          <Radio value={"부적절한 홍보 게시물"}>부적절한 홍보 게시물</Radio>
+          <Radio value={"음란 / 불법 게시물"}>음란 / 불법 게시물</Radio>
+          <Radio value={"기타"}>기타</Radio>
+        </Radio.Group>
+        {reportRadioGroup === "기타" ? (
+          <div>
+            <hr /> <p>신고내용 : </p>
+            <textarea
+              type="text"
+              onChange={reportContentChange}
+              style={{ width: "100%", height: "20vh" }}
+            />
+          </div>
+        ) : (
+          ""
+        )}
+      </Modal>
     </div>
   );
 };
