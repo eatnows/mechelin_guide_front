@@ -441,10 +441,38 @@ const ListItem = ({
 
   // 신고하기 아이콘 클릭시 모달창 보임
   const onClickReport = (e) => {
-    setReportPostId(e.target.getAttribute("postId"));
+    const postId = e.target.getAttribute("postId");
+    setReportPostId(postId);
     setReportUserId(e.target.getAttribute("userId"));
-    setModalVisible(true);
+    const url = `/report/isreport?user_id=${sessionStorage.getItem(
+      "userId"
+    )}&post_id=${postId}`;
+
+    Axios.get(url)
+      .then((res) => {
+        console.log(res.data);
+        if (res.data === "") {
+          setModalVisible(true);
+        } else {
+          infoReport("리뷰글 신고하기");
+        }
+      })
+      .catch((error) => {
+        console.log(error);
+      });
   };
+
+  function infoReport(str) {
+    Modal.info({
+      title: str,
+      content: (
+        <div>
+          <p>이미 신고한 리뷰글입니다.</p>
+        </div>
+      ),
+      onOk() {},
+    });
+  }
 
   /*
    * 신고하기 버튼을 눌렀을때 실행되는 메소드
