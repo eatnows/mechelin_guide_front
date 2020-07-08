@@ -8,9 +8,11 @@ import heart_o from "images/heart_o.png";
 import star from "images/star.png";
 import share from "images/share2.png";
 import star_g from "images/star_g.png";
+import report from "images/report.png";
+import report_g from "images/report_g.png";
 import block from "images/block.png";
 import block_g from "images/block_g.png";
-import { Rate, Button, Input, Modal, Spin } from "antd";
+import { Rate, Button, Input, Modal, Spin, Radio } from "antd";
 import StarRate from "components/review/StarRate";
 import WriteFormMap from "components/map/WriteFormMap";
 import ReactQuill, { Quill } from "react-quill";
@@ -34,6 +36,7 @@ const ListItem = ({
   blockClick,
   userPlaceId,
   fetchItems,
+  pathFrom,
 }) => {
   const [showBtn, setShowBtn] = useState(false);
   const [form, setForm] = useState(false);
@@ -54,6 +57,14 @@ const ListItem = ({
   const [imageId, setImageId] = useState([]);
   const [postId, setPostId] = useState("");
   const [checkBlock, setCheckBlock] = useState(false);
+  const [checkReport, setCheckReport] = useState(false);
+  const [modalVisible, setModalVisible] = useState(false);
+  const [modalLoading, setModalLoading] = useState(false);
+  const [radioValue, setRadioValue] = useState(1);
+  const [reportRadioGroup, setReportRadioGroup] = useState("");
+  const [reportUserId, setReportUserId] = useState("");
+  const [reportPostId, setReportPostId] = useState("");
+  const [reportContent, setReportContent] = useState("");
   useEffect(() => {
     console.log(showBtn);
     console.log(typeof contact.user_id);
@@ -153,8 +164,13 @@ const ListItem = ({
 
   /* 블랙리스트 등록되어있는지 확인 */
   const blackListBoolean = () => {
+    let url;
     console.log("실행됨");
-    const url = `/userplace/blacklist/exist?user_place_id=${userPlaceId}`;
+    if (pathFrom === "timeline") {
+      url = `/userplace/blacklist/exist?user_place_id=${contact.user_place_id}`;
+    } else {
+      url = `/userplace/blacklist/exist?user_place_id=${userPlaceId}`;
+    }
     Axios.get(url)
       .then((res) => {
         console.log("블랙리스트");
@@ -423,6 +439,94 @@ const ListItem = ({
     setAddress(address);
   };
 
+  // 신고하기 아이콘 클릭시 모달창 보임
+  const onClickReport = (e) => {
+    const postId = e.target.getAttribute("postId");
+    setReportPostId(postId);
+    setReportUserId(e.target.getAttribute("userId"));
+    const url = `/report/isreport?user_id=${sessionStorage.getItem(
+      "userId"
+    )}&post_id=${postId}`;
+
+    Axios.get(url)
+      .then((res) => {
+        console.log(res.data);
+        if (res.data === "") {
+          setModalVisible(true);
+        } else {
+          infoReport("리뷰글 신고하기");
+        }
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  };
+
+  function infoReport(str) {
+    Modal.info({
+      title: str,
+      content: (
+        <div>
+          <p>이미 신고한 리뷰글입니다.</p>
+        </div>
+      ),
+      onOk() {},
+    });
+  }
+
+  /*
+   * 신고하기 버튼을 눌렀을때 실행되는 메소드
+   */
+  const handleOk = () => {
+    console.log("gggg");
+    setModalLoading(true);
+    const postId = reportPostId;
+    const userId = reportUserId;
+    let content = "";
+    if (reportContent === "") {
+      content = reportRadioGroup;
+    } else {
+      content = reportContent;
+    }
+    const url = `/report/add`;
+    Axios.post(url, {
+      register_user_id: sessionStorage.getItem("userId"),
+      reported_user_id: userId,
+      post_id: postId,
+      content: content,
+    })
+      .then((res) => {
+        setReportContent("");
+        setReportPostId("");
+        setReportUserId("");
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+
+    setTimeout(() => {
+      setModalLoading(false);
+      setModalVisible(false);
+    }, 3000);
+  };
+
+  const handleCancel = () => {
+    setModalVisible(false);
+  };
+
+  const reportRadio = (e) => {
+    console.log("radio checked", e.target.value);
+    setRadioValue(e.target.value);
+    setReportRadioGroup(e.target.value);
+  };
+
+  /*
+   * 신고 내용
+   */
+  const reportContentChange = (e) => {
+    setReportContent(e.target.value);
+  };
+
   return (
     <div key={i}>
       {!form ? (
@@ -578,7 +682,20 @@ const ListItem = ({
                     >
                       {contact.likes}
                     </span>
-                    {checkBlock ? (
+                    {sessionStorage.getItem("userId") !==
+                    contact.user_id.toString() ? (
+                      <img
+                        src={report}
+                        width="30"
+                        height="30"
+                        alt=""
+                        placeId={contact.place_id}
+                        postId={contact.id}
+                        userId={contact.user_id}
+                        style={{ cursor: "pointer", float: "right" }}
+                        onClick={onClickReport}
+                      />
+                    ) : checkBlock ? (
                       <img
                         src={block}
                         width="30"
@@ -589,6 +706,7 @@ const ListItem = ({
                         postId={contact.id}
                         style={{ cursor: "pointer", float: "right" }}
                         userId={contact.user_id}
+                        userPlaceId={contact.user_place_id}
                       />
                     ) : (
                       <img
@@ -599,7 +717,9 @@ const ListItem = ({
                         onClick={blockClick}
                         placeId={contact.place_id}
                         postId={contact.id}
+                        userId={contact.user_id}
                         style={{ cursor: "pointer", float: "right" }}
+                        userPlaceId={contact.user_place_id}
                       />
                     )}
                     <img
@@ -822,6 +942,46 @@ const ListItem = ({
           </div>
         </form>
       )}
+      <Modal
+        visible={modalVisible}
+        title="리뷰글 신고하기"
+        onOk={handleOk}
+        onCancel={handleCancel}
+        footer={[
+          <Button key="back" onClick={handleCancel}>
+            취소하기
+          </Button>,
+          <Button
+            key="submit"
+            type="primary"
+            loading={modalLoading}
+            onClick={handleOk}
+          >
+            신고하기
+          </Button>,
+        ]}
+      >
+        <p>제목 : {contact.subject}</p>
+        <p>작성자 : {contact.nickname}</p>
+        <p>신고 사유</p>
+        <Radio.Group onChange={reportRadio} value={radioValue}>
+          <Radio value={"부적절한 홍보 게시물"}>부적절한 홍보 게시물</Radio>
+          <Radio value={"음란 / 불법 게시물"}>음란 / 불법 게시물</Radio>
+          <Radio value={"기타"}>기타</Radio>
+        </Radio.Group>
+        {reportRadioGroup === "기타" ? (
+          <div>
+            <hr /> <p>신고내용 : </p>
+            <textarea
+              type="text"
+              onChange={reportContentChange}
+              style={{ width: "100%", height: "20vh" }}
+            />
+          </div>
+        ) : (
+          ""
+        )}
+      </Modal>
     </div>
   );
 };
@@ -932,10 +1092,13 @@ const Post = (props) => {
    */
   const blockClick = (e) => {
     if (e.target.getAttribute("userId") === sessionStorage.getItem("userId")) {
-      const url = `/userplace/blacklist/${props.userPlaceId}`;
+      const url = `/userplace/blacklist/${e.target.getAttribute(
+        "userPlaceId"
+      )}`;
       Axios.put(url)
         .then((res) => {
           console.log(res.data);
+          item -= 3;
           if (res.data === "블랙리스트에 추가되었습니다.") {
             success(res.data);
           } else {
@@ -1040,6 +1203,7 @@ const Post = (props) => {
               blockClick={blockClick}
               userPlaceId={props.userPlaceId}
               fetchItems={fetchItems}
+              pathFrom={props.pathFrom}
             />
           );
         })}
