@@ -131,7 +131,7 @@ const MyListComponent = (props) => {
                 </td>
               </tr>
             );
-          })}{" "}
+          })}
         </table>
       </div>
       <div style={{ marginTop: "1vw", textAlign: "center" }}>

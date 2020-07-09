@@ -893,7 +893,7 @@ class FullMap extends React.Component {
               position: "absolute",
               zIndex: "9999",
               left: "3%",
-              bottom: "5%",
+              bottom: "6.5%",
             }}
           >
             <div

@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef, forwardRef } from "react";
+import React, { useState, useEffect } from "react";
 import Axios from "util/axios";
 import Comment from "./Comment";
 import "css/postStyle.css";
@@ -6,29 +6,17 @@ import useIntersect from "components/review/useIntersect";
 import heart from "images/heart.png";
 import heart_o from "images/heart_o.png";
 import star from "images/star.png";
-import block from "images/block.png";
-import block_g from "images/block_g.png";
 import report from "images/report.png";
-import report_g from "images/report_g.png";
 import star_g from "images/star_g.png";
 
-import e from "cors";
 import { Rate, Modal, Spin, Button, Radio } from "antd";
-import { RedditSquareFilled, LoadingOutlined } from "@ant-design/icons";
+import { LoadingOutlined } from "@ant-design/icons";
 
 const fakeFetch = (delay = 1000) =>
   new Promise((res) => setTimeout(res, delay));
 
 let checkHearts = false;
-const ListItem = ({
-  row,
-  i,
-  likesChange,
-  wishClick,
-  blockClick,
-  render,
-  history,
-}) => {
+const ListItem = ({ row, i, likesChange, wishClick, render, history }) => {
   useEffect(() => {
     heartBoolean();
     if (row.user_id === sessionStorage.getItem("userId")) {
@@ -46,7 +34,6 @@ const ListItem = ({
   const [checkHeart, setCheckHeart] = useState(false);
   const [checkWishlist, setCheckWishlist] = useState(false);
   const [checkBlock, setCheckBlock] = useState(false);
-  const [checkReport, setCheckReport] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
   const [modalLoading, setModalLoading] = useState(false);
   const [radioValue, setRadioValue] = useState(1);
@@ -54,6 +41,7 @@ const ListItem = ({
   const [reportUserId, setReportUserId] = useState("");
   const [reportPostId, setReportPostId] = useState("");
   const [reportContent, setReportContent] = useState("");
+
   /* 게시한 시간 표시*/
   const nowTime = (data) => {
     let now = new Date().getTime();
