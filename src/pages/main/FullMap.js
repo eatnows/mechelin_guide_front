@@ -1,5 +1,5 @@
 import React from "react";
-import { Switch, Checkbox, Input, Select, Button } from "antd";
+import { Switch, Checkbox, Input, Button } from "antd";
 import ReactQuill, { Quill } from "react-quill";
 import { ImageUpload } from "quill-image-upload";
 import "react-quill/dist/quill.snow.css";
@@ -10,6 +10,8 @@ import filter from "images/filter2.png";
 import friend from "images/friend2.png";
 import list from "images/list.png";
 import review from "images/review2.png";
+import friends from "images/friends.png";
+import message from "images/message2.png";
 import MainMap from "components/map/MainMap";
 import MyListComponent from "../../components/mypage/MyList";
 
@@ -60,6 +62,8 @@ class FullMap extends React.Component {
     blacklist: false,
     myListModal: false,
     frinedsModal: false,
+    messageModal: false,
+    dm: false,
     friendEmail: "",
     render: 0,
   };
@@ -214,6 +218,7 @@ class FullMap extends React.Component {
       filterModal: false,
       myListModal: false,
       friendModal: false,
+      messageModal: false,
     });
   };
 
@@ -228,6 +233,7 @@ class FullMap extends React.Component {
         filterModal: true,
         myListModal: false,
         friendModal: false,
+        messageModal: false,
       });
     }
   };
@@ -241,6 +247,22 @@ class FullMap extends React.Component {
     } else {
       this.setState({
         myListModal: true,
+        filterModal: false,
+        friendModal: false,
+        messageModal: false,
+      });
+    }
+  };
+  /*DM 창 보이게 */
+  showMessageForm = () => {
+    if (this.state.messageModal) {
+      this.setState({
+        messageModal: false,
+      });
+    } else {
+      this.setState({
+        messageModal: true,
+        myListModal: false,
         filterModal: false,
         friendModal: false,
       });
@@ -258,6 +280,7 @@ class FullMap extends React.Component {
         friendModal: true,
         filterModal: false,
         myListModal: false,
+        messageModal: false,
       });
     }
   };
@@ -403,7 +426,7 @@ class FullMap extends React.Component {
                   onClick={this.showFilterForm.bind(this)}
                   style={{
                     bottom: this.state.bottomMenu ? "1.5%" : "-20%",
-                    left: this.state.bottomMenu ? "37%" : "50%",
+                    left: this.state.bottomMenu ? "35%" : "50%",
                   }}
                 >
                   <img src={filter} width="30px" height="20px" alt="" />
@@ -412,8 +435,8 @@ class FullMap extends React.Component {
                   className="review"
                   onClick={this.showReviewForm.bind(this)}
                   style={{
-                    bottom: this.state.bottomMenu ? "12.5%" : "-20%",
-                    left: this.state.bottomMenu ? "43.1%" : "50%",
+                    bottom: this.state.bottomMenu ? "13.5%" : "-20%",
+                    left: this.state.bottomMenu ? "40%" : "50%",
                   }}
                 >
                   <img
@@ -423,13 +446,13 @@ class FullMap extends React.Component {
                     height="32px"
                     alt=""
                   />
-                </div>
+                </div>{" "}
                 <div
                   className="list"
                   onClick={this.showMyListForm.bind(this)}
                   style={{
-                    bottom: this.state.bottomMenu ? "12.5%" : "-20%",
-                    right: this.state.bottomMenu ? "43.1%" : "50%",
+                    bottom: this.state.bottomMenu ? "19%" : "-20%",
+                    right: this.state.bottomMenu ? "47.5%" : "50%",
                   }}
                 >
                   <img
@@ -441,11 +464,27 @@ class FullMap extends React.Component {
                   />
                 </div>
                 <div
+                  className="message"
+                  onClick={this.showMessageForm.bind(this)}
+                  style={{
+                    bottom: this.state.bottomMenu ? "13.5%" : "-20%",
+                    right: this.state.bottomMenu ? "40%" : "50%",
+                  }}
+                >
+                  <img
+                    style={{ marginLeft: "1px" }}
+                    src={friends}
+                    width="40px"
+                    height="30px"
+                    alt=""
+                  />
+                </div>
+                <div
                   className="friend"
                   onClick={this.showfriendForm.bind(this)}
                   style={{
                     bottom: this.state.bottomMenu ? "1.5%" : "-20%",
-                    right: this.state.bottomMenu ? "37%" : "50%",
+                    right: this.state.bottomMenu ? "35%" : "50%",
                   }}
                 >
                   <img
@@ -789,7 +828,7 @@ class FullMap extends React.Component {
               position: "absolute",
               zIndex: "9999",
               left: "3%",
-              bottom: "5%",
+              bottom: "6.5%",
             }}
           >
             <div
@@ -834,6 +873,82 @@ class FullMap extends React.Component {
             >
               닫기
             </Button>
+          </div>
+        </section>
+
+        {/*DM 모달창*/}
+        <section>
+          <div
+            className="DM"
+            style={{
+              display:
+                this.state.messageModal && !this.props.bar ? "block" : "none",
+              clear: "both",
+              background: "white",
+              border: "1px solid rgba(0,0,0,.2)",
+              borderRadius: "10px",
+              width: this.state.dm === true ? "30vw" : "15vw",
+              height: "72vh",
+              boxShadow: "5px 5px 5px rgba(0,0,0,.1)",
+              position: "absolute",
+              zIndex: "9999",
+              left: "3%",
+              bottom: "5%",
+            }}
+          >
+            <div
+              style={{
+                fontSize: "2.5vh",
+                margin:
+                  this.state.dm === true
+                    ? "2vh 0 1.5vh 3vh"
+                    : "2vh 0 1.5vh 1.5vh",
+                textAlign: "left",
+              }}
+            >
+              나의 밥친구들
+            </div>
+            <div
+              className="closeFilter xi-close"
+              onClick={() => {
+                this.setState({ messageModal: false });
+              }}
+              style={{
+                position: "absolute",
+                right: "3%",
+                top: "3%",
+                fontSize: "3vh",
+                color: "rgba(245,145,45)",
+                cursor: "pointer",
+                zIndex: "1",
+              }}
+            ></div>
+            <hr
+              style={{
+                borderColor: "rgba(0,0,0,.2)",
+                margin: "1vh 0 3vh",
+              }}
+            />
+            <div
+              style={{
+                width: "14vw",
+                height: "59vh",
+                margin: "0 0.5vw",
+                float: "left",
+                border: "1px solid rgba(0,0,0,.2)",
+              }}
+            ></div>{" "}
+            <div
+              style={{
+                opacity: this.state.dm === true ? "1" : "0",
+                pointerEvents: this.state.dm === true ? "auto" : "none",
+                width: "14vw",
+                height: "59vh",
+                margin: "0 0.4vw",
+                float: "left",
+                border: "1px solid rgba(0,0,0,.2)",
+              }}
+            ></div>
           </div>
         </section>
 
@@ -901,7 +1016,7 @@ class FullMap extends React.Component {
               <Input
                 name="friendEmail"
                 onChange={this.changeState.bind(this)}
-                placeholder="상대방의 이메일 입력하세요."
+                placeholder="상대방의 이메일을 입력하세요."
                 style={{
                   width: "15vw",
                   margin: "0 2.5vw",
