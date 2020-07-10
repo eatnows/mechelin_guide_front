@@ -605,12 +605,12 @@ class View extends React.Component {
                   </li>{" "}
                   <br />
                 </ul>
-                /*마이페이지 하위 메뉴 */
+                {/*마이페이지 하위 메뉴 */}
                 <ul
                   className="mypage"
                   style={{
                     position: "fixed",
-                    top: "53%",
+                    top: "51.5%",
                     right: "50%",
                     transform: "translate(50%)",
                     opacity: this.state.mypage ? "1" : "0",
@@ -630,12 +630,12 @@ class View extends React.Component {
                     <br />
                   </NavLink>
                 </ul>
-                /*고객센터 하위 메뉴 */
+                {/*고객센터 하위 메뉴 */}
                 <ul
                   className="cc"
                   style={{
                     position: "fixed",
-                    bottom: "24%",
+                    bottom: "25.5%",
                     right: "50%",
                     transform: "translate(50%)",
                     opacity: this.state.cc ? "1" : "0",
