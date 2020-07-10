@@ -11,7 +11,11 @@ class User extends React.Component {
     this.getList();
     this.showPage();
   }
-
+  componentDidUpdate(prevState) {
+    if (prevState.startPage !== this.state.startPage) {
+      this.getList();
+    }
+  }
   /*전체 데이터 개수 */
   showPage = () => {
     const url = "/admin/usercount";
@@ -26,6 +30,7 @@ class User extends React.Component {
         console.log("user count 받아오기 에러:" + err);
       });
   };
+
   /*10개씩 데이터 출력 */
   getList = () => {
     const url =
@@ -43,14 +48,13 @@ class User extends React.Component {
         console.log("list 출력 에러:" + err);
       });
   };
-  /*페이지 바뀔 때마다 실행 */
 
+  /*페이지 바뀔 때마다 실행 */
   nextPage = (e) => {
     this.setState({
       startPage: (e - 1) * this.state.dataCount,
     });
     console.log(this.state.startPage);
-    this.getList();
   };
 
   render() {
@@ -114,7 +118,7 @@ class User extends React.Component {
                       textAlign: "center",
                     }}
                   >
-                    <td>{i + 1}</td>
+                    <td>{this.state.startPage + i + 1}</td>
                     <td>{row.id}</td>
                     <td>
                       <img
