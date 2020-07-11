@@ -83,6 +83,7 @@ const User = (props) => {
 
   /*10개씩 데이터 출력 */
   const getList = () => {
+    console.log("실행");
     const url =
       "/admin/user?startPage=" + startPage + "&dataCount=" + dataCount;
     Axios.get(url)

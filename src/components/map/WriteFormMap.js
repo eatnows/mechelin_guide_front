@@ -7,7 +7,6 @@ import Axios from "util/axios";
 const WriteFormMap2 = (props) => {
   const [latitude, setLatitude] = useState(37.505002);
   const [longitude, setLongitude] = useState(127.033617);
-  const [keyword, setKeyword] = useState("");
   const [ps, setPs] = useState("");
   const [infowindow, setInfoWindow] = useState("");
   const [map, setMap] = useState("");
@@ -18,8 +17,6 @@ const WriteFormMap2 = (props) => {
   const [placeName, setPlaceName] = useState("");
   const [moveLatLon, setMoveLatLon] = useState("");
   const [geoCoder, setGeoCoder] = useState("");
-  const [content, setContent] = useState("");
-  const [mouseLatlng, setMouseLatlng] = useState("");
   const [address, setAddress] = useState("");
   const [latitudeX, setLatitudeX] = useState("");
   const [longitudeY, setLongitudeY] = useState("");
@@ -30,8 +27,6 @@ const WriteFormMap2 = (props) => {
   const [dbData, setDbData] = useState([]);
   const [visible, setVisible] = useState(false);
   useEffect(() => {
-    //let latitude = 37.505002;
-    //let longitude = 127.033617;
     /*
       GPS 받아오는 메소드
     */
@@ -198,28 +193,6 @@ const WriteFormMap2 = (props) => {
     }
   };
 
-  /*
-   * 지도에 마커를 표시하는 함수입니다
-   */
-  const displayMarker = (place) => {
-    // 마커를 생성하고 지도에 표시합니다
-    let marker = new kakao.maps.Marker({
-      map: map,
-      position: new kakao.maps.LatLng(place.y, place.x),
-    });
-
-    // 마커에 클릭이벤트를 등록합니다
-    kakao.maps.event.addListener(marker, "click", () => {
-      // 마커를 클릭하면 장소명이 인포윈도우에 표출됩니다
-      infowindow.setContent(
-        '<div style="padding:5px;font-size:12px;">' +
-          place.place_name +
-          "</div>"
-      );
-      infowindow.open(map, marker);
-    });
-  };
-
   // 키워드 검색을 요청하는 함수입니다
   const searchPlaces = () => {
     var keyword = document.getElementById("keyword").value;
@@ -237,8 +210,7 @@ const WriteFormMap2 = (props) => {
     let listEl = document.getElementById("placesList"),
       menuEl = document.getElementById("menu_wrap"),
       fragment = document.createDocumentFragment(),
-      bounds = new kakao.maps.LatLngBounds(),
-      listStr = "";
+      bounds = new kakao.maps.LatLngBounds();
 
     // 검색 결과 목록에 추가된 항목들을 제거합니다
     removeAllChildNods(listEl);
@@ -421,12 +393,6 @@ const WriteFormMap2 = (props) => {
 
     infowindow.setContent(content);
     infowindow.open(map, marker);
-  };
-
-  const searchBtn = () => {
-    // 키워드로 장소를 검색합니다
-    ps.keywordSearch(keyword, placesSearchCB);
-    setKeyword("");
   };
 
   // 검색결과 목록의 자식 Element를 제거하는 함수입니다

@@ -11,7 +11,6 @@ import friend from "images/friend2.png";
 import list from "images/list.png";
 import review from "images/review2.png";
 import friends from "images/friends.png";
-import message from "images/message2.png";
 import MainMap from "components/map/MainMap";
 import MyListComponent from "../../components/mypage/MyList";
 
