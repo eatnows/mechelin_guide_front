@@ -57,6 +57,7 @@ const ListItem = ({
   const [imageId, setImageId] = useState([]);
   const [postId, setPostId] = useState("");
   const [checkBlock, setCheckBlock] = useState(false);
+  const [checkWishlist, setCheckWishlist] = useState(false);
   const [checkReport, setCheckReport] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
   const [modalLoading, setModalLoading] = useState(false);
@@ -105,6 +106,7 @@ const ListItem = ({
   useEffect(() => {
     heartBoolean();
     blackListBoolean();
+    wishListBoolean();
     fetchItems();
     // timelineToTimeLine();
   }, [render]);
@@ -160,6 +162,27 @@ const ListItem = ({
           });
       },
     });
+  };
+
+  /* 위시리스트 등록되어있는지 확인 */
+  const wishListBoolean = () => {
+    console.log("실행됨");
+    const url = `/wishlist/exist?user_id=${sessionStorage.getItem(
+      "userId"
+    )}&place_id=${contact.place_id}`;
+    Axios.get(url)
+      .then((res) => {
+        console.log("위시리스트");
+        console.log(res.data);
+        if (res.data === 1) {
+          setCheckWishlist(true);
+        } else {
+          setCheckWishlist(false);
+        }
+      })
+      .catch((error) => {
+        console.log("wishListBoolean" + error);
+      });
   };
 
   /* 블랙리스트 등록되어있는지 확인 */
@@ -722,20 +745,37 @@ const ListItem = ({
                         userPlaceId={contact.user_place_id}
                       />
                     )}
-                    <img
-                      src={star}
-                      width="28.5"
-                      height="28.5"
-                      alt=""
-                      style={{
-                        float: "right",
-                        cursor: "pointer",
-                        marginRight: "10px",
-                      }}
-                      onClick={wishClick}
-                      placeId={contact.place_id}
-                      postId={contact.id}
-                    />
+                    {checkWishlist ? (
+                      <img
+                        src={star}
+                        width="28.5"
+                        height="28.5"
+                        alt=""
+                        style={{
+                          float: "right",
+                          cursor: "pointer",
+                          marginRight: "10px",
+                        }}
+                        onClick={wishClick}
+                        placeId={contact.place_id}
+                        postId={contact.id}
+                      />
+                    ) : (
+                      <img
+                        src={star_g}
+                        width="28.5"
+                        height="28.5"
+                        alt=""
+                        style={{
+                          float: "right",
+                          cursor: "pointer",
+                          marginRight: "10px",
+                        }}
+                        onClick={wishClick}
+                        placeId={contact.place_id}
+                        postId={contact.id}
+                      />
+                    )}
                   </div>
 
                   <div

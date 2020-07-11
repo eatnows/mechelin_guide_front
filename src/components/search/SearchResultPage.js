@@ -1,10 +1,7 @@
-import React, { useEffect } from "react";
+import React from "react";
 import "antd/dist/antd.css";
 import { List, Avatar, Space } from "antd";
 import { MessageOutlined, LikeOutlined, StarOutlined } from "@ant-design/icons";
-import Axios from "util/axios";
-import { useState } from "react";
-import { NavLink } from "react-router-dom";
 
 // const listData = [];
 const SearchResultPage = (props) => {
@@ -15,9 +12,9 @@ const SearchResultPage = (props) => {
     </Space>
   );
 
-  const reivewPageMove = () => {
-    props.reivewPageMove();
-  };
+  // const reivewPageMove = () => {
+  //   props.reivewPageMove();
+  // };
 
   const onClickTitle = (e) => {
     const userPlaceId = e.target.getAttribute("userPlaceId");

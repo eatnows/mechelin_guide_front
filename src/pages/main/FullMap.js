@@ -11,9 +11,9 @@ import friend from "images/friend2.png";
 import list from "images/list.png";
 import review from "images/review2.png";
 import friends from "images/friends.png";
-import message from "images/message2.png";
 import MainMap from "components/map/MainMap";
-import MyListComponent from "../../components/mypage/MyList";
+import MyListComponent from "components/mypage/MyList";
+import MyFriends from "components/mypage/MyFriends";
 
 Quill.register("modules/imageUpload", ImageUpload);
 
@@ -937,7 +937,9 @@ class FullMap extends React.Component {
                 float: "left",
                 border: "1px solid rgba(0,0,0,.2)",
               }}
-            ></div>{" "}
+            >
+              <MyFriends />
+            </div>{" "}
             <div
               style={{
                 opacity: this.state.dm === true ? "1" : "0",

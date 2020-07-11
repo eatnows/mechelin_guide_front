@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import "antd/dist/antd.css";
 import { Pagination, Button, Modal } from "antd";
 import Axios from "util/axios";
