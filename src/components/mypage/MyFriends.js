@@ -2,15 +2,15 @@ import React, { useEffect, useState } from "react";
 import Axios from "util/axios";
 import { Pagination, Modal } from "antd";
 import { ExclamationCircleOutlined } from "@ant-design/icons";
-
 const { confirm } = Modal;
 
-const MyFriends = () => {
+const MyFriends = (props) => {
   const [totalcount, setTotalCount] = useState("");
   const perPageNum = 5;
   const [pageStart, setPageStart] = useState(0);
   const [friendsData, setFriendsData] = useState([]);
   const [render, setRender] = useState("");
+  const [unfollow, setUnfollow] = useState(false);
   useEffect(() => {
     myfriendsCount();
     selectMyFriends();
@@ -98,6 +98,20 @@ const MyFriends = () => {
     });
   };
 
+  /*DM 버튼 클릭시 상위컴포넌트로 값 전달 */
+  const changeDm = () => {
+    props.changeDm(true);
+  };
+
+  /*더보기 버튼 클릭시 언팔하기 버튼 표시 */
+  const showUnfollowing = () => {
+    if (unfollow === true) {
+      setUnfollow(false);
+    } else {
+      setUnfollow(true);
+    }
+  };
+
   return (
     <div>
       <div>
@@ -105,14 +119,16 @@ const MyFriends = () => {
           {[...friendsData].map((contact, i) => {
             return (
               <tr>
-                <td style={{ padding: " .5vw 0" }}>
+                <td style={{ padding: " .5vw" }}>
                   <img
                     src={contact.profile_url}
+                    onClick={onFriendsClick}
+                    friendsUserId={contact.id}
                     alt=""
-                    style={{ width: "50px", height: "50px" }}
+                    style={{ cursor: "pointer", width: "50px", height: "50px" }}
                   />
                 </td>
-                <td style={{ paddingLeft: "0.5vw", fontSize: "13px" }}>
+                <td style={{ fontSize: "13px" }}>
                   <span
                     onClick={onFriendsClick}
                     style={{ cursor: "pointer" }}
@@ -120,25 +136,73 @@ const MyFriends = () => {
                   >
                     {contact.nickname}
                   </span>
-                  <br />
-                  <span>{contact.introduce}</span>
                 </td>
-                <td style={{ textAlign: "right" }}>
+                <td style={{ textAlign: "center" }}>
                   <span
-                    type="text"
-                    onClick={showDeleteConfirm}
-                    friendsUserId={contact.id}
+                    className="xi-send turnOrange"
+                    onClick={changeDm}
                     style={{
-                      color: "rgba(245,145,45,.7)",
-                      border: "1px solid rgba(245,145,45,.7)",
-                      padding: "3px",
-                      borderRadius: "5px",
+                      width: "1vw",
+                      height: "1vw",
                       cursor: "pointer",
-                      fontSize: "13px",
+                      fontSize: "1.2vw",
+                      marginRight: ".3vw",
+                      marginTop: "50%",
+                      transform: "translateY(-50%)",
+                    }}
+                  ></span>
+                  <span
+                    className="xi-ellipsis-v turnOrange"
+                    onClick={showUnfollowing}
+                    style={{
+                      width: "1vw",
+                      height: "1vw",
+                      borderRadius: "50%",
+                      fontWeight: "bold",
+                      cursor: "pointer",
+                      fontSize: "1.1vw",
+                      marginTop: "50%",
+                      transform: "translateY(-50%)",
+                    }}
+                  ></span>{" "}
+                  <div
+                    style={{
+                      width: "5.5vw",
+                      height: "auto",
+                      lineHeight: "auto",
+                      backgroundColor: "white",
+                      position: "relative",
+                      left: "5vw",
+                      bottom: "1.8vw",
+                      boxShadow: "3px 3px 10px #999",
+
+                      display: unfollow === true ? "block" : "none",
                     }}
                   >
-                    삭제
-                  </span>{" "}
+                    <div
+                      onClick={showDeleteConfirm}
+                      friendsUserId={contact.id}
+                      className="turnOrange"
+                      style={{ padding: "0.2vw 0", cursor: "pointer" }}
+                    >
+                      언팔하기
+                    </div>
+                    <div
+                      className="turnOrange"
+                      style={{ padding: "0.2vw 0", cursor: "pointer" }}
+                    >
+                      차단하기
+                    </div>
+                    <div
+                      className="turnOrange"
+                      onClick={() => {
+                        setUnfollow(false);
+                      }}
+                      style={{ padding: "0.2vw 0", cursor: "pointer" }}
+                    >
+                      취소
+                    </div>
+                  </div>
                 </td>
               </tr>
             );

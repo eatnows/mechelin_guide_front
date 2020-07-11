@@ -136,3 +136,13 @@
   cursor: pointer;
   vertical-align: top;
 }
+
+/*친구추가 모달*/
+.turnOrange {
+  color: rgba(0, 0, 0, 0.5);
+  transition: all 0.5s;
+}
+
+.turnOrange:hover {
+  color: rgba(245, 145, 45);
+}

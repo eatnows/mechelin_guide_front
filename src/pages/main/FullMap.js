@@ -14,6 +14,7 @@ import friends from "images/friends.png";
 import MainMap from "components/map/MainMap";
 import MyListComponent from "components/mypage/MyList";
 import MyFriends from "components/mypage/MyFriends";
+import { ContactsFilled, SendOutlined } from "@ant-design/icons";
 
 Quill.register("modules/imageUpload", ImageUpload);
 
@@ -396,6 +397,12 @@ class FullMap extends React.Component {
     });
   };
 
+  /*친구추가 DM 보이게 */
+  changeDm = (e) => {
+    this.setState({
+      dm: e,
+    });
+  };
   render() {
     return (
       <div>
@@ -891,7 +898,7 @@ class FullMap extends React.Component {
               height: "72vh",
               boxShadow: "5px 5px 5px rgba(0,0,0,.1)",
               position: "absolute",
-              zIndex: "9999",
+              zIndex: "1",
               left: "3%",
               bottom: "6.5%",
             }}
@@ -904,9 +911,10 @@ class FullMap extends React.Component {
                     ? "2vh 0 1.5vh 3vh"
                     : "2vh 0 1.5vh 1.5vh",
                 textAlign: "left",
+                transition: "all 1s",
               }}
             >
-              나의 밥친구들
+              친구 목록{" "}
             </div>
             <div
               className="closeFilter xi-close"
@@ -926,19 +934,19 @@ class FullMap extends React.Component {
             <hr
               style={{
                 borderColor: "rgba(0,0,0,.2)",
-                margin: "1vh 0 3vh",
+                margin: "1vh 0",
               }}
             />
             <div
               style={{
                 width: "14vw",
                 height: "59vh",
-                margin: "0 0.5vw",
+                marginLeft: ".5vw",
+                marginRight: this.state.dm === true ? "0" : ".5vw",
                 float: "left",
-                border: "1px solid rgba(0,0,0,.2)",
               }}
             >
-              <MyFriends />
+              <MyFriends changeDm={this.changeDm.bind(this)} />
             </div>{" "}
             <div
               style={{
@@ -946,11 +954,92 @@ class FullMap extends React.Component {
                 pointerEvents: this.state.dm === true ? "auto" : "none",
                 width: "14vw",
                 height: "59vh",
-                margin: "0 0.4vw",
+                margin: ".8vw .4vw",
+                borderRadius: "10px",
                 float: "left",
                 border: "1px solid rgba(0,0,0,.2)",
               }}
-            ></div>
+            >
+              <div
+                className="header"
+                style={{
+                  backgroundColor: "rgba(156,197,87,.7)",
+                  height: "3.5vw",
+                  width: "100%",
+                  borderRadius: "10px 10px 0 0",
+                }}
+              >
+                <div
+                  style={{
+                    color: "white",
+                    fontSize: "1vw",
+                    float: "left",
+                    margin: "0.6vw 0.8vw 0.2vw",
+                  }}
+                >
+                  닉네임
+                </div>
+                <span
+                  className="xi-reply"
+                  onClick={() => {
+                    this.setState({ dm: false });
+                  }}
+                  style={{
+                    color: "white",
+                    fontSize: "2vw",
+                    float: "right",
+                    margin: "0.6vw",
+                    cursor: "pointer",
+                  }}
+                ></span>
+                <br />
+                <div
+                  style={{
+                    color: "white",
+                    fontSize: ".7vw",
+                    float: "left",
+                    clear: "both",
+                    margin: "-1.2vw 1vw 0.8vw",
+                  }}
+                >
+                  소개글
+                </div>
+              </div>
+              <div className="dialog" style={{ width: "100%", height: "22vw" }}>
+                <div
+                  style={{
+                    borderRadius: "10px",
+                    width: "60%",
+                    height: "3vw",
+                    backgroundColor: "white",
+                    border: "1px solid rgba(245,145,45,.5)",
+                    float: "left",
+                    clear: "both",
+                    margin: ".5vw 0.5vw",
+                  }}
+                ></div>
+                <div
+                  style={{
+                    borderRadius: "10px",
+                    width: "60%",
+                    height: "3vw",
+                    backgroundColor: "rgba(245,145,45,.7)",
+                    float: "right",
+                    clear: "both",
+                    margin: ".5vw 0.5vw",
+                  }}
+                ></div>
+              </div>
+              <Input
+                style={{
+                  width: "100%",
+                  border: "none",
+                  borderTop: "1px solid rgba(0,0,0,.2)",
+                  borderRadius: "0 0 10px 10px",
+                }}
+                suffix={<SendOutlined style={{ color: "rgba(0,0,0,.2)" }} />}
+              />
+            </div>
           </div>
         </section>
 
