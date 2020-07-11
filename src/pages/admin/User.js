@@ -1,41 +1,14 @@
 import React, { useState, useEffect } from "react";
 import Axios from "util/axios";
-import { Pagination, Menu, Dropdown } from "antd";
+import { Pagination, Menu, Dropdown, Input } from "antd";
 import Search from "antd/lib/input/Search";
 import { DownOutlined } from "@ant-design/icons";
-
-const authorityMenu = (
-  <Menu style={{ textAlign: "center" }}>
-    <Menu.Item key="0">
-      <span style={{ cursor: "pointer", fontSize: "12px" }}>전체 보기</span>
-    </Menu.Item>
-    <br />
-    <Menu.Item key="1">
-      <span style={{ cursor: "pointer", fontSize: "12px" }}>일반</span>
-    </Menu.Item>
-    <br />
-    <Menu.Item key="2">
-      <span style={{ cursor: "pointer", fontSize: "12px" }}>정지</span>
-    </Menu.Item>
-  </Menu>
-);
-const dropUserMenu = (
-  <Menu style={{ textAlign: "center" }}>
-    <Menu.Item key="0">
-      <span style={{ cursor: "pointer", fontSize: "12px" }}>전체 보기</span>
-    </Menu.Item>
-    <br />
-    <Menu.Item key="1">
-      <span style={{ cursor: "pointer", fontSize: "12px" }}>탈퇴</span>
-    </Menu.Item>
-  </Menu>
-);
 
 const User = (props) => {
   const [data, setData] = useState([]);
   const [dataCount, setDataCount] = useState(10);
   const [startPage, setStartPage] = useState(0);
-  const [totalCount, setTotalCount] = useState("");
+  const [totalCount, setTotalCount] = useState(0);
   const [searchData, setSearchData] = useState("");
 
   useEffect(() => {
@@ -49,24 +22,71 @@ const User = (props) => {
   }, [startPage]);
 
   /*user 검색 */
-  const searchUser = (e) => {
-    setSearchData(e);
-    const url =
-      "/admin/searchdata?searchData=" +
-      e +
-      "&startPage=" +
-      startPage +
-      "&dataCount=" +
-      dataCount;
+  const searchUser = (v, e) => {
+    e.preventDefault();
+    if (v === "") {
+      getList();
+    } else {
+      setSearchData(v);
+      const url =
+        "/admin/searchdata?searchData=" +
+        v +
+        "&startPage=" +
+        startPage +
+        "&dataCount=" +
+        dataCount;
 
+      Axios.get(url)
+        .then((res) => {
+          setData(res.data);
+          setTotalCount(data.length);
+        })
+        .catch((err) => {
+          console.log("search result error:" + err);
+        });
+    }
+  };
+
+  /* */
+  const sortAuthority = (e) => {
+    const url = "/admin/sortdata";
     Axios.get(url)
       .then((res) => {
         setData(res.data);
+        setTotalCount(data.length);
       })
       .catch((err) => {
-        console.log("search result error:" + err);
+        console.log("sort authority 에러:" + err);
       });
+    console.log(e);
   };
+
+  const authorityMenu = (
+    <Menu style={{ textAlign: "center" }} onClick={sortAuthority}>
+      <Menu.Item key="0">
+        <span style={{ cursor: "pointer", fontSize: "12px" }}>전체 보기</span>
+      </Menu.Item>
+      <br />
+      <Menu.Item key="1">
+        <span style={{ cursor: "pointer", fontSize: "12px" }}>일반</span>
+      </Menu.Item>
+      <br />
+      <Menu.Item key="2">
+        <span style={{ cursor: "pointer", fontSize: "12px" }}>정지</span>
+      </Menu.Item>
+    </Menu>
+  );
+  const dropUserMenu = (
+    <Menu style={{ textAlign: "center" }}>
+      <Menu.Item key="0">
+        <span style={{ cursor: "pointer", fontSize: "12px" }}>전체 보기</span>
+      </Menu.Item>
+      <br />
+      <Menu.Item key="1">
+        <span style={{ cursor: "pointer", fontSize: "12px" }}>탈퇴</span>
+      </Menu.Item>
+    </Menu>
+  );
 
   /*전체 데이터 개수 */
   const showPageCount = () => {
@@ -137,7 +157,6 @@ const User = (props) => {
             <Dropdown overlay={authorityMenu} trigger={["click"]}>
               <span
                 className="ant-dropdown-link"
-                // onClick={handleMenuClick}
                 style={{ cursor: "pointer", color: "rgba(0,0,0,.8)" }}
               >
                 권한 <DownOutlined />
