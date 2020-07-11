@@ -1,13 +1,16 @@
 import React, { useEffect, useState } from "react";
 import Axios from "util/axios";
-import { Pagination } from "antd";
+import { Pagination, Modal } from "antd";
+import { ExclamationCircleOutlined } from "@ant-design/icons";
+
+const { confirm } = Modal;
 
 const MyFriends = () => {
   const [totalcount, setTotalCount] = useState("");
   const perPageNum = 5;
   const [pageStart, setPageStart] = useState(0);
   const [friendsData, setFriendsData] = useState([]);
-
+  const [render, setRender] = useState("");
   useEffect(() => {
     myfriendsCount();
     selectMyFriends();
@@ -17,7 +20,7 @@ const MyFriends = () => {
    */
   useEffect(() => {
     selectMyFriends();
-  }, [pageStart]);
+  }, [pageStart, render]);
 
   /*
    *  나의 친구들의 정보를 받아오는 메소드
@@ -65,6 +68,35 @@ const MyFriends = () => {
   const onFriendsClick = (e) => {
     console.log(e.target.getAttribute("friendsUserId"));
   };
+  /*
+   * 삭제 버튼 클릭시 실행되는 함수
+   */
+  const showDeleteConfirm = (e) => {
+    const user_id = e.target.getAttribute("friendsUserId");
+    confirm({
+      title: "친구 삭제",
+      icon: <ExclamationCircleOutlined />,
+      content: "친구를 삭제하시려면 확인을 눌러주세요",
+      okText: "확인",
+      okType: "danger",
+      cancelText: "취소",
+      onOk() {
+        const url = `/friends/deletefriend`;
+        Axios.post(url, {
+          request_user_id: sessionStorage.getItem("userId"),
+          target_user_id: user_id,
+        })
+          .then((res) => {
+            console.log(res);
+            setRender(render + 1);
+          })
+          .catch((error) => {
+            console.log(error);
+          });
+      },
+      onCancel() {},
+    });
+  };
 
   return (
     <div>
@@ -90,6 +122,23 @@ const MyFriends = () => {
                   </span>
                   <br />
                   <span>{contact.introduce}</span>
+                </td>
+                <td style={{ textAlign: "right" }}>
+                  <span
+                    type="text"
+                    onClick={showDeleteConfirm}
+                    friendsUserId={contact.id}
+                    style={{
+                      color: "rgba(245,145,45,.7)",
+                      border: "1px solid rgba(245,145,45,.7)",
+                      padding: "3px",
+                      borderRadius: "5px",
+                      cursor: "pointer",
+                      fontSize: "13px",
+                    }}
+                  >
+                    삭제
+                  </span>{" "}
                 </td>
               </tr>
             );
