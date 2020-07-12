@@ -99,8 +99,17 @@ const MyFriends = (props) => {
   };
 
   /*DM 버튼 클릭시 상위컴포넌트로 값 전달 */
-  const changeDm = () => {
-    props.changeDm(true);
+  const changeDm = (e) => {
+    const friendsUserId = e.target.getAttribute("friendsUserId");
+    const friendsNickname = e.target.getAttribute("friendsNickname");
+    const friendsIntroduce = e.target.getAttribute("friendsIntroduce");
+
+    const userData = {
+      userId: friendsUserId,
+      nickname: friendsNickname,
+      introduce: friendsIntroduce,
+    };
+    props.changeDm(true, userData);
   };
 
   /*더보기 버튼 클릭시 언팔하기 버튼 표시 */
@@ -141,6 +150,9 @@ const MyFriends = (props) => {
                   <span
                     className="xi-send turnOrange"
                     onClick={changeDm}
+                    friendsUserId={contact.id}
+                    friendsNickname={contact.nickname}
+                    friendsIntroduce={contact.introduce}
                     style={{
                       width: "1vw",
                       height: "1vw",

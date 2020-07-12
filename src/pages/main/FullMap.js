@@ -67,6 +67,9 @@ class FullMap extends React.Component {
     dm: false,
     friendEmail: "",
     render: 0,
+    dmUserId: "",
+    dmNickname: "",
+    dmIntroduce: "",
   };
 
   modules = {
@@ -398,9 +401,12 @@ class FullMap extends React.Component {
   };
 
   /*친구추가 DM 보이게 */
-  changeDm = (e) => {
+  changeDm = (e, data) => {
     this.setState({
       dm: e,
+      dmUserId: data.userId,
+      dmNickname: data.nickname,
+      dmIntroduce: data.introduce,
     });
   };
   render() {
@@ -977,7 +983,7 @@ class FullMap extends React.Component {
                     margin: "0.6vw 0.8vw 0.2vw",
                   }}
                 >
-                  닉네임
+                  {this.state.dmNickname}
                 </div>
                 <span
                   className="xi-reply"
@@ -1002,7 +1008,7 @@ class FullMap extends React.Component {
                     margin: "-1.2vw 1vw 0.8vw",
                   }}
                 >
-                  소개글
+                  {this.state.dmIntroduce}
                 </div>
               </div>
               <div className="dialog" style={{ width: "100%", height: "22vw" }}>
