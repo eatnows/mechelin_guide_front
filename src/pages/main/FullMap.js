@@ -10,11 +10,12 @@ import filter from "images/filter2.png";
 import friend from "images/friend2.png";
 import list from "images/list.png";
 import review from "images/review2.png";
+import plane from "images/plane.PNG";
 import friends from "images/friends.png";
 import MainMap from "components/map/MainMap";
 import MyListComponent from "components/mypage/MyList";
 import MyFriends from "components/mypage/MyFriends";
-import { ContactsFilled, SendOutlined } from "@ant-design/icons";
+import TextArea from "antd/lib/input/TextArea";
 
 Quill.register("modules/imageUpload", ImageUpload);
 
@@ -269,6 +270,7 @@ class FullMap extends React.Component {
         myListModal: false,
         filterModal: false,
         friendModal: false,
+        dm: false,
       });
     }
   };
@@ -971,7 +973,7 @@ class FullMap extends React.Component {
                 className="header"
                 style={{
                   backgroundColor: "rgba(156,197,87,.7)",
-                  height: "3.5vw",
+                  height: "8vh",
                   width: "100%",
                   borderRadius: "10px 10px 0 0",
                 }}
@@ -1006,13 +1008,16 @@ class FullMap extends React.Component {
                     fontSize: ".7vw",
                     float: "left",
                     clear: "both",
-                    margin: "-1.2vw 1vw 0.8vw",
+                    margin: "-1vw 1vw 0.8vw",
                   }}
                 >
                   {this.state.dmIntroduce}
                 </div>
               </div>
-              <div className="dialog" style={{ width: "100%", height: "22vw" }}>
+              <div
+                className="dialog"
+                style={{ width: "100%", height: "43.5vh" }}
+              >
                 <div
                   style={{
                     borderRadius: "10px",
@@ -1037,15 +1042,29 @@ class FullMap extends React.Component {
                   }}
                 ></div>
               </div>
-              <Input
+              <TextArea
                 style={{
                   width: "100%",
                   border: "none",
                   borderTop: "1px solid rgba(0,0,0,.2)",
                   borderRadius: "0 0 10px 10px",
+                  resize: "none",
+                  overflow: "hidden",
                 }}
-                suffix={<SendOutlined style={{ color: "rgba(0,0,0,.2)" }} />}
-              />
+              />{" "}
+              <span
+                style={{
+                  position: "absolute",
+                  right: "1.6vw",
+                  bottom: "2.2vw",
+                }}
+              >
+                <img
+                  src={plane}
+                  style={{ opacity: ".4", width: "1vw", height: "1vw" }}
+                  alt=""
+                />
+              </span>
             </div>
           </div>
         </section>

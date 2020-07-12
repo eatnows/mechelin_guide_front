@@ -194,6 +194,7 @@ const MyFriends = (props) => {
           defaultPageSize={perPageNum} //default size of page
           onChange={onChangePage}
           total={totalcount}
+          style={{ position: "absolute", left: "5vw", bottom: "2vh" }}
         />
         <div
           style={{
@@ -214,7 +215,7 @@ const MyFriends = (props) => {
             className="turnOrange"
             style={{ padding: "0.2vw 0", cursor: "pointer" }}
           >
-            언팔하기
+            삭제하기
           </div>
           <div
             className="turnOrange"

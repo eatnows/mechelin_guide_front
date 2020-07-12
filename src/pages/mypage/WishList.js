@@ -5,7 +5,7 @@ import Axios from "util/axios";
 import SlideMenu from "components/mypage/SlideMenu";
 
 const WishList = (props) => {
-  const perPageNum = 5;
+  const perPageNum = 7;
   const [pageStart, setPageStart] = useState(0);
   const [totalcount, setTotalCount] = useState("");
   const [render, setRender] = useState("");
