@@ -1108,7 +1108,7 @@ class FullMap extends React.Component {
               id="content"
               style={{
                 width: "20vw",
-                height: "20vh",
+                height: "21.5vh",
                 position: "absolute",
                 left: "50%",
                 top: "50%",

@@ -10,7 +10,8 @@ const User = (props) => {
   const [startPage, setStartPage] = useState(0);
   const [totalCount, setTotalCount] = useState(0);
   const [searchData, setSearchData] = useState("");
-
+  const [sorting, setSorting] = useState("0");
+  const [filtering, setFiltering] = useState("0");
   useEffect(() => {
     props.getState(false);
     showPageCount();
@@ -18,7 +19,19 @@ const User = (props) => {
   }, []);
 
   useEffect(() => {
-    getList();
+    if (sorting === "0") {
+      if (filtering !== "0") {
+        filterDropUser(filtering);
+      } else {
+        getList();
+      }
+    } else {
+      if (filtering !== "0") {
+        filterDropUser(filtering);
+      } else {
+        sortAuthority(sorting);
+      }
+    }
   }, [startPage]);
 
   /*user 검색 */
@@ -35,7 +48,6 @@ const User = (props) => {
         startPage +
         "&dataCount=" +
         dataCount;
-
       Axios.get(url)
         .then((res) => {
           setData(res.data);
@@ -47,43 +59,101 @@ const User = (props) => {
     }
   };
 
-  /* */
+  /*권한 정렬 */
   const sortAuthority = (e) => {
-    const url = "/admin/sortdata";
-    Axios.get(url)
-      .then((res) => {
-        setData(res.data);
-        setTotalCount(data.length);
-      })
-      .catch((err) => {
-        console.log("sort authority 에러:" + err);
-      });
-    console.log(e);
+    console.log(e.key);
+    if (e.key === "0") {
+      showPageCount();
+      getList();
+      setSorting("0");
+    } else {
+      const value = e.key !== "1" || "2" || "3" ? sorting : e.key;
+      const url =
+        "/admin/sortdata?sorting=" +
+        value +
+        "&startPage=" +
+        startPage +
+        "&dataCount=" +
+        dataCount;
+      Axios.get(url)
+        .then((res) => {
+          setData(res.data);
+          if (e.key === "1") {
+            setSorting("1");
+          } else if (e.key === "2") {
+            setSorting("2");
+          } else {
+            setSorting(e);
+          }
+        })
+        .catch((err) => {
+          console.log("sort authority 에러:" + err);
+        });
+    }
+  };
+
+  /*탈퇴 여부 필터링 */
+  const filterDropUser = (e) => {
+    console.log(e.key);
+    if (e.key === "0") {
+      showPageCount();
+      getList();
+      setFiltering("0");
+    } else {
+      const value = e.key !== "1" || "2" || "3" ? filtering : e.key;
+      const url =
+        "/admin/filterdata?sorting=" +
+        sorting +
+        "&filtering=" +
+        value +
+        "&startPage=" +
+        startPage +
+        "&dataCount=" +
+        dataCount;
+      Axios.get(url)
+        .then((res) => {
+          setData(res.data);
+          setTotalCount(data.length);
+          if (e.key === "1") {
+            setFiltering("1");
+          } else if (e.key === "2") {
+            setFiltering("2");
+          } else {
+            setFiltering(e);
+          }
+        })
+        .catch((err) => {
+          console.log("filter data 에러:" + err);
+        });
+    }
   };
 
   const authorityMenu = (
     <Menu style={{ textAlign: "center" }} onClick={sortAuthority}>
       <Menu.Item key="0">
-        <span style={{ cursor: "pointer", fontSize: "12px" }}>전체 보기</span>
+        <span style={{ cursor: "pointer", fontSize: "12px" }}>기본</span>
       </Menu.Item>
       <br />
       <Menu.Item key="1">
-        <span style={{ cursor: "pointer", fontSize: "12px" }}>일반</span>
+        <span style={{ cursor: "pointer", fontSize: "12px" }}>내림차순</span>
       </Menu.Item>
       <br />
       <Menu.Item key="2">
-        <span style={{ cursor: "pointer", fontSize: "12px" }}>정지</span>
+        <span style={{ cursor: "pointer", fontSize: "12px" }}>오름차순</span>
       </Menu.Item>
     </Menu>
   );
   const dropUserMenu = (
-    <Menu style={{ textAlign: "center" }}>
+    <Menu style={{ textAlign: "center" }} onClick={filterDropUser}>
       <Menu.Item key="0">
         <span style={{ cursor: "pointer", fontSize: "12px" }}>전체 보기</span>
       </Menu.Item>
       <br />
       <Menu.Item key="1">
         <span style={{ cursor: "pointer", fontSize: "12px" }}>탈퇴</span>
+      </Menu.Item>
+      <Menu.Item key="2">
+        <span style={{ cursor: "pointer", fontSize: "12px" }}>정상</span>
       </Menu.Item>
     </Menu>
   );

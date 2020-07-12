@@ -265,6 +265,7 @@ class View extends React.Component {
               <MyPage
                 getState={this.getState.bind(this)}
                 userId={this.state.userId}
+                history={this.props.history}
               />
             );
           }}
