@@ -901,6 +901,7 @@ class FullMap extends React.Component {
               zIndex: "1",
               left: "3%",
               bottom: "6.5%",
+              transition: "all 1s",
             }}
           >
             <div
@@ -949,10 +950,10 @@ class FullMap extends React.Component {
               <MyFriends changeDm={this.changeDm.bind(this)} />
             </div>{" "}
             <div
+              className={this.state.dm === true ? "showDm" : "hideDm"}
               style={{
-                opacity: this.state.dm === true ? "1" : "0",
                 pointerEvents: this.state.dm === true ? "auto" : "none",
-                width: "14vw",
+                width: this.state.dm === true ? "14vw" : "0",
                 height: "59vh",
                 margin: ".8vw .4vw",
                 borderRadius: "10px",
