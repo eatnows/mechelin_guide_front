@@ -30,6 +30,7 @@ const categoryOptions = [
 let categoryFilter = ["한식", "양식", "중식", "일식"];
 let blacklist = false;
 let render = 0;
+let socket = null;
 class FullMap extends React.Component {
   constructor(props) {
     super();
@@ -71,6 +72,8 @@ class FullMap extends React.Component {
     dmUserId: "",
     dmNickname: "",
     dmIntroduce: "",
+    sendMessage: "",
+    // socket: "",
   };
 
   modules = {
@@ -149,6 +152,11 @@ class FullMap extends React.Component {
     "image",
     "video",
   ];
+
+  componentDidMount() {
+    this.socketConnect();
+  }
+
   /*
    * 내용을 기입했을때 실행
    */
@@ -409,6 +417,53 @@ class FullMap extends React.Component {
       dmUserId: data.userId,
       dmNickname: data.nickname,
       dmIntroduce: data.introduce,
+    });
+  };
+
+  /*
+   * 메세지 전송
+   */
+  onClickMessageSend = () => {
+    console.log("메시지 전송");
+    // this.state.socket.send(this.state.sendMessage);
+    socket.send(this.state.sendMessage);
+  };
+
+  /*
+   * 소켓 연결
+   */
+  socketConnect = () => {
+    console.log("tttttt");
+    const ws = new WebSocket("ws://localhost:9000/mechelin/replyEcho");
+    // this.setState({
+    //   socket: ws,
+    // });
+    socket = ws;
+    ws.onopen = () => {
+      console.log("Info : connection opened");
+    };
+
+    ws.onmessage = (event) => {
+      console.log(event.data + "\n");
+    };
+
+    ws.onclose = (event) => {
+      console.log("Info: connection closed.");
+      // setTimeout(() => {
+      //   this.socketConnect();
+      // }, 1000);
+    };
+    ws.onerror = (err) => {
+      console.log("Error : ", err);
+    };
+  };
+
+  /*
+   * 입력한 메시지
+   */
+  onChangeMessage = (e) => {
+    this.setState({
+      sendMessage: e.target.value,
     });
   };
   render() {
@@ -1051,6 +1106,7 @@ class FullMap extends React.Component {
                   resize: "none",
                   overflow: "hidden",
                 }}
+                onChange={this.onChangeMessage.bind(this)}
               />{" "}
               <span
                 style={{
@@ -1061,8 +1117,14 @@ class FullMap extends React.Component {
               >
                 <img
                   src={plane}
-                  style={{ opacity: ".4", width: "1vw", height: "1vw" }}
+                  style={{
+                    opacity: ".4",
+                    width: "1vw",
+                    height: "1vw",
+                    cursor: "pointer",
+                  }}
                   alt=""
+                  onClick={this.onClickMessageSend.bind(this)}
                 />
               </span>
             </div>
