@@ -11,6 +11,8 @@ const MyFriends = (props) => {
   const [friendsData, setFriendsData] = useState([]);
   const [render, setRender] = useState("");
   const [unfollow, setUnfollow] = useState(false);
+  const [Y, setY] = useState("");
+
   useEffect(() => {
     myfriendsCount();
     selectMyFriends();
@@ -113,7 +115,8 @@ const MyFriends = (props) => {
   };
 
   /*더보기 버튼 클릭시 언팔하기 버튼 표시 */
-  const showUnfollowing = () => {
+  const showUnfollowing = (e) => {
+    setY(e.clientY);
     if (unfollow === true) {
       setUnfollow(false);
     } else {
@@ -166,6 +169,7 @@ const MyFriends = (props) => {
                   <span
                     className="xi-ellipsis-v turnOrange"
                     onClick={showUnfollowing}
+                    friendsUserId={contact.id}
                     style={{
                       width: "1vw",
                       height: "1vw",
@@ -177,44 +181,6 @@ const MyFriends = (props) => {
                       transform: "translateY(-50%)",
                     }}
                   ></span>{" "}
-                  <div
-                    style={{
-                      width: "5.5vw",
-                      height: "auto",
-                      lineHeight: "auto",
-                      backgroundColor: "white",
-                      position: "relative",
-                      left: "5vw",
-                      bottom: "1.8vw",
-                      boxShadow: "3px 3px 10px #999",
-
-                      display: unfollow === true ? "block" : "none",
-                    }}
-                  >
-                    <div
-                      onClick={showDeleteConfirm}
-                      friendsUserId={contact.id}
-                      className="turnOrange"
-                      style={{ padding: "0.2vw 0", cursor: "pointer" }}
-                    >
-                      언팔하기
-                    </div>
-                    <div
-                      className="turnOrange"
-                      style={{ padding: "0.2vw 0", cursor: "pointer" }}
-                    >
-                      차단하기
-                    </div>
-                    <div
-                      className="turnOrange"
-                      onClick={() => {
-                        setUnfollow(false);
-                      }}
-                      style={{ padding: "0.2vw 0", cursor: "pointer" }}
-                    >
-                      취소
-                    </div>
-                  </div>
                 </td>
               </tr>
             );
@@ -229,6 +195,43 @@ const MyFriends = (props) => {
           onChange={onChangePage}
           total={totalcount}
         />
+        <div
+          style={{
+            width: "5.5vw",
+            height: "auto",
+            lineHeight: "auto",
+            backgroundColor: "white",
+            position: "fixed",
+            left: "17.6vw",
+            top: Y,
+            boxShadow: "3px 3px 10px #999",
+            display: unfollow === true ? "block" : "none",
+          }}
+        >
+          <div
+            onClick={showDeleteConfirm}
+            // friendsUserId={contact.id}
+            className="turnOrange"
+            style={{ padding: "0.2vw 0", cursor: "pointer" }}
+          >
+            언팔하기
+          </div>
+          <div
+            className="turnOrange"
+            style={{ padding: "0.2vw 0", cursor: "pointer" }}
+          >
+            차단하기
+          </div>
+          <div
+            className="turnOrange"
+            onClick={() => {
+              setUnfollow(false);
+            }}
+            style={{ padding: "0.2vw 0", cursor: "pointer" }}
+          >
+            취소
+          </div>
+        </div>
       </div>
     </div>
   );
