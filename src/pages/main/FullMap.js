@@ -426,7 +426,10 @@ class FullMap extends React.Component {
   onClickMessageSend = () => {
     console.log("메시지 전송");
     // this.state.socket.send(this.state.sendMessage);
-    socket.send(this.state.sendMessage);
+    let socketMsg = `chat,${sessionStorage.getItem("userId")},${
+      this.state.dmUserId
+    },${this.state.sendMessage}`;
+    socket.send(socketMsg);
   };
 
   /*
@@ -434,7 +437,11 @@ class FullMap extends React.Component {
    */
   socketConnect = () => {
     console.log("tttttt");
-    const ws = new WebSocket("ws://localhost:9000/mechelin/replyEcho");
+    const ws = new WebSocket(
+      `ws://localhost:9000/mechelin/myHandler?userId=${sessionStorage.getItem(
+        "userId"
+      )}`
+    );
     // this.setState({
     //   socket: ws,
     // });
@@ -444,14 +451,14 @@ class FullMap extends React.Component {
     };
 
     ws.onmessage = (event) => {
-      console.log(event.data + "\n");
+      console.log("ReceiveMessage : ", event.data + "\n");
     };
 
     ws.onclose = (event) => {
       console.log("Info: connection closed.");
-      // setTimeout(() => {
-      //   this.socketConnect();
-      // }, 1000);
+      setTimeout(() => {
+        this.socketConnect();
+      }, 1000);
     };
     ws.onerror = (err) => {
       console.log("Error : ", err);
