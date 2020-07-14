@@ -493,6 +493,25 @@ class FullMap extends React.Component {
       sendMessage: e.target.value,
     });
   };
+
+  /*
+   * 친구요청 버튼을 눌렀을 시
+   */
+  onClickFriendRequest = () => {
+    const url = `/friends/addfriend`;
+
+    Axios.post(url, {
+      request_user_id: sessionStorage.getItem("userId"),
+      email: this.state.friendEmail,
+    })
+      .then((response) => {
+        alert("친구신청 메일이 발송되었습니다.");
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
+
   render() {
     return (
       <div>
@@ -1255,6 +1274,7 @@ class FullMap extends React.Component {
                   border: "none",
                   backgroundColor: "rgba(245,145,45)",
                 }}
+                onClick={this.onClickFriendRequest.bind(this)}
               >
                 친구 요청
               </button>
