@@ -1098,7 +1098,7 @@ class FullMap extends React.Component {
               </div>
               <div
                 className="dialog"
-                style={{ width: "100%", height: "43.5vh" }}
+                style={{ width: "100%", height: "43.5vh", overflow: "auto" }}
               >
                 {[...this.state.dmContent].map((contact, i) => {
                   return (
