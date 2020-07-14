@@ -12,7 +12,7 @@ const MyFriends = (props) => {
   const [render, setRender] = useState("");
   const [unfollow, setUnfollow] = useState(false);
   const [Y, setY] = useState("");
-
+  const [friendUserId, setFriendUserId] = useState("");
   useEffect(() => {
     myfriendsCount();
     selectMyFriends();
@@ -74,7 +74,7 @@ const MyFriends = (props) => {
    * 삭제 버튼 클릭시 실행되는 함수
    */
   const showDeleteConfirm = (e) => {
-    const user_id = e.target.getAttribute("friendsUserId");
+    //const user_id = e.target.getAttribute("friendsUserId");
     confirm({
       title: "친구 삭제",
       icon: <ExclamationCircleOutlined />,
@@ -86,11 +86,12 @@ const MyFriends = (props) => {
         const url = `/friends/deletefriend`;
         Axios.post(url, {
           request_user_id: sessionStorage.getItem("userId"),
-          target_user_id: user_id,
+          target_user_id: friendUserId,
         })
           .then((res) => {
             console.log(res);
-            setRender(render + 1);
+            selectMyFriends();
+            myfriendsCount();
           })
           .catch((error) => {
             console.log(error);
@@ -116,6 +117,7 @@ const MyFriends = (props) => {
 
   /*더보기 버튼 클릭시 언팔하기 버튼 표시 */
   const showUnfollowing = (e) => {
+    setFriendUserId(e.target.getAttribute("friendsUserId"));
     setY(e.clientY);
     if (unfollow === true) {
       setUnfollow(false);
