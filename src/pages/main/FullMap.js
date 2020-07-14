@@ -437,7 +437,9 @@ class FullMap extends React.Component {
         userId: sessionStorage.getItem("userId"),
         content: this.state.sendMessage,
       }),
+      sendMessage: "",
     });
+    this.TextArea.focus();
   };
 
   /*
@@ -1132,6 +1134,7 @@ class FullMap extends React.Component {
                 })}
               </div>
               <TextArea
+                ref={(ref) => (this.TextArea = ref)}
                 style={{
                   width: "100%",
                   border: "none",
@@ -1141,6 +1144,7 @@ class FullMap extends React.Component {
                   overflow: "hidden",
                 }}
                 onChange={this.onChangeMessage.bind(this)}
+                value={this.state.sendMessage}
               />{" "}
               <span
                 style={{
