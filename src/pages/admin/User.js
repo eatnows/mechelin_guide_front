@@ -67,7 +67,7 @@ const User = (props) => {
       getList();
       setSorting("0");
     } else {
-      const value = e.key !== "1" || "2" || "3" ? sorting : e.key;
+      const value = e.key !== "1" || "2" ? sorting : e.key;
       const url =
         "/admin/sortdata?sorting=" +
         value +
@@ -100,7 +100,7 @@ const User = (props) => {
       getList();
       setFiltering("0");
     } else {
-      const value = e.key !== "1" || "2" || "3" ? filtering : e.key;
+      const value = e.key !== "1" || "2" ? filtering : e.key;
       const url =
         "/admin/filterdata?sorting=" +
         sorting +
@@ -200,8 +200,8 @@ const User = (props) => {
           width: "1000px",
           position: "absolute",
           left: "50%",
-          top: "50%",
-          transform: "translate(-50%,-50%)",
+          top: "4vw",
+          transform: "translateX(-50%)",
           textAlign: "center",
         }}
       >
@@ -303,9 +303,18 @@ const User = (props) => {
             })}
           </tbody>
         </table>
-        <br />
-        <Pagination size="small" total={totalCount} onChange={nextPage} />
       </form>
+      <Pagination
+        size="small"
+        total={totalCount}
+        onChange={nextPage}
+        style={{
+          position: "absolute",
+          bottom: "4vw",
+          left: "50%",
+          transform: "translateX(-50%)",
+        }}
+      />
     </div>
   );
 };
