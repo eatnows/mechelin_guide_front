@@ -74,6 +74,7 @@ class FullMap extends React.Component {
     dmIntroduce: "",
     sendMessage: "",
     // socket: "",
+    dmContent: [{}],
   };
 
   modules = {
@@ -430,13 +431,19 @@ class FullMap extends React.Component {
       this.state.dmUserId
     },${this.state.sendMessage}`;
     socket.send(socketMsg);
+    this.setState({
+      dmContent: this.state.dmContent.concat({
+        ...this.state.dmContent,
+        userId: sessionStorage.getItem("userId"),
+        content: this.state.sendMessage,
+      }),
+    });
   };
 
   /*
    * 소켓 연결
    */
   socketConnect = () => {
-    console.log("tttttt");
     const ws = new WebSocket(
       `ws://localhost:9000/mechelin/myHandler?userId=${sessionStorage.getItem(
         "userId"
@@ -452,6 +459,13 @@ class FullMap extends React.Component {
 
     ws.onmessage = (event) => {
       console.log("ReceiveMessage : ", event.data + "\n");
+      this.setState({
+        dmContent: this.state.dmContent.concat({
+          ...this.state.dmContent,
+          userId: this.state.dmUserId,
+          content: event.data,
+        }),
+      });
     };
 
     ws.onclose = (event) => {
@@ -1080,29 +1094,42 @@ class FullMap extends React.Component {
                 className="dialog"
                 style={{ width: "100%", height: "43.5vh" }}
               >
-                <div
-                  style={{
-                    borderRadius: "10px",
-                    width: "60%",
-                    height: "3vw",
-                    backgroundColor: "white",
-                    border: "1px solid rgba(245,145,45,.5)",
-                    float: "left",
-                    clear: "both",
-                    margin: ".5vw 0.5vw",
-                  }}
-                ></div>
-                <div
-                  style={{
-                    borderRadius: "10px",
-                    width: "60%",
-                    height: "3vw",
-                    backgroundColor: "rgba(245,145,45,.7)",
-                    float: "right",
-                    clear: "both",
-                    margin: ".5vw 0.5vw",
-                  }}
-                ></div>
+                {[...this.state.dmContent].map((contact, i) => {
+                  return (
+                    <div>
+                      {contact.userId === sessionStorage.getItem("userId") ? (
+                        <div
+                          style={{
+                            borderRadius: "10px",
+                            width: "60%",
+                            height: "3vw",
+                            backgroundColor: "rgba(245,145,45,.7)",
+                            float: "right",
+                            clear: "both",
+                            margin: ".5vw 0.5vw",
+                          }}
+                        >
+                          {contact.content}
+                        </div>
+                      ) : (
+                        <div
+                          style={{
+                            borderRadius: "10px",
+                            width: "60%",
+                            height: "3vw",
+                            backgroundColor: "white",
+                            border: "1px solid rgba(245,145,45,.5)",
+                            float: "left",
+                            clear: "both",
+                            margin: ".5vw 0.5vw",
+                          }}
+                        >
+                          {contact.content}
+                        </div>
+                      )}
+                    </div>
+                  );
+                })}
               </div>
               <TextArea
                 style={{
