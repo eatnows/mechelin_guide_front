@@ -418,6 +418,7 @@ class FullMap extends React.Component {
       dmUserId: data.userId,
       dmNickname: data.nickname,
       dmIntroduce: data.introduce,
+      dmContent: [],
     });
   };
 
@@ -461,13 +462,16 @@ class FullMap extends React.Component {
 
     ws.onmessage = (event) => {
       console.log("ReceiveMessage : ", event.data + "\n");
-      this.setState({
-        dmContent: this.state.dmContent.concat({
-          ...this.state.dmContent,
-          userId: this.state.dmUserId,
-          content: event.data,
-        }),
-      });
+      let message = event.data.split(",");
+      if (message[1] === this.state.dmUserId) {
+        this.setState({
+          dmContent: this.state.dmContent.concat({
+            ...this.state.dmContent,
+            userId: this.state.dmUserId,
+            content: message[0],
+          }),
+        });
+      }
     };
 
     ws.onclose = (event) => {
