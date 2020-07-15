@@ -480,6 +480,12 @@ const NewsFeed = (props) => {
   console.log("state구역");
   /* fake async fetch */
   const fetchItems = async () => {
+    setState((prev) => ({ ...prev, isLoading: true }));
+    await fakeFetch();
+    setState((prev) => ({
+      itemCount: prev.itemCount + 3,
+      isLoading: false,
+    }));
     const url = `/post/newsfeed/getallpost?user_id=${sessionStorage.getItem(
       "userId"
     )}&row=${item}`;
@@ -495,13 +501,6 @@ const NewsFeed = (props) => {
       .catch((error) => {
         console.log(error);
       });
-
-    setState((prev) => ({ ...prev, isLoading: true }));
-    await fakeFetch();
-    setState((prev) => ({
-      itemCount: prev.itemCount + 3,
-      isLoading: false,
-    }));
     item = dataLength;
     item += 3;
   };
@@ -511,12 +510,16 @@ const NewsFeed = (props) => {
     props.getState(false);
     console.log(item);
   }, []);
-  const [_, setRef] = useIntersect(async (entry, observer) => {
+
+  const [setRef] = useIntersect(async (entry, observer) => {
     observer.unobserve(entry.target);
     await fetchItems();
     observer.observe(entry.target);
+    console.log(itemCount);
   }, {});
   const { itemCount, isLoading } = state;
+  console.log("아이템 카운트");
+  console.log(!itemCount);
   if (!itemCount) return null;
 
   /*
@@ -664,6 +667,7 @@ const NewsFeed = (props) => {
           )}
         </div>
       </div>
+      <div></div>
     </div>
   );
 };

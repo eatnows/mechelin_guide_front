@@ -31,6 +31,20 @@ let categoryFilter = ["한식", "양식", "중식", "일식"];
 let blacklist = false;
 let render = 0;
 let socket = null;
+
+// const ioOptions = {
+//   root: null,
+//   threshold: 1,
+// };
+// const lastChild = () => this.scroll;
+// const handleInfiniteScrolling = (entries, observer) => {
+//   const $last = [...entries].pop();
+//   if ($last.isIntersecting) {
+//   }
+// };
+
+// const io = new IntersectionObserver(handleInfiniteScrolling, ioOptions);
+// io.observe(lastChild());
 class FullMap extends React.Component {
   constructor(props) {
     super();
@@ -77,7 +91,6 @@ class FullMap extends React.Component {
     // socket: "",
     dmContent: [{}],
   };
-
   modules = {
     toolbar: {
       container: [
@@ -517,6 +530,20 @@ class FullMap extends React.Component {
       .catch((err) => {
         console.log(err);
       });
+  };
+
+  onScrollInfinity = () => {
+    console.log("이벤트실행");
+    let scrollHeight = Math.max(
+      this.div.scrollHeight,
+      document.body.scrollHeight
+    );
+    let scrollTop = Math.max(this.div.scrollTop, document.body.scrollTop);
+    let clientHeight = this.div.clientHeight;
+    let scrollBot = scrollHeight - (scrollTop + clientHeight);
+    if (scrollBot + clientHeight === scrollHeight) {
+      console.log("ㅇ스크롤이벤트");
+    }
   };
 
   render() {
@@ -1126,6 +1153,7 @@ class FullMap extends React.Component {
                 className="dialog"
                 style={{ width: "100%", height: "43.5vh", overflow: "auto" }}
                 ref={(ref) => (this.div = ref)}
+                onScroll={this.onScrollInfinity.bind(this)}
               >
                 {[...this.state.dmContent].map((contact, i) => {
                   return (
