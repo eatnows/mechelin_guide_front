@@ -72,6 +72,7 @@ class FullMap extends React.Component {
     dmUserId: "",
     dmNickname: "",
     dmIntroduce: "",
+    chatRoomId: "",
     sendMessage: "",
     // socket: "",
     dmContent: [{}],
@@ -412,14 +413,17 @@ class FullMap extends React.Component {
   };
 
   /*친구추가 DM 보이게 */
-  changeDm = (e, data) => {
+  changeDm = (e, data, chatLog) => {
+    const chatLogReverse = chatLog.reverse();
     this.setState({
       dm: e,
-      dmUserId: data.userId,
+      dmUserId: data.user_id,
       dmNickname: data.nickname,
       dmIntroduce: data.introduce,
-      dmContent: [],
+      dmContent: chatLogReverse,
+      chatRoomId: data.chatRoomId,
     });
+    this.div.scrollTop = this.div.scrollHeight;
   };
 
   /*
@@ -430,16 +434,17 @@ class FullMap extends React.Component {
     // this.state.socket.send(this.state.sendMessage);
     let socketMsg = `chat,${sessionStorage.getItem("userId")},${
       this.state.dmUserId
-    },${this.state.sendMessage}`;
+    },${this.state.sendMessage},${this.state.chatRoomId}`;
     socket.send(socketMsg);
     this.setState({
       dmContent: this.state.dmContent.concat({
         ...this.state.dmContent,
-        userId: sessionStorage.getItem("userId"),
+        user_id: sessionStorage.getItem("userId"),
         content: this.state.sendMessage,
       }),
       sendMessage: "",
     });
+    this.div.scrollTop = this.div.scrollHeight;
     this.TextArea.focus();
   };
 
@@ -448,7 +453,7 @@ class FullMap extends React.Component {
    */
   socketConnect = () => {
     const ws = new WebSocket(
-      `ws://localhost:9000/mechelin/myHandler?userId=${sessionStorage.getItem(
+      `ws://localhost:9000/mechelin/chat?userId=${sessionStorage.getItem(
         "userId"
       )}`
     );
@@ -463,15 +468,17 @@ class FullMap extends React.Component {
     ws.onmessage = (event) => {
       console.log("ReceiveMessage : ", event.data + "\n");
       let message = event.data.split(",");
-      if (message[1] === this.state.dmUserId) {
+      if (message[1] === this.state.chatRoomId) {
         this.setState({
           dmContent: this.state.dmContent.concat({
             ...this.state.dmContent,
-            userId: this.state.dmUserId,
+            user_id: message[2],
             content: message[0],
           }),
         });
       }
+      this.div.scrollTop = this.div.scrollHeight;
+      console.log(this.state.dmContent);
     };
 
     ws.onclose = (event) => {
@@ -1118,11 +1125,12 @@ class FullMap extends React.Component {
               <div
                 className="dialog"
                 style={{ width: "100%", height: "43.5vh", overflow: "auto" }}
+                ref={(ref) => (this.div = ref)}
               >
                 {[...this.state.dmContent].map((contact, i) => {
                   return (
                     <div>
-                      {contact.userId === sessionStorage.getItem("userId") ? (
+                      {contact.user_id == sessionStorage.getItem("userId") ? (
                         <div
                           style={{
                             borderRadius: "10px",

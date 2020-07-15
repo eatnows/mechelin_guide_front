@@ -106,13 +106,26 @@ const MyFriends = (props) => {
     const friendsUserId = e.target.getAttribute("friendsUserId");
     const friendsNickname = e.target.getAttribute("friendsNickname");
     const friendsIntroduce = e.target.getAttribute("friendsIntroduce");
+    const chatRoomId = e.target.getAttribute("chatRoomId");
 
     const userData = {
-      userId: friendsUserId,
+      user_id: friendsUserId,
       nickname: friendsNickname,
       introduce: friendsIntroduce,
+      chatRoomId: chatRoomId,
     };
-    props.changeDm(true, userData);
+
+    const url = `/chat/log?chatroom_id=${chatRoomId}&page=${0}`;
+    Axios.get(url)
+      .then((res) => {
+        console.log(res.data);
+        const chatLog = res.data;
+
+        props.changeDm(true, userData, chatLog);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
   };
 
   /*더보기 버튼 클릭시 언팔하기 버튼 표시 */
@@ -158,6 +171,7 @@ const MyFriends = (props) => {
                     friendsUserId={contact.id}
                     friendsNickname={contact.nickname}
                     friendsIntroduce={contact.introduce}
+                    chatRoomId={contact.chatroom_id}
                     style={{
                       width: "1vw",
                       height: "1vw",
