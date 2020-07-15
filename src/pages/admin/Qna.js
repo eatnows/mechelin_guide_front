@@ -1,15 +1,15 @@
 import React, { useState, useEffect } from "react";
 import Axios from "util/axios";
-import { Pagination, Menu, Dropdown, Button } from "antd";
-import { DownOutlined } from "@ant-design/icons";
-import { NavLink } from "react-router-dom";
+import { Pagination, Input } from "antd";
+import Search from "antd/lib/input/Search";
 
 const Qna = (props) => {
   const [data, setData] = useState([]);
-  const [dataCount, setDataCount] = useState(5);
+  const [dataCount, setDataCount] = useState(10);
   const [startPage, setStartPage] = useState(0);
   const [totalCount, setTotalCount] = useState(0);
-  const [authority, setAuthority] = useState([]);
+  const [showInput, setShowInput] = useState(false);
+  const [reply, setReply] = useState(false);
   useEffect(() => {
     props.getState(false);
     showPageCount();
@@ -20,58 +20,47 @@ const Qna = (props) => {
     getList();
   }, [startPage]);
 
-  /*권한 정렬 */
-  const sortCreatedAt = (e) => {
-    console.log(e.key);
-    if (e.key === "0") {
-      showPageCount();
+  /*문의 유저 검색 */
+  const searchAskUser = (v, e) => {
+    e.preventDefault();
+    if (v === "") {
       getList();
     } else {
       const url =
-        "/admin/report/sortdata?startPage=" +
+        "/admin/ask/searchdata?searchData=" +
+        v +
+        "&startPage=" +
         startPage +
         "&dataCount=" +
         dataCount;
       Axios.get(url)
         .then((res) => {
           setData(res.data);
+          setTotalCount(data.length);
         })
         .catch((err) => {
-          console.log("sort created_at 에러:" + err);
+          console.log("search result error:" + err);
         });
     }
   };
 
-  const authorityMenu = (
-    <Menu style={{ textAlign: "center" }} onClick={sortCreatedAt}>
-      <Menu.Item key="0">
-        <span style={{ cursor: "pointer", fontSize: "12px" }}>과거순</span>
-      </Menu.Item>
-      <br />
-      <Menu.Item key="1">
-        <span style={{ cursor: "pointer", fontSize: "12px" }}>최신순</span>
-      </Menu.Item>
-    </Menu>
-  );
-
   /*전체 데이터 개수 */
   const showPageCount = () => {
-    const url = "/admin/reportcount";
+    const url = "/admin/askcount";
     Axios.get(url)
       .then((res) => {
         setTotalCount(res.data);
         console.log(res.data);
       })
       .catch((err) => {
-        console.log("report count 받아오기 에러:" + err);
+        console.log("ask count 받아오기 에러:" + err);
       });
   };
 
   /*10개씩 데이터 출력 */
   const getList = () => {
     console.log("실행");
-    const url =
-      "/admin/report?startPage=" + startPage + "&dataCount=" + dataCount;
+    const url = "/admin/ask?startPage=" + startPage + "&dataCount=" + dataCount;
     Axios.get(url)
       .then((res) => {
         setData(res.data);
@@ -82,37 +71,22 @@ const Qna = (props) => {
     console.log("겟리스트");
   };
 
-  /*제재 상태 변경 */
-  const changeAuthority = (e) => {
-    console.log(e.target.getAttribute("id"));
+  /*문의글 답변 달기 및 답변 수정 */
+  const answer = (e) => {
+    console.log(e.target.getAttribute("askId"));
     const url =
-      "/admin/report/changeauthority?&id=" +
-      e.target.getAttribute("reportedUserId");
+      "/admin/ask/answer?reply=" +
+      reply +
+      "&id=" +
+      e.target.getAttribute("askId");
     Axios.get(url)
       .then((res) => {
-        setAuthority("ban", data.reported_user_id);
         getList();
+        setShowInput(false);
       })
       .catch((err) => {
         console.log("list 출력 에러:" + err);
       });
-    console.log("겟리스트");
-  };
-
-  /*신고글 삭제*/
-  const deleteReport = (e) => {
-    const url =
-      "/admin/report/deletereport?id=" + e.target.getAttribute("reportId");
-    Axios.get(url)
-      .then((res) => {
-        showPageCount();
-        getList();
-        console.log("삭제완료");
-      })
-      .catch((err) => {
-        console.log("list 출력 에러:" + err);
-      });
-    console.log("겟리스트");
   };
 
   /*페이지 바뀔 때마다 실행 */
@@ -142,18 +116,10 @@ const Qna = (props) => {
             color: "rgba(245,145,45)",
           }}
         >
-          신고된 글 목록
+          1:1 문의글 목록
         </caption>{" "}
         <span style={{ position: "absolute", top: "1.5vw", right: "0" }}>
-          {" "}
-          <Dropdown overlay={authorityMenu} trigger={["click"]}>
-            <span
-              className="ant-dropdown-link"
-              style={{ cursor: "pointer", color: "rgba(0,0,0,.8)" }}
-            >
-              시간순 <DownOutlined />
-            </span>
-          </Dropdown>
+          <Search placeholder="검색" onSearch={searchAskUser} />
         </span>
         <br />
         <table>
@@ -169,7 +135,10 @@ const Qna = (props) => {
               }}
             >
               <th style={{ width: "70px", fontWeight: "bold" }}>구분</th>
-              <th style={{ width: "100px", fontWeight: "bold" }}>신고 번호</th>
+              <th style={{ width: "70px", fontWeight: "bold" }}>문의 번호</th>
+              <th style={{ width: "100px", fontWeight: "bold" }}>
+                문의 유저 번호
+              </th>
               <th
                 style={{
                   padding: "10px 0",
@@ -177,21 +146,13 @@ const Qna = (props) => {
                   fontWeight: "bold",
                 }}
               >
-                신고한
-                <br />
-                유저 번호
+                제목
               </th>
-              <th style={{ width: "120px", fontWeight: "bold" }}>
-                신고당한
-                <br />
-                유저 번호
-              </th>
-              <th style={{ width: "120px", fontWeight: "bold" }}>
-                해당 글 번호
-              </th>
-              <th style={{ width: "300px", fontWeight: "bold" }}>신고 사유</th>
-              <th style={{ width: "200px", fontWeight: "bold" }}>신고 날짜</th>
-              <th style={{ width: "150px", fontWeight: "bold" }}>제재/삭제</th>
+              <th style={{ width: "120px", fontWeight: "bold" }}>내용</th>
+              <th style={{ width: "200px", fontWeight: "bold" }}>문의 날짜</th>
+              <th style={{ width: "120px", fontWeight: "bold" }}>답변</th>
+              <th style={{ width: "120px", fontWeight: "bold" }}>답변일</th>
+              <th style={{ width: "150px", fontWeight: "bold" }}>답변/수정</th>
             </tr>
           </thead>
           <tbody>
@@ -206,34 +167,39 @@ const Qna = (props) => {
                 >
                   <td>{startPage + i + 1}</td>
                   <td>{row.id}</td>
-                  <td>{row.register_user_id}</td>
-                  <td>{row.reported_user_id}</td>
-                  <td>
-                    <NavLink to={`` + row.post_id}>{row.post_id}</NavLink>
-                  </td>
+                  <td>{row.user_id}</td>
+                  <td>{row.subject}</td>
                   <td>{row.content}</td>
                   <td>{row.created_at}</td>
-                  <td style={{}}>
+                  <td>
+                    {showInput === true ? (
+                      <Input
+                        value={reply}
+                        onInput={(e) => setReply(e.target.value)}
+                      />
+                    ) : (
+                      row.reply
+                    )}
+                  </td>
+                  <td>{row.reply_created_at}</td>
+                  <td>
                     <button
                       className="btn"
-                      onClick={changeAuthority}
-                      reportedUserId={row.reported_user_id}
+                      onClick={answer}
+                      askId={row.id}
                       style={{ color: "rgba(245,145,45)", margin: "5px" }}
                     >
-                      {authority === "ban" && row.reported_user_id
-                        ? "제재 완료"
-                        : "제재하기"}
+                      확인
+                    </button>
+                    <button
+                      className="btn"
+                      onClick={() => setShowInput(true)}
+                      askId={row.id}
+                      style={{ color: "rgba(245,145,45)", margin: "5px" }}
+                    >
+                      {row.replay === null ? "답변하기" : "수정하기"}
                     </button>
                     <br />
-                    <button
-                      type="button"
-                      onClick={deleteReport}
-                      reportId={row.id}
-                      className="btn"
-                      style={{ color: "rgba(245,145,45)", marginBottom: "5px" }}
-                    >
-                      삭제하기
-                    </button>
                   </td>
                 </tr>
               );

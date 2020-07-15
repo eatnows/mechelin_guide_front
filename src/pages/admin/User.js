@@ -9,7 +9,6 @@ const User = (props) => {
   const [dataCount, setDataCount] = useState(10);
   const [startPage, setStartPage] = useState(0);
   const [totalCount, setTotalCount] = useState(0);
-  const [searchData, setSearchData] = useState("");
   const [sorting, setSorting] = useState("0");
   const [filtering, setFiltering] = useState("0");
   useEffect(() => {
@@ -40,7 +39,6 @@ const User = (props) => {
     if (v === "") {
       getList();
     } else {
-      setSearchData(v);
       const url =
         "/admin/searchdata?searchData=" +
         v +

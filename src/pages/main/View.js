@@ -10,7 +10,6 @@ import {
   Review,
   Timeline,
   Result,
-  MyList,
 } from "pages/index.js";
 import "css/mainStyle.css";
 import { Input } from "antd";
@@ -333,17 +332,6 @@ class View extends React.Component {
                 listData2={listData2}
                 reivewPageMove={this.reivewPageMove.bind(this)}
                 history={this.props.history}
-              />
-            );
-          }}
-        />
-        <Route
-          path="/mechelin/mylist/:userId"
-          render={() => {
-            return (
-              <MyList
-                getState={this.getState.bind(this)}
-                userId={this.state.userId}
               />
             );
           }}

@@ -9,7 +9,6 @@ const Report = (props) => {
   const [dataCount, setDataCount] = useState(5);
   const [startPage, setStartPage] = useState(0);
   const [totalCount, setTotalCount] = useState(0);
-  const [authority, setAuthority] = useState([]);
   useEffect(() => {
     props.getState(false);
     showPageCount();
@@ -75,11 +74,11 @@ const Report = (props) => {
     Axios.get(url)
       .then((res) => {
         setData(res.data);
+        console.log("겟리스트");
       })
       .catch((err) => {
         console.log("list 출력 에러:" + err);
       });
-    console.log("겟리스트");
   };
 
   /*제재 상태 변경 */
@@ -90,13 +89,11 @@ const Report = (props) => {
       e.target.getAttribute("reportedUserId");
     Axios.get(url)
       .then((res) => {
-        setAuthority("ban");
         getList();
       })
       .catch((err) => {
         console.log("list 출력 에러:" + err);
       });
-    console.log("겟리스트");
   };
 
   /*신고글 삭제*/
@@ -112,7 +109,6 @@ const Report = (props) => {
       .catch((err) => {
         console.log("list 출력 에러:" + err);
       });
-    console.log("겟리스트");
   };
 
   /*페이지 바뀔 때마다 실행 */
