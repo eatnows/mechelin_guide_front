@@ -31,20 +31,8 @@ let categoryFilter = ["한식", "양식", "중식", "일식"];
 let blacklist = false;
 let render = 0;
 let socket = null;
+let page = 10;
 
-// const ioOptions = {
-//   root: null,
-//   threshold: 1,
-// };
-// const lastChild = () => this.scroll;
-// const handleInfiniteScrolling = (entries, observer) => {
-//   const $last = [...entries].pop();
-//   if ($last.isIntersecting) {
-//   }
-// };
-
-// const io = new IntersectionObserver(handleInfiniteScrolling, ioOptions);
-// io.observe(lastChild());
 class FullMap extends React.Component {
   constructor(props) {
     super();
@@ -427,6 +415,7 @@ class FullMap extends React.Component {
 
   /*친구추가 DM 보이게 */
   changeDm = (e, data, chatLog) => {
+    page = 10;
     const chatLogReverse = chatLog.reverse();
     this.setState({
       dm: e,
@@ -442,8 +431,7 @@ class FullMap extends React.Component {
   /*
    * 메세지 전송
    */
-  onClickMessageSend = () => {
-    console.log("메시지 전송");
+  onClickMessageSend = (e) => {
     // this.state.socket.send(this.state.sendMessage);
     let socketMsg = `chat,${sessionStorage.getItem("userId")},${
       this.state.dmUserId
@@ -457,7 +445,9 @@ class FullMap extends React.Component {
       }),
       sendMessage: "",
     });
-    this.div.scrollTop = this.div.scrollHeight;
+    setTimeout(() => {
+      this.div.scrollTop = this.div.scrollHeight;
+    }, 100);
     this.TextArea.focus();
   };
 
@@ -470,16 +460,12 @@ class FullMap extends React.Component {
         "userId"
       )}`
     );
-    // this.setState({
-    //   socket: ws,
-    // });
     socket = ws;
     ws.onopen = () => {
       console.log("Info : connection opened");
     };
 
     ws.onmessage = (event) => {
-      console.log("ReceiveMessage : ", event.data + "\n");
       let message = event.data.split(",");
       if (message[1] === this.state.chatRoomId) {
         this.setState({
@@ -491,7 +477,6 @@ class FullMap extends React.Component {
         });
       }
       this.div.scrollTop = this.div.scrollHeight;
-      console.log(this.state.dmContent);
     };
 
     ws.onclose = (event) => {
@@ -533,7 +518,6 @@ class FullMap extends React.Component {
   };
 
   onScrollInfinity = () => {
-    console.log("이벤트실행");
     let scrollHeight = Math.max(
       this.div.scrollHeight,
       document.body.scrollHeight
@@ -542,7 +526,24 @@ class FullMap extends React.Component {
     let clientHeight = this.div.clientHeight;
     let scrollBot = scrollHeight - (scrollTop + clientHeight);
     if (scrollBot + clientHeight === scrollHeight) {
-      console.log("ㅇ스크롤이벤트");
+      page += 10;
+      const url = `/chat/log?chatroom_id=${this.state.chatRoomId}&page=${page}`;
+      Axios.get(url)
+        .then((res) => {
+          console.log(res.data);
+          setTimeout(() => {
+            if (res.data.length !== this.state.dmContent.length) {
+              this.setState({
+                dmContent: res.data.reverse(),
+              });
+              // 스크롤 바 중간쯤으로 이동
+              this.div.scrollTop = 280;
+            }
+          }, 200);
+        })
+        .catch((err) => {
+          console.log(err);
+        });
     }
   };
 

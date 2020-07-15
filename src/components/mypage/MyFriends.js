@@ -115,7 +115,7 @@ const MyFriends = (props) => {
       chatRoomId: chatRoomId,
     };
 
-    const url = `/chat/log?chatroom_id=${chatRoomId}&page=${0}`;
+    const url = `/chat/log?chatroom_id=${chatRoomId}&page=${10}`;
     Axios.get(url)
       .then((res) => {
         console.log(res.data);
