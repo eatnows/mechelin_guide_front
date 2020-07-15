@@ -1,15 +1,16 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import Axios from "util/axios";
 import { Pagination, Input } from "antd";
 import Search from "antd/lib/input/Search";
+import TextArea from "antd/lib/input/TextArea";
 
 const Qna = (props) => {
   const [data, setData] = useState([]);
-  const [dataCount, setDataCount] = useState(10);
+  const [dataCount, setDataCount] = useState(5);
   const [startPage, setStartPage] = useState(0);
   const [totalCount, setTotalCount] = useState(0);
-  const [showInput, setShowInput] = useState(false);
-  const [reply, setReply] = useState(false);
+  const [askId, setAskId] = useState("");
+  const [reply, setReply] = useState("");
   useEffect(() => {
     props.getState(false);
     showPageCount();
@@ -51,6 +52,7 @@ const Qna = (props) => {
       .then((res) => {
         setTotalCount(res.data);
         console.log(res.data);
+        console.log("토탈카운트" + totalCount);
       })
       .catch((err) => {
         console.log("ask count 받아오기 에러:" + err);
@@ -59,30 +61,30 @@ const Qna = (props) => {
 
   /*10개씩 데이터 출력 */
   const getList = () => {
-    console.log("실행");
     const url = "/admin/ask?startPage=" + startPage + "&dataCount=" + dataCount;
     Axios.get(url)
       .then((res) => {
         setData(res.data);
+        console.log("겟리스트");
+        console.log(res.data);
       })
       .catch((err) => {
         console.log("list 출력 에러:" + err);
       });
-    console.log("겟리스트");
   };
 
   /*문의글 답변 달기 및 답변 수정 */
   const answer = (e) => {
-    console.log(e.target.getAttribute("askId"));
+    console.log(e.target.getAttribute("reply"));
     const url =
-      "/admin/ask/answer?reply=" +
-      reply +
+      "/admin/ask/answer?answer=" +
+      e.target.getAttribute("reply") +
       "&id=" +
       e.target.getAttribute("askId");
     Axios.get(url)
       .then((res) => {
         getList();
-        setShowInput(false);
+        setReply("");
       })
       .catch((err) => {
         console.log("list 출력 에러:" + err);
@@ -103,7 +105,7 @@ const Qna = (props) => {
           width: "1000px",
           position: "absolute",
           left: "50%",
-          top: "4vw",
+          top: "5vw",
           transform: "translateX(-50%)",
           textAlign: "center",
         }}
@@ -130,36 +132,37 @@ const Qna = (props) => {
                 textAlign: "center",
                 height: "50px",
                 fontWeight: "bold",
-
                 fontSize: "15px",
               }}
             >
               <th style={{ width: "70px", fontWeight: "bold" }}>구분</th>
-              <th style={{ width: "70px", fontWeight: "bold" }}>문의 번호</th>
-              <th style={{ width: "100px", fontWeight: "bold" }}>
+              <th style={{ width: "70px", fontWeight: "bold" }}>
+                문의
+                <br /> 번호
+              </th>
+              <th style={{ width: "70px", fontWeight: "bold" }}>
                 문의 유저 번호
               </th>
               <th
                 style={{
-                  padding: "10px 0",
-                  width: "120px",
+                  width: "150px",
                   fontWeight: "bold",
                 }}
               >
                 제목
               </th>
-              <th style={{ width: "120px", fontWeight: "bold" }}>내용</th>
-              <th style={{ width: "200px", fontWeight: "bold" }}>문의 날짜</th>
-              <th style={{ width: "120px", fontWeight: "bold" }}>답변</th>
+              <th style={{ width: "200px", fontWeight: "bold" }}>내용</th>
+              <th style={{ width: "120px", fontWeight: "bold" }}>문의일</th>
+              <th style={{ width: "200px", fontWeight: "bold" }}>답변</th>
               <th style={{ width: "120px", fontWeight: "bold" }}>답변일</th>
-              <th style={{ width: "150px", fontWeight: "bold" }}>답변/수정</th>
+              <th style={{ width: "120px", fontWeight: "bold" }}>답변/수정</th>
             </tr>
           </thead>
           <tbody>
             {[...data].map((row, i) => {
               return (
                 <tr
-                  key={i}
+                  key={row.id}
                   style={{
                     border: "1px solid rgba(0,0,0,.2)",
                     textAlign: "center",
@@ -171,35 +174,22 @@ const Qna = (props) => {
                   <td>{row.subject}</td>
                   <td>{row.content}</td>
                   <td>{row.created_at}</td>
-                  <td>
-                    {showInput === true ? (
-                      <Input
-                        value={reply}
-                        onInput={(e) => setReply(e.target.value)}
-                      />
-                    ) : (
-                      row.reply
-                    )}
-                  </td>
+                  <td>{row.reply}</td>
                   <td>{row.reply_created_at}</td>
                   <td>
                     <button
                       className="btn"
-                      onClick={answer}
+                      reply={row.reply}
+                      onClick={(e) => {
+                        e.preventDefault();
+                        setAskId(row.id);
+                        setReply(e.target.getAttribute("reply"));
+                      }}
                       askId={row.id}
                       style={{ color: "rgba(245,145,45)", margin: "5px" }}
                     >
-                      확인
+                      {row.reply === null ? "답변하기" : "수정하기"}
                     </button>
-                    <button
-                      className="btn"
-                      onClick={() => setShowInput(true)}
-                      askId={row.id}
-                      style={{ color: "rgba(245,145,45)", margin: "5px" }}
-                    >
-                      {row.replay === null ? "답변하기" : "수정하기"}
-                    </button>
-                    <br />
                   </td>
                 </tr>
               );
@@ -213,11 +203,78 @@ const Qna = (props) => {
         onChange={nextPage}
         style={{
           position: "absolute",
-          bottom: "4vw",
+          bottom: "16.5vw",
           left: "50%",
           transform: "translateX(-50%)",
         }}
-      />
+      />{" "}
+      <div
+        style={{
+          width: "1000px",
+          position: "absolute",
+          left: "50%",
+          bottom: "5vw",
+          transform: "translateX(-50%)",
+          textAlign: "center",
+          height: "8vw",
+          backgroundColor: "rgba(0,0,0,.1)",
+          borderRadius: "20px",
+        }}
+      >
+        <caption
+          style={{
+            position: "absolute",
+            fontWeight: "bold",
+            fontSize: "20px",
+            color: "rgba(245,145,45)",
+            float: "left",
+            left: "2.5%",
+            bottom: "2.3vw",
+          }}
+        >
+          답변하기
+        </caption>{" "}
+        <table
+          style={{
+            position: "absolute",
+            left: "12%",
+            bottom: "2vw",
+            float: "left",
+          }}
+        >
+          <tbody>
+            <tr>
+              <td>
+                {" "}
+                <TextArea
+                  value={reply}
+                  onInput={(e) => {
+                    e.preventDefault();
+                    setReply(e.target.value);
+                    console.log(askId);
+                  }}
+                  style={{
+                    width: "750px",
+                    marginRight: "30px",
+                    resize: "none",
+                  }}
+                />
+              </td>
+              <td>
+                <button
+                  className="btn"
+                  askId={askId}
+                  reply={reply}
+                  onClick={answer}
+                  style={{ color: "rgba(245,145,45)", margin: "5px" }}
+                >
+                  확인
+                </button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
     </div>
   );
 };

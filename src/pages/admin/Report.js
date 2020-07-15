@@ -204,7 +204,9 @@ const Report = (props) => {
                   <td>{row.register_user_id}</td>
                   <td>{row.reported_user_id}</td>
                   <td>
-                    <NavLink to={`` + row.post_id}>{row.post_id}</NavLink>
+                    <NavLink to={`/mechelin/review/` + row.post_id}>
+                      {row.post_id}
+                    </NavLink>
                   </td>
                   <td>{row.content}</td>
                   <td>{row.created_at}</td>
