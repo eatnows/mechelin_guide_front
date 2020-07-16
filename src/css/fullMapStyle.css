@@ -1,18 +1,18 @@
 /*하단 메뉴바*/
 .menuBall {
-  width: 10vw;
-  height: 10vw;
-  padding-top: 1.5vh;
+  width: 13vw;
+  height: 13vw;
+  padding-top: 3vh;
   text-align: center;
   color: rgba(255, 255, 255);
   font-weight: normal;
   background-color: rgba(245, 145, 45, 0.9);
   border-radius: 50%;
   position: fixed;
-  bottom: -14%;
+  bottom: -17%;
   left: 50%;
   transform: translateX(-50%);
-  font-size: 35px;
+  font-size: 40px;
   z-index: 1;
   box-shadow: 3px 3px 10px #999;
 }
@@ -62,7 +62,6 @@
   box-shadow: 3px 3px 10px #999;
   border-radius: 50%;
   position: fixed;
-  z-index: 0.5;
   line-height: 5vw;
   font-family: "NEXON Lv2 Gothic Bold";
   transition: all 0.7s;
@@ -136,4 +135,24 @@
   margin: 0 2px;
   cursor: pointer;
   vertical-align: top;
+}
+
+/*친구추가 모달*/
+.turnOrange {
+  color: rgba(0, 0, 0, 0.5);
+  transition: all 0.5s;
+}
+
+.turnOrange:hover {
+  color: rgba(245, 145, 45);
+}
+
+/*DM 창*/
+.hideDm {
+  opacity: 0;
+  transition: all 0.3s;
+}
+.showDm {
+  opacity: 1;
+  transition: all 0.3s 0.5s;
 }

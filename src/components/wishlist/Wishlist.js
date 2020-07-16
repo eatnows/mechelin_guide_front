@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import "antd/dist/antd.css";
 import { Pagination, Button, Modal } from "antd";
 import Axios from "util/axios";
@@ -52,7 +52,7 @@ const WishlistComponent = (props) => {
   return (
     <div>
       <div>
-        <table style={{ width: "34vw", textAlign: "left" }}>
+        <table style={{ marginTop: "-.5vw", width: "34vw", textAlign: "left" }}>
           {[...props.result].map((contact, i) => {
             return (
               <tr>
@@ -89,7 +89,14 @@ const WishlistComponent = (props) => {
           })}
         </table>
       </div>{" "}
-      <div style={{ marginTop: "1vw", textAlign: "center" }}>
+      <div
+        style={{
+          position: "absolute",
+          left: "34.5vw",
+          bottom: "4vw",
+          textAlign: "center",
+        }}
+      >
         <Pagination
           size="small"
           defaultCurrent={1}

@@ -131,10 +131,17 @@ const MyListComponent = (props) => {
                 </td>
               </tr>
             );
-          })}{" "}
+          })}
         </table>
       </div>
-      <div style={{ marginTop: "1vw", textAlign: "center" }}>
+      <div
+        style={{
+          position: "absolute",
+          left: "50%",
+          bottom: "5vw",
+          transform: "translateX(-50%)",
+        }}
+      >
         <Pagination
           size="small"
           defaultCurrent={1}

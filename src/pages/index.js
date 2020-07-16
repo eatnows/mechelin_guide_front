@@ -1,4 +1,7 @@
 export { default as Home } from "./Home";
+export { default as User } from "pages/admin/User";
+export { default as Report } from "pages/admin/Report";
+export { default as Qna } from "pages/admin/Qna";
 export { default as Login } from "pages/login/Login";
 export { default as ChangePwd } from "pages/login/ChangePwd";
 export { default as SignUp } from "pages/signup/SignUp";
@@ -8,7 +11,6 @@ export { default as FAQ } from "pages/customer_center/FAQ";
 export { default as QnA } from "pages/customer_center/QnA";
 export { default as MyPage } from "pages/mypage/MyPage";
 export { default as WishList } from "pages/mypage/WishList";
-export { default as MyList } from "pages/mypage/MyList";
 export { default as NewsFeed } from "pages/post/NewsFeed";
 export { default as Comment } from "pages/post/Comment";
 export { default as Review } from "pages/post/Review";

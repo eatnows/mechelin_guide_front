@@ -1,12 +1,12 @@
 import { useState, useEffect, useCallback } from "react";
 
-const baseOption = {
-  root: null,
-  threshold: 0.5,
-  rootMargin: "0px",
-};
 const useIntersect = (onIntersect, option) => {
   const [ref, setRef] = useState(null);
+  const baseOption = {
+    root: null,
+    threshold: 1.0,
+    rootMargin: "0",
+  };
   const checkIntersect = useCallback(([entry], observer) => {
     if (entry.isIntersecting) {
       onIntersect(entry, observer);
