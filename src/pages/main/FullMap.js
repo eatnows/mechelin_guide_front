@@ -126,7 +126,6 @@ class FullMap extends React.Component {
       // optional
       // add callback when a image have been chosen
       checkBeforeSend: (file, next) => {
-        console.log("ceckbeforesend");
         console.log(file);
         next(file); // go back to component and send to the server
       },
@@ -530,7 +529,6 @@ class FullMap extends React.Component {
       const url = `/chat/log?chatroom_id=${this.state.chatRoomId}&page=${page}`;
       Axios.get(url)
         .then((res) => {
-          console.log(res.data);
           setTimeout(() => {
             if (res.data.length !== this.state.dmContent.length) {
               this.setState({

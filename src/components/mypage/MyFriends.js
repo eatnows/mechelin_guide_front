@@ -33,7 +33,6 @@ const MyFriends = (props) => {
     )}&pageStart=${pageStart}&perPageNum=${perPageNum}`;
     Axios.get(url)
       .then((res) => {
-        console.log(res.data);
         setFriendsData(res.data);
       })
       .catch((err) => {
@@ -58,11 +57,7 @@ const MyFriends = (props) => {
    * 페이지 번호가 변경될때 실행되는 메소드
    */
   const onChangePage = (value) => {
-    console.log(value);
     setPageStart((value - 1) * perPageNum);
-    //pageStart = value * 5 - 1;
-    console.log(pageStart);
-    // setRender(render + 1);
   };
   /*
    * 친구 닉네임 클릭시
@@ -89,7 +84,6 @@ const MyFriends = (props) => {
           target_user_id: friendUserId,
         })
           .then((res) => {
-            console.log(res);
             selectMyFriends();
             myfriendsCount();
           })
@@ -118,9 +112,7 @@ const MyFriends = (props) => {
     const url = `/chat/log?chatroom_id=${chatRoomId}&page=${10}`;
     Axios.get(url)
       .then((res) => {
-        console.log(res.data);
         const chatLog = res.data;
-
         props.changeDm(true, userData, chatLog);
       })
       .catch((err) => {
