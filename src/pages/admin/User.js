@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import Axios from "util/axios";
-import { Pagination, Menu, Dropdown, Input } from "antd";
+import { Pagination, Menu, Dropdown, Input, Cascader } from "antd";
 import Search from "antd/lib/input/Search";
 import { DownOutlined } from "@ant-design/icons";
 
@@ -11,28 +11,37 @@ const User = (props) => {
   const [totalCount, setTotalCount] = useState(0);
   const [sorting, setSorting] = useState("0");
   const [filtering, setFiltering] = useState("0");
+  const [option, setOption] = useState([]);
   useEffect(() => {
     props.getState(false);
     showPageCount();
     getList();
   }, []);
 
-  useEffect(() => {
-    if (sorting === "0") {
-      if (filtering !== "0") {
-        filterDropUser(filtering);
-      } else {
-        getList();
-      }
-    } else {
-      if (filtering !== "0") {
-        filterDropUser(filtering);
-      } else {
-        sortAuthority(sorting);
-      }
-    }
-  }, [startPage]);
+  useEffect(() => {}, [startPage]);
 
+  const options = [
+    {
+      value: "id",
+      label: "유저 번호",
+    },
+    {
+      value: "email",
+      label: "이메일",
+    },
+    {
+      value: "created_at",
+      label: "가입일",
+    },
+  ];
+
+  const changeOptions = (v) => {
+    setOption(v[0]);
+    console.log(option);
+  };
+  const dropdownRender = (menus) => {
+    return <div style={{ width: "50px", height: "10px" }}>{menus}</div>;
+  };
   /*user 검색 */
   const searchUser = (v, e) => {
     e.preventDefault();
@@ -40,7 +49,9 @@ const User = (props) => {
       getList();
     } else {
       const url =
-        "/admin/searchdata?searchData=" +
+        "/admin/searchdata?option=" +
+        option +
+        "&searchData=" +
         v +
         "&startPage=" +
         startPage +
@@ -48,8 +59,8 @@ const User = (props) => {
         dataCount;
       Axios.get(url)
         .then((res) => {
-          setData(res.data);
           setTotalCount(data.length);
+          setData(res.data);
         })
         .catch((err) => {
           console.log("search result error:" + err);
@@ -60,12 +71,14 @@ const User = (props) => {
   /*권한 정렬 */
   const sortAuthority = (e) => {
     console.log(e.key);
+    setStartPage(0);
     if (e.key === "0") {
       showPageCount();
       getList();
       setSorting("0");
+      setFiltering("0");
     } else {
-      const value = e.key !== "1" || "2" ? sorting : e.key;
+      const value = e.key === null ? sorting : e.key;
       const url =
         "/admin/sortdata?sorting=" +
         value +
@@ -93,12 +106,14 @@ const User = (props) => {
   /*탈퇴 여부 필터링 */
   const filterDropUser = (e) => {
     console.log(e.key);
+    setStartPage(0);
     if (e.key === "0") {
       showPageCount();
       getList();
+      setSorting("0");
       setFiltering("0");
     } else {
-      const value = e.key !== "1" || "2" ? filtering : e.key;
+      const value = e.key === null ? filtering : e.key;
       const url =
         "/admin/filterdata?sorting=" +
         sorting +
@@ -110,8 +125,6 @@ const User = (props) => {
         dataCount;
       Axios.get(url)
         .then((res) => {
-          setData(res.data);
-          setTotalCount(data.length);
           if (e.key === "1") {
             setFiltering("1");
           } else if (e.key === "2") {
@@ -119,6 +132,8 @@ const User = (props) => {
           } else {
             setFiltering(e);
           }
+          showFilteredUserCount();
+          setData(res.data);
         })
         .catch((err) => {
           console.log("filter data 에러:" + err);
@@ -126,10 +141,22 @@ const User = (props) => {
     }
   };
 
+  /*전체 데이터 개수 */
+  const showFilteredUserCount = () => {
+    const url = "/admin/filteredusercount?filtering=" + filtering;
+    Axios.get(url)
+      .then((res) => {
+        setTotalCount(res.data);
+        console.log(totalCount);
+      })
+      .catch((err) => {
+        console.log("filtered user count 받아오기 에러:" + err);
+      });
+  };
   const authorityMenu = (
     <Menu style={{ textAlign: "center" }} onClick={sortAuthority}>
       <Menu.Item key="0">
-        <span style={{ cursor: "pointer", fontSize: "12px" }}>기본</span>
+        <span style={{ cursor: "pointer", fontSize: "12px" }}>기본 정렬</span>
       </Menu.Item>
       <br />
       <Menu.Item key="1">
@@ -141,6 +168,7 @@ const User = (props) => {
       </Menu.Item>
     </Menu>
   );
+
   const dropUserMenu = (
     <Menu style={{ textAlign: "center" }} onClick={filterDropUser}>
       <Menu.Item key="0">
@@ -148,10 +176,10 @@ const User = (props) => {
       </Menu.Item>
       <br />
       <Menu.Item key="1">
-        <span style={{ cursor: "pointer", fontSize: "12px" }}>탈퇴</span>
+        <span style={{ cursor: "pointer", fontSize: "12px" }}>탈퇴 유저</span>
       </Menu.Item>
       <Menu.Item key="2">
-        <span style={{ cursor: "pointer", fontSize: "12px" }}>정상</span>
+        <span style={{ cursor: "pointer", fontSize: "12px" }}>정상 유저</span>
       </Menu.Item>
     </Menu>
   );
@@ -219,6 +247,17 @@ const User = (props) => {
           placeholder="검색"
           onSearch={searchUser}
           style={{ width: 200, marginTop: "30px", float: "right" }}
+        />
+        <Cascader
+          options={options}
+          onChange={changeOptions}
+          placeholder="구분"
+          dropdownRender={dropdownRender}
+          style={{
+            width: "100px",
+            float: "right",
+            marginTop: "30px",
+          }}
         />
         <div style={{ float: "left", clear: "both", marginBottom: "10px" }}>
           <span>
@@ -305,6 +344,9 @@ const User = (props) => {
       <Pagination
         size="small"
         total={totalCount}
+        defaultCurrent={1}
+        defaultPageSize={dataCount}
+        current={startPage}
         onChange={nextPage}
         style={{
           position: "absolute",

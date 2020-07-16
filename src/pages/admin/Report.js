@@ -247,6 +247,9 @@ const Report = (props) => {
       <Pagination
         size="small"
         total={totalCount}
+        defaultCurrent={1}
+        defaultPageSize={dataCount}
+        current={startPage}
         onChange={nextPage}
         style={{
           position: "absolute",
