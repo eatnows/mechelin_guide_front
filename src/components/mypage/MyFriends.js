@@ -12,7 +12,7 @@ const MyFriends = (props) => {
   const [render, setRender] = useState("");
   const [unfollow, setUnfollow] = useState(false);
   const [Y, setY] = useState("");
-
+  const [friendUserId, setFriendUserId] = useState("");
   useEffect(() => {
     myfriendsCount();
     selectMyFriends();
@@ -33,7 +33,6 @@ const MyFriends = (props) => {
     )}&pageStart=${pageStart}&perPageNum=${perPageNum}`;
     Axios.get(url)
       .then((res) => {
-        console.log(res.data);
         setFriendsData(res.data);
       })
       .catch((err) => {
@@ -58,11 +57,7 @@ const MyFriends = (props) => {
    * 페이지 번호가 변경될때 실행되는 메소드
    */
   const onChangePage = (value) => {
-    console.log(value);
     setPageStart((value - 1) * perPageNum);
-    //pageStart = value * 5 - 1;
-    console.log(pageStart);
-    // setRender(render + 1);
   };
   /*
    * 친구 닉네임 클릭시
@@ -74,7 +69,7 @@ const MyFriends = (props) => {
    * 삭제 버튼 클릭시 실행되는 함수
    */
   const showDeleteConfirm = (e) => {
-    const user_id = e.target.getAttribute("friendsUserId");
+    //const user_id = e.target.getAttribute("friendsUserId");
     confirm({
       title: "친구 삭제",
       icon: <ExclamationCircleOutlined />,
@@ -86,11 +81,11 @@ const MyFriends = (props) => {
         const url = `/friends/deletefriend`;
         Axios.post(url, {
           request_user_id: sessionStorage.getItem("userId"),
-          target_user_id: user_id,
+          target_user_id: friendUserId,
         })
           .then((res) => {
-            console.log(res);
-            setRender(render + 1);
+            selectMyFriends();
+            myfriendsCount();
           })
           .catch((error) => {
             console.log(error);
@@ -105,17 +100,29 @@ const MyFriends = (props) => {
     const friendsUserId = e.target.getAttribute("friendsUserId");
     const friendsNickname = e.target.getAttribute("friendsNickname");
     const friendsIntroduce = e.target.getAttribute("friendsIntroduce");
+    const chatRoomId = e.target.getAttribute("chatRoomId");
 
     const userData = {
-      userId: friendsUserId,
+      user_id: friendsUserId,
       nickname: friendsNickname,
       introduce: friendsIntroduce,
+      chatRoomId: chatRoomId,
     };
-    props.changeDm(true, userData);
+
+    const url = `/chat/log?chatroom_id=${chatRoomId}&page=${10}`;
+    Axios.get(url)
+      .then((res) => {
+        const chatLog = res.data;
+        props.changeDm(true, userData, chatLog);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
   };
 
   /*더보기 버튼 클릭시 언팔하기 버튼 표시 */
   const showUnfollowing = (e) => {
+    setFriendUserId(e.target.getAttribute("friendsUserId"));
     setY(e.clientY);
     if (unfollow === true) {
       setUnfollow(false);
@@ -156,6 +163,7 @@ const MyFriends = (props) => {
                     friendsUserId={contact.id}
                     friendsNickname={contact.nickname}
                     friendsIntroduce={contact.introduce}
+                    chatRoomId={contact.chatroom_id}
                     style={{
                       width: "1vw",
                       height: "1vw",

@@ -30,6 +30,9 @@ const categoryOptions = [
 let categoryFilter = ["한식", "양식", "중식", "일식"];
 let blacklist = false;
 let render = 0;
+let socket = null;
+let page = 10;
+
 class FullMap extends React.Component {
   constructor(props) {
     super();
@@ -71,8 +74,11 @@ class FullMap extends React.Component {
     dmUserId: "",
     dmNickname: "",
     dmIntroduce: "",
+    chatRoomId: "",
+    sendMessage: "",
+    // socket: "",
+    dmContent: [{}],
   };
-
   modules = {
     toolbar: {
       container: [
@@ -120,7 +126,6 @@ class FullMap extends React.Component {
       // optional
       // add callback when a image have been chosen
       checkBeforeSend: (file, next) => {
-        console.log("ceckbeforesend");
         console.log(file);
         next(file); // go back to component and send to the server
       },
@@ -149,6 +154,11 @@ class FullMap extends React.Component {
     "image",
     "video",
   ];
+
+  componentDidMount() {
+    this.socketConnect();
+  }
+
   /*
    * 내용을 기입했을때 실행
    */
@@ -403,14 +413,138 @@ class FullMap extends React.Component {
   };
 
   /*친구추가 DM 보이게 */
-  changeDm = (e, data) => {
+  changeDm = (e, data, chatLog) => {
+    page = 10;
+    const chatLogReverse = chatLog.reverse();
     this.setState({
       dm: e,
-      dmUserId: data.userId,
+      dmUserId: data.user_id,
       dmNickname: data.nickname,
       dmIntroduce: data.introduce,
+      dmContent: chatLogReverse,
+      chatRoomId: data.chatRoomId,
+    });
+    this.div.scrollTop = this.div.scrollHeight;
+  };
+
+  /*
+   * 메세지 전송
+   */
+  onClickMessageSend = (e) => {
+    // this.state.socket.send(this.state.sendMessage);
+    let socketMsg = `chat,${sessionStorage.getItem("userId")},${
+      this.state.dmUserId
+    },${this.state.sendMessage},${this.state.chatRoomId}`;
+    socket.send(socketMsg);
+    this.setState({
+      dmContent: this.state.dmContent.concat({
+        ...this.state.dmContent,
+        user_id: sessionStorage.getItem("userId"),
+        content: this.state.sendMessage,
+      }),
+      sendMessage: "",
+    });
+    setTimeout(() => {
+      this.div.scrollTop = this.div.scrollHeight;
+    }, 100);
+    this.TextArea.focus();
+  };
+
+  /*
+   * 소켓 연결
+   */
+  socketConnect = () => {
+    const ws = new WebSocket(
+      `ws://localhost:9000/mechelin/chat?userId=${sessionStorage.getItem(
+        "userId"
+      )}`
+    );
+    socket = ws;
+    ws.onopen = () => {
+      console.log("Info : connection opened");
+    };
+
+    ws.onmessage = (event) => {
+      let message = event.data.split(",");
+      if (message[1] === this.state.chatRoomId) {
+        this.setState({
+          dmContent: this.state.dmContent.concat({
+            ...this.state.dmContent,
+            user_id: message[2],
+            content: message[0],
+          }),
+        });
+      }
+      this.div.scrollTop = this.div.scrollHeight;
+    };
+
+    ws.onclose = (event) => {
+      console.log("Info: connection closed.");
+      setTimeout(() => {
+        this.socketConnect();
+      }, 1000);
+    };
+    ws.onerror = (err) => {
+      console.log("Error : ", err);
+    };
+  };
+
+  /*
+   * 입력한 메시지
+   */
+  onChangeMessage = (e) => {
+    this.setState({
+      sendMessage: e.target.value,
     });
   };
+
+  /*
+   * 친구요청 버튼을 눌렀을 시
+   */
+  onClickFriendRequest = () => {
+    const url = `/friends/addfriend`;
+
+    Axios.post(url, {
+      request_user_id: sessionStorage.getItem("userId"),
+      email: this.state.friendEmail,
+    })
+      .then((response) => {
+        alert("친구신청 메일이 발송되었습니다.");
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
+
+  onScrollInfinity = () => {
+    let scrollHeight = Math.max(
+      this.div.scrollHeight,
+      document.body.scrollHeight
+    );
+    let scrollTop = Math.max(this.div.scrollTop, document.body.scrollTop);
+    let clientHeight = this.div.clientHeight;
+    let scrollBot = scrollHeight - (scrollTop + clientHeight);
+    if (scrollBot + clientHeight === scrollHeight) {
+      page += 10;
+      const url = `/chat/log?chatroom_id=${this.state.chatRoomId}&page=${page}`;
+      Axios.get(url)
+        .then((res) => {
+          setTimeout(() => {
+            if (res.data.length !== this.state.dmContent.length) {
+              this.setState({
+                dmContent: res.data.reverse(),
+              });
+              // 스크롤 바 중간쯤으로 이동
+              this.div.scrollTop = 280;
+            }
+          }, 200);
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    }
+  };
+
   render() {
     return (
       <div>
@@ -1016,33 +1150,49 @@ class FullMap extends React.Component {
               </div>
               <div
                 className="dialog"
-                style={{ width: "100%", height: "43.5vh" }}
+                style={{ width: "100%", height: "43.5vh", overflow: "auto" }}
+                ref={(ref) => (this.div = ref)}
+                onScroll={this.onScrollInfinity.bind(this)}
               >
-                <div
-                  style={{
-                    borderRadius: "10px",
-                    width: "60%",
-                    height: "3vw",
-                    backgroundColor: "white",
-                    border: "1px solid rgba(245,145,45,.5)",
-                    float: "left",
-                    clear: "both",
-                    margin: ".5vw 0.5vw",
-                  }}
-                ></div>
-                <div
-                  style={{
-                    borderRadius: "10px",
-                    width: "60%",
-                    height: "3vw",
-                    backgroundColor: "rgba(245,145,45,.7)",
-                    float: "right",
-                    clear: "both",
-                    margin: ".5vw 0.5vw",
-                  }}
-                ></div>
+                {[...this.state.dmContent].map((contact, i) => {
+                  return (
+                    <div>
+                      {contact.user_id == sessionStorage.getItem("userId") ? (
+                        <div
+                          style={{
+                            borderRadius: "10px",
+                            width: "60%",
+                            height: "3vw",
+                            backgroundColor: "rgba(245,145,45,.7)",
+                            float: "right",
+                            clear: "both",
+                            margin: ".5vw 0.5vw",
+                          }}
+                        >
+                          {contact.content}
+                        </div>
+                      ) : (
+                        <div
+                          style={{
+                            borderRadius: "10px",
+                            width: "60%",
+                            height: "3vw",
+                            backgroundColor: "white",
+                            border: "1px solid rgba(245,145,45,.5)",
+                            float: "left",
+                            clear: "both",
+                            margin: ".5vw 0.5vw",
+                          }}
+                        >
+                          {contact.content}
+                        </div>
+                      )}
+                    </div>
+                  );
+                })}
               </div>
               <TextArea
+                ref={(ref) => (this.TextArea = ref)}
                 style={{
                   width: "100%",
                   border: "none",
@@ -1051,6 +1201,8 @@ class FullMap extends React.Component {
                   resize: "none",
                   overflow: "hidden",
                 }}
+                onChange={this.onChangeMessage.bind(this)}
+                value={this.state.sendMessage}
               />{" "}
               <span
                 style={{
@@ -1061,8 +1213,14 @@ class FullMap extends React.Component {
               >
                 <img
                   src={plane}
-                  style={{ opacity: ".4", width: "1vw", height: "1vw" }}
+                  style={{
+                    opacity: ".4",
+                    width: "1vw",
+                    height: "1vw",
+                    cursor: "pointer",
+                  }}
                   alt=""
+                  onClick={this.onClickMessageSend.bind(this)}
                 />
               </span>
             </div>
@@ -1151,6 +1309,7 @@ class FullMap extends React.Component {
                   border: "none",
                   backgroundColor: "rgba(245,145,45)",
                 }}
+                onClick={this.onClickFriendRequest.bind(this)}
               >
                 친구 요청
               </button>

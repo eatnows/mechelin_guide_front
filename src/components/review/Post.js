@@ -745,7 +745,10 @@ const ListItem = ({
                         userPlaceId={contact.user_place_id}
                       />
                     )}
-                    {checkWishlist ? (
+
+                    {showBtn ? (
+                      ""
+                    ) : checkWishlist ? (
                       <img
                         src={star}
                         width="28.5"
