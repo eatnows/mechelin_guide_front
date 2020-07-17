@@ -83,7 +83,6 @@ const Report = (props) => {
 
   /*제재 상태 변경 */
   const changeAuthority = (e) => {
-    console.log(e.target.getAttribute("id"));
     const url =
       "/admin/report/changeauthority?&id=" +
       e.target.getAttribute("reportedUserId");

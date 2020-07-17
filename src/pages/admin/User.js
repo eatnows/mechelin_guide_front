@@ -3,14 +3,14 @@ import Axios from "util/axios";
 import { Pagination, Menu, Dropdown, Input, Cascader } from "antd";
 import Search from "antd/lib/input/Search";
 import { DownOutlined } from "@ant-design/icons";
-
+let sorting;
+let filtering;
+let key;
 const User = (props) => {
   const [data, setData] = useState([]);
   const [dataCount, setDataCount] = useState(10);
   const [startPage, setStartPage] = useState(0);
   const [totalCount, setTotalCount] = useState(0);
-  const [sorting, setSorting] = useState("0");
-  const [filtering, setFiltering] = useState("0");
   const [option, setOption] = useState([]);
   useEffect(() => {
     props.getState(false);
@@ -18,7 +18,15 @@ const User = (props) => {
     getList();
   }, []);
 
-  useEffect(() => {}, [startPage]);
+  useEffect(() => {
+    if (sorting !== 0) {
+      sortAuthority(sorting);
+    } else if (filtering !== 0) {
+      filterDropUser(filtering);
+    } else {
+      getList();
+    }
+  }, [startPage]);
 
   const options = [
     {
@@ -70,15 +78,14 @@ const User = (props) => {
 
   /*권한 정렬 */
   const sortAuthority = (e) => {
-    console.log(e.key);
     setStartPage(0);
-    if (e.key === "0") {
+    if (key === 0) {
       showPageCount();
       getList();
-      setSorting("0");
-      setFiltering("0");
+      sorting = 0;
+      filtering = 0;
     } else {
-      const value = e.key === null ? sorting : e.key;
+      const value = sorting !== 0 ? sorting : key;
       const url =
         "/admin/sortdata?sorting=" +
         value +
@@ -89,12 +96,12 @@ const User = (props) => {
       Axios.get(url)
         .then((res) => {
           setData(res.data);
-          if (e.key === "1") {
-            setSorting("1");
-          } else if (e.key === "2") {
-            setSorting("2");
+          if (key === 1) {
+            sorting = 1;
+          } else if (e.key === 2) {
+            sorting = 2;
           } else {
-            setSorting(e);
+            sorting = e;
           }
         })
         .catch((err) => {
@@ -105,19 +112,16 @@ const User = (props) => {
 
   /*탈퇴 여부 필터링 */
   const filterDropUser = (e) => {
-    console.log(e.key);
     setStartPage(0);
-    if (e.key === "0") {
+    if (key === 0) {
       showPageCount();
       getList();
-      setSorting("0");
-      setFiltering("0");
+      sorting = 0;
+      filtering = 0;
     } else {
-      const value = e.key === null ? filtering : e.key;
+      const value = filtering !== 0 ? filtering : key;
       const url =
-        "/admin/filterdata?sorting=" +
-        sorting +
-        "&filtering=" +
+        "/admin/filterdata?filtering=" +
         value +
         "&startPage=" +
         startPage +
@@ -125,12 +129,12 @@ const User = (props) => {
         dataCount;
       Axios.get(url)
         .then((res) => {
-          if (e.key === "1") {
-            setFiltering("1");
-          } else if (e.key === "2") {
-            setFiltering("2");
+          if (key === 1) {
+            filtering = 1;
+          } else if (e.key === 2) {
+            filtering = 2;
           } else {
-            setFiltering(e);
+            filtering = e;
           }
           showFilteredUserCount();
           setData(res.data);
@@ -153,6 +157,11 @@ const User = (props) => {
         console.log("filtered user count 받아오기 에러:" + err);
       });
   };
+
+  const saveKey = (e) => {
+    key = e.target.getAttribute("num");
+  };
+
   const authorityMenu = (
     <Menu style={{ textAlign: "center" }} onClick={sortAuthority}>
       <Menu.Item key="0">
@@ -171,14 +180,14 @@ const User = (props) => {
 
   const dropUserMenu = (
     <Menu style={{ textAlign: "center" }} onClick={filterDropUser}>
-      <Menu.Item key="0">
+      <Menu.Item num="0" onClick={saveKey}>
         <span style={{ cursor: "pointer", fontSize: "12px" }}>전체 보기</span>
       </Menu.Item>
       <br />
-      <Menu.Item key="1">
+      <Menu.Item num="1" onClick={saveKey}>
         <span style={{ cursor: "pointer", fontSize: "12px" }}>탈퇴 유저</span>
       </Menu.Item>
-      <Menu.Item key="2">
+      <Menu.Item num="2" onClick={saveKey}>
         <span style={{ cursor: "pointer", fontSize: "12px" }}>정상 유저</span>
       </Menu.Item>
     </Menu>
@@ -214,7 +223,7 @@ const User = (props) => {
 
   /*페이지 바뀔 때마다 실행 */
   const nextPage = (e) => {
-    setStartPage((e - 1) * dataCount);
+    if (startPage !== e) setStartPage((e - 1) * dataCount);
     console.log(startPage);
   };
 

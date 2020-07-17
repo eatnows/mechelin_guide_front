@@ -502,14 +502,28 @@ class FullMap extends React.Component {
    * 친구요청 버튼을 눌렀을 시
    */
   onClickFriendRequest = () => {
-    const url = `/friends/addfriend`;
-
+    const url = `/friends/confirmfriend`;
     Axios.post(url, {
       request_user_id: sessionStorage.getItem("userId"),
       email: this.state.friendEmail,
     })
-      .then((response) => {
-        alert("친구신청 메일이 발송되었습니다.");
+      .then((res) => {
+        console.log(res.data);
+        if (res.data === 1) {
+          alert("내 친구에겐 친구 신청을 할 수 없습니다.");
+        } else {
+          const url = `/friends/addfriend`;
+          Axios.post(url, {
+            request_user_id: sessionStorage.getItem("userId"),
+            email: this.state.friendEmail,
+          })
+            .then((response) => {
+              alert("친구신청 메일이 발송되었습니다.");
+            })
+            .catch((err) => {
+              console.log(err);
+            });
+        }
       })
       .catch((err) => {
         console.log(err);
@@ -1082,20 +1096,23 @@ class FullMap extends React.Component {
             />
             <div
               style={{
-                width: "14vw",
+                width: this.state.dm === true ? "11vw" : "14vw",
                 height: "59vh",
                 marginLeft: ".5vw",
                 marginRight: this.state.dm === true ? "0" : ".5vw",
                 float: "left",
               }}
             >
-              <MyFriends changeDm={this.changeDm.bind(this)} />
+              <MyFriends
+                dm={this.state.dm}
+                changeDm={this.changeDm.bind(this)}
+              />
             </div>{" "}
             <div
               className={this.state.dm === true ? "showDm" : "hideDm"}
               style={{
                 pointerEvents: this.state.dm === true ? "auto" : "none",
-                width: this.state.dm === true ? "14vw" : "0",
+                width: this.state.dm === true ? "17vw" : "0",
                 height: "59vh",
                 margin: ".8vw .4vw",
                 borderRadius: "10px",
@@ -1150,7 +1167,12 @@ class FullMap extends React.Component {
               </div>
               <div
                 className="dialog"
-                style={{ width: "100%", height: "43.5vh", overflow: "auto" }}
+                style={{
+                  width: "100%",
+                  height: "42.5vh",
+                  overflowY: "auto",
+                  overflowX: "hidden",
+                }}
                 ref={(ref) => (this.div = ref)}
                 onScroll={this.onScrollInfinity.bind(this)}
               >
@@ -1161,12 +1183,14 @@ class FullMap extends React.Component {
                         <div
                           style={{
                             borderRadius: "10px",
-                            width: "60%",
-                            height: "3vw",
                             backgroundColor: "rgba(245,145,45,.7)",
                             float: "right",
                             clear: "both",
-                            margin: ".5vw 0.5vw",
+                            padding: ".1vw .5vw",
+                            margin: ".3vw .5vw",
+                            maxWidth: "60%",
+                            wordBreak: "break-all",
+                            color: "white",
                           }}
                         >
                           {contact.content}
@@ -1175,13 +1199,15 @@ class FullMap extends React.Component {
                         <div
                           style={{
                             borderRadius: "10px",
-                            width: "60%",
-                            height: "3vw",
                             backgroundColor: "white",
                             border: "1px solid rgba(245,145,45,.5)",
                             float: "left",
                             clear: "both",
-                            margin: ".5vw 0.5vw",
+                            padding: ".3vw .5vw",
+                            margin: ".3vw .5vw",
+                            wordBreak: "break-all",
+                            maxWidth: "60%",
+                            color: "rgba(245,145,45,.9)",
                           }}
                         >
                           {contact.content}
