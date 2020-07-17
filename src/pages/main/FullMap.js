@@ -1089,7 +1089,10 @@ class FullMap extends React.Component {
                 float: "left",
               }}
             >
-              <MyFriends changeDm={this.changeDm.bind(this)} />
+              <MyFriends
+                changeDm={this.changeDm.bind(this)}
+                history={this.props.history}
+              />
             </div>{" "}
             <div
               className={this.state.dm === true ? "showDm" : "hideDm"}

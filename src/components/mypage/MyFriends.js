@@ -33,6 +33,8 @@ const MyFriends = (props) => {
     )}&pageStart=${pageStart}&perPageNum=${perPageNum}`;
     Axios.get(url)
       .then((res) => {
+        console.log("친구들 받아오기");
+        console.log(res.data);
         setFriendsData(res.data);
       })
       .catch((err) => {
@@ -63,7 +65,9 @@ const MyFriends = (props) => {
    * 친구 닉네임 클릭시
    */
   const onFriendsClick = (e) => {
+    const friendUserId = e.target.getAttribute("friendsUserId");
     console.log(e.target.getAttribute("friendsUserId"));
+    props.history.push(`/mechelin/timeline/${friendUserId}`);
   };
   /*
    * 삭제 버튼 클릭시 실행되는 함수

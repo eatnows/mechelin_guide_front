@@ -25,6 +25,7 @@ class Timeline extends React.Component {
     const url = `/friends/profile?id=${this.state.profileUser}`;
     Axios.get(url)
       .then((response) => {
+        console.log(response.data);
         this.setState({ profile: response.data });
       })
       .catch((err) => {
