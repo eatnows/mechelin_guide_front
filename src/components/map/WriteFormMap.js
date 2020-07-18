@@ -3,6 +3,7 @@ import React, { useState, useEffect, createRef } from "react";
 import "./WriteFormMapStyle.css";
 import LocationIcon from "images/location-02.png";
 import Axios from "util/axios";
+import { Input } from "antd";
 
 const WriteFormMap2 = (props) => {
   const [latitude, setLatitude] = useState(37.505002);
@@ -460,22 +461,41 @@ const WriteFormMap2 = (props) => {
         <div
           style={{
             width: "220px",
-            height: "130px",
+            height: "150px",
             position: "absolute",
             right: "0",
-            bottom: "0",
+            bottom: "-5px",
             zIndex: "1",
             margin: "10px 10px 230px 0",
             padding: "5px",
-            opacity: "0.9",
-            overflow: "auto",
+            backgroundColor: "rgba(255,255,255,0.8)",
+            borderRadius: "10px 10px 0 0 ",
             display: visible ? "block" : "none",
+            overflow: "hidden",
           }}
           className="bg_white"
         >
-          <p style={{ fontSize: "1.5em", textAlign: "center" }}>근처 맛집</p>
-          <br />
-          <ul id="dbDataList">
+          <p
+            style={{
+              color: "rgba(245,145,45)",
+              padding: "5px",
+              fontSize: "1.2vw",
+              textAlign: "center",
+            }}
+          >
+            근처 맛집
+          </p>
+          <ul
+            id="dbDataList"
+            style={{
+              width: "95%",
+              height: "70%",
+              overflow: "auto",
+              border: "1px solid rgba(245,145,45)",
+              margin: "0 auto",
+              paddingLeft: "3px",
+            }}
+          >
             {dbData.map((contact, i) => (
               <li
                 key={i}
@@ -487,10 +507,14 @@ const WriteFormMap2 = (props) => {
                 style={{
                   cursor: "pointer",
                   width: "180px",
+                  padding: "3px",
                 }}
                 onClick={onClickDbList}
               >
-                {contact.name}
+                <span style={{ fontWeight: "bold", fontSize: ".9vw" }}>
+                  {" "}
+                  {contact.name}
+                </span>
                 <br />
                 {contact.address}
                 <br />
@@ -525,59 +549,161 @@ const WriteFormMap2 = (props) => {
           id="addPlaceName"
           style={{
             width: "220px",
-            height: "130px",
+            height: "200px",
             position: "absolute",
             right: "0",
             bottom: "0",
             zIndex: "1",
             margin: "10px 10px 30px 0",
             padding: "5px",
-            opacity: "0.8",
+            backgroundColor: "rgba(255,255,255,0.8)",
+            borderRadius: "10px",
           }}
           className="bg_white"
         >
-          <p align="center" style={{ fontSize: "12pt" }}>
+          <p
+            align="center"
+            style={{
+              color: "rgba(245,145,45)",
+              padding: "5px",
+              paddingBottom: "0",
+              fontSize: "1.2vw",
+            }}
+          >
             맛집등록
           </p>
-          상호명 :&nbsp;
+          <span
+            style={{
+              color: "rgba(245,145,45)",
+              padding: "5px",
+              fontSize: ".9vw",
+            }}
+          >
+            상호명 :
+          </span>
           <br />
-          <input
+          <Input
             type="text"
             name="placeName"
             ref={addPlaceName}
             onChange={onChangeName}
             value={placeName}
+            placeholder="이름을 적어주세요"
+            style={{
+              height: "2vw",
+              fontSize: ".8vw",
+              marginBottom: "5px",
+            }}
           />
           <br />
-          주소 : <br />
-          {address}
+          <span
+            style={{
+              color: "rgba(245,145,45)",
+              fontSize: ".9vw",
+              padding: "5px",
+              float: "left",
+            }}
+          >
+            {" "}
+            주소 :
+          </span>{" "}
+          <div
+            style={{
+              width: "10.5vw",
+              fontSize: ".9vw",
+              float: "left",
+              marginTop: "5px",
+            }}
+          >
+            {" "}
+            {address === "" ? "지도에서 위치를 클릭하세요." : address}
+          </div>{" "}
           <br />
-          <div style={{ textAlign: "center" }}>
-            <button type="button" onClick={onClickName}>
+          <br />
+          <div
+            style={{
+              textAlign: "center",
+              position: "absolute",
+              right: "50%",
+              bottom: "6%",
+              transform: "translateX(50%)",
+            }}
+          >
+            <button
+              type="button"
+              className="btn"
+              style={{
+                color: "rgba(245,145,45)",
+                padding: "5px",
+                fontSize: "1vw",
+              }}
+              onClick={onClickName}
+            >
               확인
             </button>
-            &nbsp;
-            <button type="button" onClick={onClickCancle}>
+            &nbsp; &nbsp; &nbsp;
+            <button
+              type="button"
+              className="btn"
+              style={{
+                color: "rgba(245,145,45)",
+                padding: "5px",
+                fontSize: "1vw",
+              }}
+              onClick={onClickCancle}
+            >
               취소
             </button>
           </div>
         </div>
-        <div id="menu_wrap" className="bg_white">
-          <div className="option">
+        <div
+          id="menu_wrap"
+          className="bg_white"
+          style={{ overflowX: "hidden", wordBreak: "break-all" }}
+        >
+          <div className="option" style={{ paddingTop: "10px" }}>
             <div>
               <form onSubmit={onSubmitBtn}>
-                키워드 :{" "}
-                <input
+                <span
+                  style={{
+                    fontSize: ".9vw",
+                    color: "rgba(245,145,45,.9)",
+                    fontWeight: "bold",
+                  }}
+                >
+                  {" "}
+                  키워드 :{" "}
+                </span>
+                <Input
                   type="text"
                   id="keyword"
-                  size="15"
                   placeholder="지역명, 키워드"
+                  style={{
+                    width: "8vw",
+                    fontSize: ".8vw",
+                    textAlign: "center",
+                  }}
                 />
-                <button type="submit">검색하기</button>
+                <button
+                  className="btn"
+                  style={{
+                    color: "rgba(245,145,45)",
+                    padding: "5px",
+                    fontSize: ".9vw",
+                  }}
+                  type="submit"
+                >
+                  검색
+                </button>
               </form>
             </div>
           </div>
-          <hr />
+          <hr
+            style={{
+              marginTop: "10px",
+              opacity: ".2",
+            }}
+          />
           <ul id="placesList"></ul>
           <div id="pagination"></div>
         </div>

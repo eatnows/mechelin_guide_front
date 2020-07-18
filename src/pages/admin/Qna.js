@@ -1,13 +1,13 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect } from "react";
 import Axios from "util/axios";
-import { Pagination, Input } from "antd";
+import { Pagination } from "antd";
 import Search from "antd/lib/input/Search";
 import TextArea from "antd/lib/input/TextArea";
 
 const Qna = (props) => {
   const [data, setData] = useState([]);
-  const [dataCount, setDataCount] = useState(5);
-  const [startPage, setStartPage] = useState(0);
+  const dataCount = 5;
+  const [currentPage, setCurrentPage] = useState(0);
   const [totalCount, setTotalCount] = useState(0);
   const [askId, setAskId] = useState("");
   const [reply, setReply] = useState("");
@@ -18,8 +18,18 @@ const Qna = (props) => {
   }, []);
 
   useEffect(() => {
-    getList();
-  }, [startPage]);
+    const url =
+      "/admin/ask?currentPage=" + currentPage + "&dataCount=" + dataCount;
+    Axios.get(url)
+      .then((res) => {
+        setData(res.data);
+        console.log("겟리스트");
+        console.log(res.data);
+      })
+      .catch((err) => {
+        console.log("list 출력 에러:" + err);
+      });
+  }, [currentPage]);
 
   /*문의 유저 검색 */
   const searchAskUser = (v, e) => {
@@ -30,8 +40,8 @@ const Qna = (props) => {
       const url =
         "/admin/ask/searchdata?searchData=" +
         v +
-        "&startPage=" +
-        startPage +
+        "&currentPage=" +
+        currentPage +
         "&dataCount=" +
         dataCount;
       Axios.get(url)
@@ -61,7 +71,8 @@ const Qna = (props) => {
 
   /*10개씩 데이터 출력 */
   const getList = () => {
-    const url = "/admin/ask?startPage=" + startPage + "&dataCount=" + dataCount;
+    const url =
+      "/admin/ask?currentPage=" + currentPage + "&dataCount=" + dataCount;
     Axios.get(url)
       .then((res) => {
         setData(res.data);
@@ -93,8 +104,8 @@ const Qna = (props) => {
 
   /*페이지 바뀔 때마다 실행 */
   const nextPage = (e) => {
-    setStartPage((e - 1) * dataCount);
-    console.log(startPage);
+    setCurrentPage((e - 1) * dataCount);
+    console.log(currentPage);
   };
 
   return (
@@ -168,7 +179,7 @@ const Qna = (props) => {
                     textAlign: "center",
                   }}
                 >
-                  <td>{startPage + i + 1}</td>
+                  <td>{currentPage + i + 1}</td>
                   <td>{row.id}</td>
                   <td>{row.user_id}</td>
                   <td>{row.subject}</td>
@@ -200,6 +211,9 @@ const Qna = (props) => {
       <Pagination
         size="small"
         total={totalCount}
+        defaultCurrent={1}
+        defaultPageSize={dataCount}
+        current={currentPage}
         onChange={nextPage}
         style={{
           position: "absolute",
