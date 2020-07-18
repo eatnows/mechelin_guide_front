@@ -1,32 +1,28 @@
 import React, { useState, useEffect } from "react";
 import Axios from "util/axios";
-import { Pagination, Menu, Dropdown, Input, Cascader } from "antd";
+import { Pagination, Dropdown, Cascader } from "antd";
 import Search from "antd/lib/input/Search";
 import { DownOutlined } from "@ant-design/icons";
 let sorting;
 let filtering;
 let key;
+let startPage;
 const User = (props) => {
   const [data, setData] = useState([]);
   const [dataCount, setDataCount] = useState(10);
-  const [startPage, setStartPage] = useState(0);
   const [totalCount, setTotalCount] = useState(0);
   const [option, setOption] = useState([]);
+  const [showDropMenu_A, setShowDropMenu_A] = useState(false);
+  const [showDropMenu_B, setShowDropMenu_B] = useState(false);
   useEffect(() => {
+    startPage = 0;
     props.getState(false);
     showPageCount();
     getList();
+    sorting = 0;
+    filtering = 0;
+    key = 0;
   }, []);
-
-  useEffect(() => {
-    if (sorting !== 0) {
-      sortAuthority(sorting);
-    } else if (filtering !== 0) {
-      filterDropUser(filtering);
-    } else {
-      getList();
-    }
-  }, [startPage]);
 
   const options = [
     {
@@ -47,9 +43,7 @@ const User = (props) => {
     setOption(v[0]);
     console.log(option);
   };
-  const dropdownRender = (menus) => {
-    return <div style={{ width: "50px", height: "10px" }}>{menus}</div>;
-  };
+
   /*user 검색 */
   const searchUser = (v, e) => {
     e.preventDefault();
@@ -78,17 +72,18 @@ const User = (props) => {
 
   /*권한 정렬 */
   const sortAuthority = (e) => {
-    setStartPage(0);
-    if (key === 0) {
+    key = e.target.getAttribute("num");
+    console.log(typeof key);
+    startPage = 0;
+    sorting = 0;
+    filtering = 0;
+    if (key === "0") {
       showPageCount();
       getList();
-      sorting = 0;
-      filtering = 0;
     } else {
-      const value = sorting !== 0 ? sorting : key;
       const url =
         "/admin/sortdata?sorting=" +
-        value +
+        key +
         "&startPage=" +
         startPage +
         "&dataCount=" +
@@ -96,13 +91,7 @@ const User = (props) => {
       Axios.get(url)
         .then((res) => {
           setData(res.data);
-          if (key === 1) {
-            sorting = 1;
-          } else if (e.key === 2) {
-            sorting = 2;
-          } else {
-            sorting = e;
-          }
+          sorting = key;
         })
         .catch((err) => {
           console.log("sort authority 에러:" + err);
@@ -112,30 +101,24 @@ const User = (props) => {
 
   /*탈퇴 여부 필터링 */
   const filterDropUser = (e) => {
-    setStartPage(0);
-    if (key === 0) {
+    key = e.target.getAttribute("num");
+    sorting = 0;
+    filtering = 0;
+    startPage = 0;
+    if (key === "0") {
       showPageCount();
       getList();
-      sorting = 0;
-      filtering = 0;
     } else {
-      const value = filtering !== 0 ? filtering : key;
       const url =
         "/admin/filterdata?filtering=" +
-        value +
+        key +
         "&startPage=" +
         startPage +
         "&dataCount=" +
         dataCount;
       Axios.get(url)
         .then((res) => {
-          if (key === 1) {
-            filtering = 1;
-          } else if (e.key === 2) {
-            filtering = 2;
-          } else {
-            filtering = e;
-          }
+          filtering = key;
           showFilteredUserCount();
           setData(res.data);
         })
@@ -157,41 +140,6 @@ const User = (props) => {
         console.log("filtered user count 받아오기 에러:" + err);
       });
   };
-
-  const saveKey = (e) => {
-    key = e.target.getAttribute("num");
-  };
-
-  const authorityMenu = (
-    <Menu style={{ textAlign: "center" }} onClick={sortAuthority}>
-      <Menu.Item key="0">
-        <span style={{ cursor: "pointer", fontSize: "12px" }}>기본 정렬</span>
-      </Menu.Item>
-      <br />
-      <Menu.Item key="1">
-        <span style={{ cursor: "pointer", fontSize: "12px" }}>내림차순</span>
-      </Menu.Item>
-      <br />
-      <Menu.Item key="2">
-        <span style={{ cursor: "pointer", fontSize: "12px" }}>오름차순</span>
-      </Menu.Item>
-    </Menu>
-  );
-
-  const dropUserMenu = (
-    <Menu style={{ textAlign: "center" }} onClick={filterDropUser}>
-      <Menu.Item num="0" onClick={saveKey}>
-        <span style={{ cursor: "pointer", fontSize: "12px" }}>전체 보기</span>
-      </Menu.Item>
-      <br />
-      <Menu.Item num="1" onClick={saveKey}>
-        <span style={{ cursor: "pointer", fontSize: "12px" }}>탈퇴 유저</span>
-      </Menu.Item>
-      <Menu.Item num="2" onClick={saveKey}>
-        <span style={{ cursor: "pointer", fontSize: "12px" }}>정상 유저</span>
-      </Menu.Item>
-    </Menu>
-  );
 
   /*전체 데이터 개수 */
   const showPageCount = () => {
@@ -223,8 +171,42 @@ const User = (props) => {
 
   /*페이지 바뀔 때마다 실행 */
   const nextPage = (e) => {
-    if (startPage !== e) setStartPage((e - 1) * dataCount);
-    console.log(startPage);
+    console.log(typeof e);
+    if (startPage !== e) startPage = (e - 1) * dataCount;
+    if (sorting !== 0) {
+      const url =
+        "/admin/sortdata?sorting=" +
+        sorting +
+        "&startPage=" +
+        startPage +
+        "&dataCount=" +
+        dataCount;
+      Axios.get(url)
+        .then((res) => {
+          setData(res.data);
+        })
+        .catch((err) => {
+          console.log("sort authority 에러:" + err);
+        });
+    } else if (filtering !== 0) {
+      const url =
+        "/admin/filterdata?filtering=" +
+        filtering +
+        "&startPage=" +
+        startPage +
+        "&dataCount=" +
+        dataCount;
+      Axios.get(url)
+        .then((res) => {
+          showFilteredUserCount();
+          setData(res.data);
+        })
+        .catch((err) => {
+          console.log("filter data 에러:" + err);
+        });
+    } else {
+      getList();
+    }
   };
 
   return (
@@ -261,7 +243,6 @@ const User = (props) => {
           options={options}
           onChange={changeOptions}
           placeholder="구분"
-          dropdownRender={dropdownRender}
           style={{
             width: "100px",
             float: "right",
@@ -271,25 +252,105 @@ const User = (props) => {
         <div style={{ float: "left", clear: "both", marginBottom: "10px" }}>
           <span>
             {" "}
-            <Dropdown overlay={authorityMenu} trigger={["click"]}>
-              <span
-                className="ant-dropdown-link"
-                style={{ cursor: "pointer", color: "rgba(0,0,0,.8)" }}
-              >
-                권한 <DownOutlined />
-              </span>
-            </Dropdown>
-            &nbsp; &nbsp; &nbsp; {"       "}
-            <Dropdown overlay={dropUserMenu} trigger={["click"]}>
-              <span
-                className="ant-dropdown-link"
-                // onClick={handleMenuClick}
-                style={{ cursor: "pointer", color: "rgba(0,0,0,.8)" }}
-              >
-                탈퇴 여부 <DownOutlined />
-              </span>
-            </Dropdown>
+            <div
+              style={{
+                cursor: "pointer",
+                display: "inline-block",
+                color: "rgba(0,0,0,.8)",
+              }}
+              onClick={() => {
+                if (showDropMenu_A === true) {
+                  setShowDropMenu_A(false);
+                } else {
+                  setShowDropMenu_A(true);
+                  setShowDropMenu_B(false);
+                }
+              }}
+            >
+              권한 &nbsp; &nbsp; &nbsp; <DownOutlined />
+            </div>
+            &nbsp;&nbsp;&nbsp;&nbsp; &nbsp; {"       "}
+            <div
+              style={{
+                cursor: "pointer",
+                display: "inline-block",
+                color: "rgba(0,0,0,.8)",
+              }}
+              onClick={() => {
+                if (showDropMenu_B === true) {
+                  setShowDropMenu_B(false);
+                } else {
+                  setShowDropMenu_B(true);
+                  setShowDropMenu_A(false);
+                }
+              }}
+            >
+              탈퇴 여부 <DownOutlined />
+            </div>
           </span>
+          <div
+            style={{
+              display: showDropMenu_A === true ? "block" : "none",
+              textAlign: "center",
+              backgroundColor: "white",
+              padding: "5px",
+              border: "1px solid rgba(0,0,0,.2)",
+              position: "absolute",
+              top: "6vw",
+              left: "0",
+              width: "4.5vw",
+            }}
+          >
+            <span
+              num="0"
+              onClick={sortAuthority}
+              style={{ cursor: "pointer", fontSize: "12px" }}
+            >
+              기본 정렬
+            </span>
+            <br />
+            <span
+              num="1"
+              onClick={sortAuthority}
+              style={{ cursor: "pointer", fontSize: "12px" }}
+            >
+              내림차순
+            </span>
+            <br />
+            <span
+              num="2"
+              onClick={sortAuthority}
+              style={{ cursor: "pointer", fontSize: "12px" }}
+            >
+              오름차순
+            </span>
+          </div>
+          <div
+            style={{
+              display: showDropMenu_B === true ? "block" : "none",
+              textAlign: "center",
+              backgroundColor: "white",
+              padding: "5px",
+              border: "1px solid rgba(0,0,0,.2)",
+              position: "absolute",
+              top: "6vw",
+              left: "5.5vw",
+              width: "5vw",
+            }}
+            onClick={filterDropUser}
+          >
+            <span num="0" style={{ cursor: "pointer", fontSize: "12px" }}>
+              전체 보기
+            </span>
+            <br />
+            <span num="1" style={{ cursor: "pointer", fontSize: "12px" }}>
+              탈퇴 유저
+            </span>
+            <br />
+            <span num="2" style={{ cursor: "pointer", fontSize: "12px" }}>
+              정상 유저
+            </span>
+          </div>
         </div>
         <br />
         <table style={{ clear: "both" }}>
