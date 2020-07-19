@@ -34,6 +34,11 @@ class NaverCallback extends React.Component {
     })
       .then((res) => {
         sessionStorage.setItem("userId", res.data);
+        sessionStorage.setItem("loginPlatform", "naver");
+        sessionStorage.setItem(
+          "token",
+          naver_id_login.oauthParams.access_token
+        );
         this.props.history.push(`/mechelin/${res.data}`);
       })
       .catch((error) => {
