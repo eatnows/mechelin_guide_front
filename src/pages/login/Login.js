@@ -9,6 +9,7 @@ import logo from "images/logo2.png";
 import icon from "images/icon.PNG";
 import { parse } from "@babel/core";
 import NaverLoginComponent from "components/login/NaverLogin";
+import NaverLogin from "../../components/login/NaverLogin";
 
 class Login extends Component {
   constructor(props) {
@@ -296,7 +297,7 @@ class Login extends Component {
                       />
                     </button>
                   </NavLink>
-                  <NaverLoginComponent />
+                  <NaverLogin />
                 </td>
               </tr>
             </tbody>
