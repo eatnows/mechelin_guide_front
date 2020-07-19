@@ -181,6 +181,14 @@ class View extends React.Component {
     });
   };
 
+  /*
+   * 로그아웃 버튼
+   */
+  onClickLogout = () => {
+    sessionStorage.clear();
+    localStorage.clear();
+  };
+
   render() {
     return (
       <div>
@@ -690,10 +698,7 @@ class View extends React.Component {
                     ? "xi-lock-o xi-2x lock"
                     : "xi-unlock-o xi-2x unlock"
                 }
-                onClick={() => {
-                  sessionStorage.clear();
-                  localStorage.clear();
-                }}
+                onClick={this.onClickLogout.bind(this)}
                 style={{
                   position: "fixed",
                   right: "-25vw",

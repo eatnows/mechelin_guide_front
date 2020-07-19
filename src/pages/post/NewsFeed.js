@@ -136,8 +136,6 @@ const ListItem = ({ row, i, likesChange, wishClick, render, history }) => {
   const onClickmoveTL = (e) => {
     const user_id = e.target.getAttribute("user_id");
     sessionStorage.setItem("targetUser", e.target.getAttribute("user_id"));
-    //timelinePageMove(user_id);
-
     history.push(`/mechelin/timeline/${user_id}`);
   };
 
@@ -511,11 +509,10 @@ const NewsFeed = (props) => {
     console.log(item);
   }, []);
 
-  const [setRef] = useIntersect(async (entry, observer) => {
+  const [_, setRef] = useIntersect(async (entry, observer) => {
     observer.unobserve(entry.target);
     await fetchItems();
     observer.observe(entry.target);
-    console.log(itemCount);
   }, {});
   const { itemCount, isLoading } = state;
   console.log("아이템 카운트");

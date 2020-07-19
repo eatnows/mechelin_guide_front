@@ -431,7 +431,8 @@ class FullMap extends React.Component {
    * 메세지 전송
    */
   onClickMessageSend = (e) => {
-    // this.state.socket.send(this.state.sendMessage);
+    if (this.state.sendMessage === "") return;
+
     let socketMsg = `chat,${sessionStorage.getItem("userId")},${
       this.state.dmUserId
     },${this.state.sendMessage},${this.state.chatRoomId}`;
@@ -1104,8 +1105,9 @@ class FullMap extends React.Component {
               }}
             >
               <MyFriends
-                dm={this.state.dm}
                 changeDm={this.changeDm.bind(this)}
+                history={this.props.history}
+                dm={this.state.dm}
               />
             </div>{" "}
             <div

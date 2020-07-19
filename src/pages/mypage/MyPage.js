@@ -208,6 +208,19 @@ const MyPage = (props) => {
         .catch((err) => {
           console.log("회원 탈퇴 error: " + err);
         });
+      // 네이버로 회원가입한 유저일 경우 토큰 삭제
+      if (sessionStorage.getItem("loginPlatform") === "naver") {
+        const naverUrl = `https://nid.naver.com/oauth2.0/token?grant_type=delete&client_id=앱키&client_secret=시크릿키&access_token=${sessionStorage.getItem(
+          "token"
+        )}&service_provider=NAVER`;
+        Axios.post(naverUrl)
+          .then((res) => {
+            console.log(res.result);
+          })
+          .catch((err) => {
+            console.log(err);
+          });
+      }
     }
   };
 
