@@ -33,6 +33,8 @@ const MyFriends = (props) => {
     )}&pageStart=${pageStart}&perPageNum=${perPageNum}`;
     Axios.get(url)
       .then((res) => {
+        console.log("친구들 받아오기");
+        console.log(res.data);
         setFriendsData(res.data);
       })
       .catch((err) => {
@@ -63,7 +65,9 @@ const MyFriends = (props) => {
    * 친구 닉네임 클릭시
    */
   const onFriendsClick = (e) => {
+    const friendUserId = e.target.getAttribute("friendsUserId");
     console.log(e.target.getAttribute("friendsUserId"));
+    props.history.push(`/mechelin/timeline/${friendUserId}`);
   };
   /*
    * 삭제 버튼 클릭시 실행되는 함수
@@ -138,7 +142,13 @@ const MyFriends = (props) => {
           {[...friendsData].map((contact, i) => {
             return (
               <tr>
-                <td style={{ padding: " .5vw" }}>
+                <td
+                  style={{
+                    padding: props.dm === true ? " .5vw 0" : ".5vw",
+                    width: props.dm === true ? "35%" : "5vw",
+                    transition: "all .5s",
+                  }}
+                >
                   <img
                     src={contact.profile_url}
                     onClick={onFriendsClick}
@@ -147,7 +157,12 @@ const MyFriends = (props) => {
                     style={{ cursor: "pointer", width: "50px", height: "50px" }}
                   />
                 </td>
-                <td style={{ fontSize: "13px" }}>
+                <td
+                  style={{
+                    fontSize: "13px",
+                    width: props.dm === true ? "40%" : "6vw",
+                  }}
+                >
                   <span
                     onClick={onFriendsClick}
                     style={{ cursor: "pointer" }}
@@ -170,8 +185,6 @@ const MyFriends = (props) => {
                       cursor: "pointer",
                       fontSize: "1.2vw",
                       marginRight: ".3vw",
-                      marginTop: "50%",
-                      transform: "translateY(-50%)",
                     }}
                   ></span>
                   <span
@@ -185,8 +198,6 @@ const MyFriends = (props) => {
                       fontWeight: "bold",
                       cursor: "pointer",
                       fontSize: "1.1vw",
-                      marginTop: "50%",
-                      transform: "translateY(-50%)",
                     }}
                   ></span>{" "}
                 </td>
@@ -202,7 +213,12 @@ const MyFriends = (props) => {
           defaultPageSize={perPageNum} //default size of page
           onChange={onChangePage}
           total={totalcount}
-          style={{ position: "absolute", left: "5vw", bottom: "2vh" }}
+          style={{
+            position: "absolute",
+            left: props.dm === true ? "3.65vw" : "5vw",
+            bottom: "2vh",
+            transition: "all 1s",
+          }}
         />
         <div
           style={{
@@ -214,6 +230,7 @@ const MyFriends = (props) => {
             left: "17.6vw",
             top: Y,
             boxShadow: "3px 3px 10px #999",
+            transition: "all .5s",
             display: unfollow === true ? "block" : "none",
           }}
         >

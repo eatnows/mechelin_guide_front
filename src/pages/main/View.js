@@ -38,12 +38,7 @@ class View extends React.Component {
     listData2: [],
     targetUserId: "",
   };
-  signOut() {
-    var auth2 = window.gapi.auth2.getAuthInstance();
-    auth2.signOut().then(function () {
-      console.log("User signed out.");
-    });
-  }
+
   componentWillMount() {
     /*세션스토리지에 유저아이디가 없으면 로그인 화면으로 돌아감 */
     if (sessionStorage.getItem("userId") === null) {
@@ -184,6 +179,19 @@ class View extends React.Component {
     this.setState({
       targetUserId: target_user_id,
     });
+  };
+
+  /*
+   * 로그아웃 버튼
+   */
+  onClickLogout = () => {
+    /*구글 로그아웃 */
+    var auth2 = this.gapi.auth2.getAuthInstance();
+    auth2.signOut().then(function () {
+      console.log("User signed out.");
+    });
+    sessionStorage.clear();
+    localStorage.clear();
   };
 
   render() {
@@ -695,11 +703,7 @@ class View extends React.Component {
                     ? "xi-lock-o xi-2x lock"
                     : "xi-unlock-o xi-2x unlock"
                 }
-                onClick={() => {
-                  this.signOut();
-                  sessionStorage.clear();
-                  localStorage.clear();
-                }}
+                onClick={this.onClickLogout.bind(this)}
                 style={{
                   position: "fixed",
                   right: "-25vw",

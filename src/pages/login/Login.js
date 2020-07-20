@@ -6,6 +6,7 @@ import Axios from "util/axios";
 import { Input, Checkbox } from "antd";
 import logo from "images/logo2.png";
 import icon from "images/icon.PNG";
+import NaverLogin from "../../components/login/NaverLogin";
 
 class Login extends Component {
   constructor(props) {
@@ -21,7 +22,7 @@ class Login extends Component {
       accessToken: "",
     };
   }
-  componentWillMount() {
+  componentDidMount() {
     if (localStorage.getItem("userId") !== null) {
       sessionStorage.setItem("userId", localStorage.getItem("userId"));
     }
@@ -301,6 +302,7 @@ class Login extends Component {
                       />
                     </button>
                   </NavLink>
+                  <NaverLogin />
                 </td>
               </tr>
             </tbody>
