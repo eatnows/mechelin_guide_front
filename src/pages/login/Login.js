@@ -272,12 +272,6 @@ class Login extends Component {
                   />
                   &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp;
                   <div class="g-signin2" data-onsuccess="onSignIn"></div>
-                  <Route
-                    path="/googlelogin"
-                    render={() => {
-                      return;
-                    }}
-                  />
                   <NavLink to="/signup">
                     <button
                       type="button"

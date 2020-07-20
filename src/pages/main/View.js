@@ -186,7 +186,7 @@ class View extends React.Component {
    */
   onClickLogout = () => {
     /*구글 로그아웃 */
-    var auth2 = this.gapi.auth2.getAuthInstance();
+    var auth2 = window.gapi.auth2.getAuthInstance();
     auth2.signOut().then(function () {
       console.log("User signed out.");
     });
