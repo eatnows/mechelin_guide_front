@@ -38,7 +38,12 @@ class View extends React.Component {
     listData2: [],
     targetUserId: "",
   };
-
+  signOut() {
+    var auth2 = window.gapi.auth2.getAuthInstance();
+    auth2.signOut().then(function () {
+      console.log("User signed out.");
+    });
+  }
   componentWillMount() {
     /*세션스토리지에 유저아이디가 없으면 로그인 화면으로 돌아감 */
     if (sessionStorage.getItem("userId") === null) {
@@ -691,6 +696,7 @@ class View extends React.Component {
                     : "xi-unlock-o xi-2x unlock"
                 }
                 onClick={() => {
+                  this.signOut();
                   sessionStorage.clear();
                   localStorage.clear();
                 }}

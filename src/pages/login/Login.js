@@ -1,13 +1,11 @@
 import React, { Component } from "react";
-import { NavLink } from "react-router-dom";
+import { NavLink, Route } from "react-router-dom";
 import kakaotalk from "images/kakaotalk.png";
 import KakaoLogin from "react-kakao-login";
 import Axios from "util/axios";
 import { Input, Checkbox } from "antd";
-import styled from "styled-components";
 import logo from "images/logo2.png";
 import icon from "images/icon.PNG";
-import { parse } from "@babel/core";
 
 class Login extends Component {
   constructor(props) {
@@ -31,6 +29,7 @@ class Login extends Component {
       this.props.history.push("/mechelin/" + this.state.userId);
     }
   }
+
   //값이 바뀌면 state 값을 변경
   handleInform = (e) => {
     this.setState({
@@ -271,6 +270,13 @@ class Login extends Component {
                     getProfile={true}
                   />
                   &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp;
+                  <div class="g-signin2" data-onsuccess="onSignIn"></div>
+                  <Route
+                    path="/googlelogin"
+                    render={() => {
+                      return;
+                    }}
+                  />
                   <NavLink to="/signup">
                     <button
                       type="button"
@@ -304,7 +310,6 @@ class Login extends Component {
     );
   }
 }
-
 const KakaoBtn = () => {
   const style = {
     borderRadius: "100%",
