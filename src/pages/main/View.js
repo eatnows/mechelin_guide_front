@@ -185,13 +185,13 @@ class View extends React.Component {
    * 로그아웃 버튼
    */
   onClickLogout = () => {
+    sessionStorage.clear();
+    localStorage.clear();
     /*구글 로그아웃 */
     var auth2 = window.gapi.auth2.getAuthInstance();
     auth2.signOut().then(function () {
       console.log("User signed out.");
     });
-    sessionStorage.clear();
-    localStorage.clear();
   };
 
   render() {

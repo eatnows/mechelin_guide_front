@@ -14,7 +14,7 @@ class NaverLogin extends React.Component {
   }
 
   render() {
-    return <div id="naver_id_login"></div>;
+    return <div id="naver_id_login" style={{ marginRight: "30px" }}></div>;
   }
 }
 

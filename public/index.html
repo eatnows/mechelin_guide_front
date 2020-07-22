@@ -56,6 +56,11 @@
     <title>내슐랭 가이드</title>
     <meta name="google-signin-scope" content="profile email" />
     <meta name="google-signin-client_id" content="클라이언트 아이디" />
+    <script
+      src="https://apis.google.com/js/platform.js?onload=init"
+      async
+      defer
+    ></script>
   </head>
   <body>
     <noscript>You need to enable JavaScript to run this app.</noscript>
@@ -84,12 +89,6 @@
           gauth.then(
             function () {
               console.log("init success");
-              var isLogined = gauth.isSignedIn.get();
-              if (isLogined) {
-                document.querySelector("#authBtn").value = "Logout";
-              } else {
-                document.querySelector("#authBtn").value = "Login";
-              }
             },
             function () {
               console.error("init fail");
@@ -112,28 +111,21 @@
 
         /*ID 토큰 얻어서 백엔드로 보내기*/
         var id_token = googleUser.getAuthResponse().id_token;
+        console.log(id_token);
         var xhr = new XMLHttpRequest();
         xhr.open("POST", "http://localhost:9000/mechelin/tokenlogin");
         xhr.setRequestHeader(
           "Content-Type",
-          "application / x-www-form-urlencoded"
+          "application/x-www-form-urlencoded"
         );
         xhr.onload = function () {
-          console.log("로그인 :" + xhr.responseText);
+          sessionStorage.setItem("userId", xhr.responseText);
+          if (sessionStorage.getItem("userId") !== 0) {
+            this.props.history.push("/mechelin/" + xhr.responseText);
+          }
         };
-        xhr.send("idtoken=" + id_token);
-      }
-      function signOut() {
-        var auth2 = gapi.auth2.getAuthInstance();
-        auth2.signOut().then(function () {
-          console.log("User signed out.");
-        });
+        xhr.send(id_token);
       }
     </script>
-    <script
-      src="https://apis.google.com/js/platform.js?onload=init"
-      async
-      defer
-    ></script>
   </body>
 </html>
