@@ -278,6 +278,7 @@ class Login extends Component {
               <tr>
                 <td style={{ textAlign: "center" }}>
                   <KakaoLogin
+                    className="btn btn-default"
                     jsKey="fd5a9908b3ef1290f9c3d52aadfd29f1"
                     onSuccess={(result) => {
                       this.resKakao(result);
