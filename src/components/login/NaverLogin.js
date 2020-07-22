@@ -2,7 +2,6 @@ import React from "react";
 
 const client_id = "앱키";
 const redirectURI = encodeURI(`http://localhost:3000/navercallback`);
-const naver_id_login = new window.naver_id_login(client_id, redirectURI);
 
 class NaverLogin extends React.Component {
   componentDidMount() {
@@ -15,7 +14,7 @@ class NaverLogin extends React.Component {
   }
 
   render() {
-    return <div id="naver_id_login"></div>;
+    return <div id="naver_id_login" style={{ marginRight: "30px" }}></div>;
   }
 }
 

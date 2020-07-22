@@ -22,17 +22,12 @@ class NaverCallback extends React.Component {
 
   naverSignInCallback() {
     const naver_id_login = new window.naver_id_login(client_id, redirectURI);
-    this.setState({
-      nickname: naver_id_login.getProfileData("nickname"),
-    });
     const url = `/naverlogin`;
     Axios.post(url, {
-      id: naver_id_login.getProfileData("id"),
-      email: naver_id_login.getProfileData("email"),
-      nickname: naver_id_login.getProfileData("nickname"),
-      profile_url: naver_id_login.getProfileData("profile_image"),
+      token: naver_id_login.oauthParams.access_token,
     })
       .then((res) => {
+        console.log(res);
         sessionStorage.setItem("userId", res.data);
         sessionStorage.setItem("loginPlatform", "naver");
         sessionStorage.setItem(

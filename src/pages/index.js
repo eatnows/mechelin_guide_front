@@ -3,6 +3,7 @@ export { default as User } from "pages/admin/User";
 export { default as Report } from "pages/admin/Report";
 export { default as Qna } from "pages/admin/Qna";
 export { default as Login } from "pages/login/Login";
+export { default as Google } from "pages/login/Google";
 export { default as ChangePwd } from "pages/login/ChangePwd";
 export { default as SignUp } from "pages/signup/SignUp";
 export { default as Welcome } from "pages/signup/Welcome";

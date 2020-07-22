@@ -1,14 +1,11 @@
 import React, { Component } from "react";
-import { NavLink } from "react-router-dom";
+import { NavLink, Route } from "react-router-dom";
 import kakaotalk from "images/kakaotalk.png";
 import KakaoLogin from "react-kakao-login";
 import Axios from "util/axios";
 import { Input, Checkbox } from "antd";
-import styled from "styled-components";
 import logo from "images/logo2.png";
 import icon from "images/icon.PNG";
-import { parse } from "@babel/core";
-import NaverLoginComponent from "components/login/NaverLogin";
 import NaverLogin from "../../components/login/NaverLogin";
 
 class Login extends Component {
@@ -33,6 +30,7 @@ class Login extends Component {
       this.props.history.push("/mechelin/" + this.state.userId);
     }
   }
+
   //값이 바뀌면 state 값을 변경
   handleInform = (e) => {
     this.setState({
@@ -260,6 +258,21 @@ class Login extends Component {
                   >
                     로그인
                   </button>
+                  <NavLink to="/signup">
+                    <button
+                      type="button"
+                      className="btn"
+                      style={{
+                        height: "40px",
+                        width: "100px",
+                        color: "white",
+                        marginLeft: "10px",
+                        backgroundColor: "#9CC557 ",
+                      }}
+                    >
+                      회원가입
+                    </button>
+                  </NavLink>
                 </td>
               </tr>
               <tr>
@@ -273,30 +286,11 @@ class Login extends Component {
                     getProfile={true}
                   />
                   &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp;
-                  <NavLink to="/signup">
-                    <button
-                      type="button"
-                      className="btn"
-                      style={{
-                        borderRadius: "100%",
-                        border: "1px solid lightgray",
-                        width: "50px",
-                        height: "50px",
-                        backgroundColor: "#9CC557 ",
-                      }}
-                    >
-                      <img
-                        src={icon}
-                        style={{
-                          textAlign: "center",
-                          width: "40px",
-                          height: "30px",
-                          marginLeft: "-8px",
-                        }}
-                        alt=""
-                      />
-                    </button>
-                  </NavLink>
+                  <div
+                    class="g-signin2"
+                    data-onsuccess="onSignIn"
+                    style={{ margin: "10px 0 10px 50px" }}
+                  ></div>
                   <NaverLogin />
                 </td>
               </tr>
@@ -307,7 +301,6 @@ class Login extends Component {
     );
   }
 }
-
 const KakaoBtn = () => {
   const style = {
     borderRadius: "100%",

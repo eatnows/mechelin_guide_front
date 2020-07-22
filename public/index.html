@@ -54,6 +54,13 @@
       Learn how to configure a non-root public URL by running `npm run build`.
     -->
     <title>내슐랭 가이드</title>
+    <meta name="google-signin-scope" content="profile email" />
+    <meta name="google-signin-client_id" content="클라이언트 아이디" />
+    <script
+      src="https://apis.google.com/js/platform.js?onload=init"
+      async
+      defer
+    ></script>
   </head>
   <body>
     <noscript>You need to enable JavaScript to run this app.</noscript>
@@ -69,5 +76,56 @@
       To begin the development, run `npm start` or `yarn start`.
       To create a production bundle, use `npm run build` or `yarn build`.
     -->
+
+    <script>
+      var client_id = "클라이언트 아이디";
+      function init() {
+        gapi.load("auth2", function () {
+          var gauth = gapi.auth2.init({
+            client_id: client_id,
+            scope: "profile",
+          });
+
+          gauth.then(
+            function () {
+              console.log("init success");
+            },
+            function () {
+              console.error("init fail");
+            }
+          );
+        });
+        gauth.signIn().then(function (response) {
+          alert("Logined");
+          alert(gauth.currentUser.get().getBasicProfile().getEmail());
+          location.reload();
+        });
+      }
+      function onSignIn(googleUser) {
+        /*프론트에서 유저 정보 얻기*/
+        var profile = googleUser.getBasicProfile();
+        console.log("ID: " + profile.getId()); // Do not send to your backend! Use an ID token instead.
+        console.log("Name: " + profile.getName());
+        console.log("Image URL: " + profile.getImageUrl());
+        console.log("Email: " + profile.getEmail()); // This is null if the 'email' scope is not present.
+
+        /*ID 토큰 얻어서 백엔드로 보내기*/
+        var id_token = googleUser.getAuthResponse().id_token;
+        console.log(id_token);
+        var xhr = new XMLHttpRequest();
+        xhr.open("POST", "http://localhost:9000/mechelin/tokenlogin");
+        xhr.setRequestHeader(
+          "Content-Type",
+          "application/x-www-form-urlencoded"
+        );
+        xhr.onload = function () {
+          sessionStorage.setItem("userId", xhr.responseText);
+          if (sessionStorage.getItem("userId") !== 0) {
+            this.props.history.push("/mechelin/" + xhr.responseText);
+          }
+        };
+        xhr.send(id_token);
+      }
+    </script>
   </body>
 </html>
