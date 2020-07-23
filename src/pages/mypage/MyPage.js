@@ -190,24 +190,7 @@ const MyPage = (props) => {
 
   // 회원 탈퇴
   const dropUser = (e) => {
-    var dropPass = window.prompt("탈퇴하려면 비밀번호를 재입력하세요");
     if (window.confirm("정말 탈퇴하시겠습니까?")) {
-      const url = `/dropout`;
-      Axios.post(url, {
-        id: sessionStorage.getItem("userId"),
-        password: dropPass,
-      })
-        .then((res) => {
-          if (res.data.check_item === "valid") {
-            sessionStorage.removeItem("userId");
-            window.location.reload();
-          } else {
-            alert("비밀번호가 맞지 않습니다");
-          }
-        })
-        .catch((err) => {
-          console.log("회원 탈퇴 error: " + err);
-        });
       // 네이버로 회원가입한 유저일 경우 토큰 삭제
       if (sessionStorage.getItem("loginPlatform") === "naver") {
         const naverUrl = `https://nid.naver.com/oauth2.0/token?grant_type=delete&client_id=앱키&client_secret=시크릿키&access_token=${sessionStorage.getItem(
@@ -220,6 +203,34 @@ const MyPage = (props) => {
           .catch((err) => {
             console.log(err);
           });
+      }
+      //구글로 회원가입한 유저일 경우 토큰 삭제
+
+      if (sessionStorage.getItem("loginPlatform") === "google") {
+        window.auth2.disconnect();
+      }
+
+      //그냥 유저일 경우
+      var dropPass = window.prompt("탈퇴하려면 비밀번호를 재입력하세요");
+      if (dropPass != null) {
+        const url = `/dropout`;
+        Axios.post(url, {
+          id: sessionStorage.getItem("userId"),
+          password: dropPass,
+        })
+          .then((res) => {
+            if (res.data.check_item === "valid") {
+              sessionStorage.removeItem("userId");
+              window.location.reload();
+            } else {
+              alert("비밀번호가 맞지 않습니다.");
+            }
+          })
+          .catch((err) => {
+            console.log("회원 탈퇴 error: " + err);
+          });
+      } else {
+        alert("비밀번호를 입력하세요.");
       }
     }
   };
@@ -288,17 +299,6 @@ const MyPage = (props) => {
                     }}
                   />{" "}
                   <br />
-                  <span
-                    style={{
-                      color: "red",
-                      fontSize: "10px",
-                      fontWeight: "normal",
-                      textAlign: "center",
-                      margin: "10px auto",
-                    }}
-                  >
-                    {nicknameCkMsg}
-                  </span>
                   <br />
                 </td>
                 <td style={{ verticalAlign: "middle" }}>
@@ -352,7 +352,7 @@ const MyPage = (props) => {
                   <br />
                   <span
                     style={{
-                      color: "red",
+                      color: nicknameSuccess ? "green" : "red",
                       fontSize: "10px",
                       fontWeight: "normal",
                       textAlign: "center",
@@ -391,10 +391,11 @@ const MyPage = (props) => {
             )}
             <tr>
               <td>비밀번호</td>
-              {kUser ? (
+              {kUser === true ||
+              sessionStorage.getItem("loginPlatform") !== null ? (
                 <td colSpan="2">
                   <span style={{ fontWeight: "bold" }}>
-                    카카오 유저는 비밀번호를 변경하실 수 없습니다.
+                    소셜 로그인 유저는 비밀번호를 변경하실 수 없습니다.
                   </span>
                 </td>
               ) : (
@@ -428,7 +429,8 @@ const MyPage = (props) => {
                 </td>
               )}
             </tr>
-            {kUser ? (
+            {kUser === true ||
+            sessionStorage.getItem("loginPlatform") !== null ? (
               ""
             ) : (
               <tr>

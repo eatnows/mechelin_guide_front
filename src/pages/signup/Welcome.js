@@ -27,6 +27,7 @@ class Welcome extends React.Component {
             style={{
               width: "auto",
               height: "100px",
+              marginLeft: "-21px",
             }}
           />
         </div>
