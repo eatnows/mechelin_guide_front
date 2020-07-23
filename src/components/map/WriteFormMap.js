@@ -63,7 +63,7 @@ const WriteFormMap2 = (props) => {
     setScript(script);
     script.async = true;
     script.src =
-      "https://dapi.kakao.com/v2/maps/sdk.js?appkey=본인앱키&autoload=false&libraries=services,clusterer,drawing";
+      "https://dapi.kakao.com/v2/maps/sdk.js?appkey=fd5a9908b3ef1290f9c3d52aadfd29f1&autoload=false&libraries=services,clusterer,drawing";
     document.head.appendChild(script);
     script.onload = () => {
       kakao.maps.load(() => {
@@ -625,7 +625,7 @@ const WriteFormMap2 = (props) => {
               textAlign: "center",
               position: "absolute",
               right: "50%",
-              bottom: "6%",
+              bottom: "5%",
               transform: "translateX(50%)",
             }}
           >

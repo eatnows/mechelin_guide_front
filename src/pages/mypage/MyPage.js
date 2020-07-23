@@ -299,17 +299,6 @@ const MyPage = (props) => {
                     }}
                   />{" "}
                   <br />
-                  <span
-                    style={{
-                      color: "red",
-                      fontSize: "10px",
-                      fontWeight: "normal",
-                      textAlign: "center",
-                      margin: "10px auto",
-                    }}
-                  >
-                    {nicknameCkMsg}
-                  </span>
                   <br />
                 </td>
                 <td style={{ verticalAlign: "middle" }}>
@@ -363,7 +352,7 @@ const MyPage = (props) => {
                   <br />
                   <span
                     style={{
-                      color: "red",
+                      color: nicknameSuccess ? "green" : "red",
                       fontSize: "10px",
                       fontWeight: "normal",
                       textAlign: "center",
