@@ -1,13 +1,12 @@
 import React, { Component } from "react";
-import { NavLink } from "react-router-dom";
+import { NavLink, Route } from "react-router-dom";
 import kakaotalk from "images/kakaotalk.png";
 import KakaoLogin from "react-kakao-login";
 import Axios from "util/axios";
 import { Input, Checkbox } from "antd";
-import styled from "styled-components";
 import logo from "images/logo2.png";
 import icon from "images/icon.PNG";
-import { parse } from "@babel/core";
+import NaverLogin from "../../components/login/NaverLogin";
 
 class Login extends Component {
   constructor(props) {
@@ -23,7 +22,7 @@ class Login extends Component {
       accessToken: "",
     };
   }
-  componentWillMount() {
+  componentDidMount() {
     if (localStorage.getItem("userId") !== null) {
       sessionStorage.setItem("userId", localStorage.getItem("userId"));
     }
@@ -31,6 +30,7 @@ class Login extends Component {
       this.props.history.push("/mechelin/" + this.state.userId);
     }
   }
+
   //값이 바뀌면 state 값을 변경
   handleInform = (e) => {
     this.setState({
@@ -54,7 +54,14 @@ class Login extends Component {
   //이메일, 비밀번호 체크 후 로그인
   userLogin = (e) => {
     e.preventDefault();
-
+    if (this.state.email === "") {
+      alert("이메일을 입력해주세요.");
+      return;
+    }
+    if (this.state.password === "") {
+      alert("비밀번호를 입력해주세요.");
+      return;
+    }
     const url = "/login";
     Axios.post(url, {
       email: this.state.email,
@@ -103,10 +110,17 @@ class Login extends Component {
     const url = "/select/id?email=" + email;
     Axios.get(url)
       .then((res) => {
+        if (res.data.authority === "ROLE_BAN") {
+          alert(
+            "제재된 유저는 내슐랭 가이드를 이용할 수 없습니다.\r 회원 탈퇴를 원하시면 고객센터에 연락 부탁드립니다."
+          );
+          return;
+        }
         this.setState({
-          userId: res.data,
+          userId: res.data.id,
         });
         sessionStorage.setItem("userId", this.state.userId);
+        sessionStorage.setItem("authority", res.data.authority);
         if (this.state.checked) {
           localStorage.setItem("userId", this.state.userId);
         }
@@ -258,11 +272,27 @@ class Login extends Component {
                   >
                     로그인
                   </button>
+                  <NavLink to="/signup">
+                    <button
+                      type="button"
+                      className="btn"
+                      style={{
+                        height: "40px",
+                        width: "100px",
+                        color: "white",
+                        marginLeft: "10px",
+                        backgroundColor: "#9CC557 ",
+                      }}
+                    >
+                      회원가입
+                    </button>
+                  </NavLink>
                 </td>
               </tr>
               <tr>
                 <td style={{ textAlign: "center" }}>
                   <KakaoLogin
+                    className="btn btn-default"
                     jsKey="fd5a9908b3ef1290f9c3d52aadfd29f1"
                     onSuccess={(result) => {
                       this.resKakao(result);
@@ -271,30 +301,12 @@ class Login extends Component {
                     getProfile={true}
                   />
                   &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp;
-                  <NavLink to="/signup">
-                    <button
-                      type="button"
-                      className="btn"
-                      style={{
-                        borderRadius: "100%",
-                        border: "1px solid lightgray",
-                        width: "50px",
-                        height: "50px",
-                        backgroundColor: "#9CC557 ",
-                      }}
-                    >
-                      <img
-                        src={icon}
-                        style={{
-                          textAlign: "center",
-                          width: "40px",
-                          height: "30px",
-                          marginLeft: "-8px",
-                        }}
-                        alt=""
-                      />
-                    </button>
-                  </NavLink>
+                  <div
+                    class="g-signin2"
+                    data-onsuccess="onSignIn"
+                    style={{ margin: "10px 0 10px 50px" }}
+                  ></div>
+                  <NaverLogin />
                 </td>
               </tr>
             </tbody>
@@ -304,7 +316,6 @@ class Login extends Component {
     );
   }
 }
-
 const KakaoBtn = () => {
   const style = {
     borderRadius: "100%",

@@ -7,7 +7,7 @@ const MyMarker = (props) => {
     const script = document.createElement("script");
     script.async = true;
     script.src =
-      "https://dapi.kakao.com/v2/maps/sdk.js?appkey=4472c6938cce6e1016fcfd20f0c079e3&autoload=false&libraries=services,clusterer,drawing";
+      "https://dapi.kakao.com/v2/maps/sdk.js?appkey=본인앱키&autoload=false&libraries=services,clusterer,drawing";
     document.head.appendChild(script);
     script.onload = () => {
       kakao.maps.load(() => {

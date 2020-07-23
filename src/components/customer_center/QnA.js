@@ -20,7 +20,6 @@ const QnAComponent = () => {
     const url = `/ask/askdata?user_id=${sessionStorage.getItem("userId")}`;
     Axios.get(url)
       .then((res) => {
-        console.log(res.data);
         setResult(res.data);
       })
       .catch((error) => {

@@ -10,13 +10,15 @@ import {
   Review,
   Timeline,
   Result,
-  MyList,
 } from "pages/index.js";
 import "css/mainStyle.css";
 import { Input } from "antd";
 import logo from "images/logo.png";
 import logo2 from "images/logo2.png";
 import Axios from "util/axios";
+import User from "../admin/User";
+import Report from "../admin/Report";
+import Qna from "../admin/Qna";
 let keyword;
 let userPlaceId;
 let targetUserId;
@@ -179,6 +181,22 @@ class View extends React.Component {
     });
   };
 
+  /*
+   * 로그아웃 버튼
+   */
+  onClickLogout = () => {
+    /*구글 로그아웃 */
+    window.onLoad();
+    var auth2 = window.gapi.auth2.getAuthInstance();
+    auth2.signOut().then(function () {
+      console.log("User signed out.");
+    });
+
+    sessionStorage.clear();
+    localStorage.clear();
+    window.location.reload();
+  };
+
   render() {
     return (
       <div>
@@ -262,6 +280,7 @@ class View extends React.Component {
               <MyPage
                 getState={this.getState.bind(this)}
                 userId={this.state.userId}
+                history={this.props.history}
               />
             );
           }}
@@ -334,10 +353,32 @@ class View extends React.Component {
           }}
         />
         <Route
-          path="/mechelin/mylist/:userId"
+          path="/mechelin/admin/user"
           render={() => {
             return (
-              <MyList
+              <User
+                getState={this.getState.bind(this)}
+                userId={this.state.userId}
+              />
+            );
+          }}
+        />
+        <Route
+          path="/mechelin/admin/qna"
+          render={() => {
+            return (
+              <Qna
+                getState={this.getState.bind(this)}
+                userId={this.state.userId}
+              />
+            );
+          }}
+        />
+        <Route
+          path="/mechelin/admin/report"
+          render={() => {
+            return (
+              <Report
                 getState={this.getState.bind(this)}
                 userId={this.state.userId}
               />
@@ -440,131 +481,184 @@ class View extends React.Component {
                   }}
                 ></button>
               </NavLink>
-            </div>
-
+            </div>{" "}
             {/*각 페이지 이동 버튼 */}
-            <ul
-              className="menu"
-              style={{
-                width: "40vw",
-                height: "100vh",
-                textAlign: "center",
-              }}
-            >
-              <NavLink to={"/mechelin/newsfeed/" + this.state.userId}>
-                <li
-                  onClick={this.goAnotherPage.bind(this)}
+            {sessionStorage.getItem("authority") === "ROLE_ADMIN" ? (
+              <span>
+                <ul
+                  className="menu"
                   style={{
-                    fontSize:
-                      this.state.mypage || this.state.cc ? "4vw" : "6vw",
-                    marginBottom:
-                      this.state.mypage || this.state.cc ? "-5vh" : "-2vh",
-                    marginTop: this.state.cc || this.state.mypage ? "2vh" : "0",
+                    width: "40vw",
+                    height: "100vh",
+                    textAlign: "center",
+                    marginTop: "5vh",
                   }}
                 >
-                  뉴스 피드
-                </li>{" "}
-                <br />
-              </NavLink>
-              <NavLink to={"/mechelin/timeline/" + this.state.userId}>
-                <li
-                  onClick={this.goAnotherPage.bind(this)}
+                  <NavLink to={"/mechelin/admin/user"}>
+                    <li
+                      onClick={this.goAnotherPage.bind(this)}
+                      style={{
+                        fontSize: "7vw",
+                      }}
+                    >
+                      유저 관리
+                    </li>{" "}
+                    <br />
+                  </NavLink>
+                  <NavLink to={"/mechelin/admin/qna"}>
+                    <li
+                      onClick={this.goAnotherPage.bind(this)}
+                      style={{
+                        fontSize: "7vw",
+                      }}
+                    >
+                      1:1 문의
+                    </li>{" "}
+                    <br />
+                  </NavLink>
+                  <NavLink to={"/mechelin/admin/report"}>
+                    <li
+                      id="mypage"
+                      onClick={this.goAnotherPage.bind(this)}
+                      style={{
+                        fontSize: "7vw",
+                      }}
+                    >
+                      신고 목록{" "}
+                    </li>{" "}
+                    <br />
+                  </NavLink>
+                </ul>
+              </span>
+            ) : (
+              <span>
+                <ul
+                  className="menu"
                   style={{
-                    fontSize:
-                      this.state.mypage || this.state.cc ? "4vw" : "6vw",
-                    marginBottom:
-                      this.state.mypage || this.state.cc ? "-5vh" : "-2vh",
-                    marginTop: this.state.cc || this.state.mypage ? "2vh" : "0",
+                    width: "40vw",
+                    height: "100vh",
+                    textAlign: "center",
                   }}
                 >
-                  타임라인
-                </li>{" "}
-                <br />
-              </NavLink>
-              <li
-                id="mypage"
-                onClick={this.showMypage.bind(this)}
-                style={{
-                  fontSize: this.state.cc ? "4vw" : "6vw",
-                  marginBottom: this.state.cc
-                    ? "-5vh"
-                    : this.state.mypage
-                    ? "15vh"
-                    : "-2vh",
-                  cursor: "pointer",
-                  marginTop: this.state.cc || this.state.mypage ? "2vh" : "0",
-                  color: this.state.mypage ? "rgba(245, 145, 45)" : "black",
-                }}
-              >
-                마이 페이지
-              </li>{" "}
-              <br />
-              <li
-                id="cc"
-                onClick={this.showCC.bind(this)}
-                style={{
-                  cursor: "pointer",
-                  fontSize: this.state.mypage ? "4vw" : "6vw",
-                  marginBottom: this.state.mypage
-                    ? "-5vh"
-                    : this.state.cc
-                    ? "10vh"
-                    : "-2vh",
-                  marginTop: this.state.cc ? "2vh" : "0",
-                  color: this.state.cc ? "rgba(245, 145, 45)" : "black",
-                }}
-              >
-                고객 센터
-              </li>{" "}
-              <br />
-            </ul>
-
-            {/*마이페이지 하위 메뉴 */}
-            <ul
-              className="mypage"
-              style={{
-                position: "fixed",
-                top: "53%",
-                right: "50%",
-                transform: "translate(50%)",
-                opacity: this.state.mypage ? "1" : "0",
-                pointerEvents: this.state.mypage ? "all" : "none",
-                transition: "all 1s",
-                textAlign: "center",
-              }}
-            >
-              <NavLink to={"/mechelin/wishlist/" + this.state.userId}>
-                <li onClick={this.goAnotherPage.bind(this)}>위시 리스트</li>{" "}
-                <br /> <br />
-              </NavLink>
-              <NavLink to={"/mechelin/mypage/" + this.state.userId}>
-                <li onClick={this.goAnotherPage.bind(this)}>회원 정보 수정</li>{" "}
-                <br />
-              </NavLink>
-            </ul>
-            {/*고객센터 하위 메뉴 */}
-            <ul
-              className="cc"
-              style={{
-                position: "fixed",
-                bottom: "24%",
-                right: "50%",
-                transform: "translate(50%)",
-                opacity: this.state.cc ? "1" : "0",
-                pointerEvents: this.state.cc ? "all" : "none",
-                transition: "all 1s",
-              }}
-            >
-              <NavLink to={"/mechelin/faq/" + this.state.userId}>
-                <li onClick={this.goAnotherPage.bind(this)}>FAQ</li>
-                <br />
-                <br />
-              </NavLink>
-              <NavLink to={"/mechelin/qna/" + this.state.userId}>
-                <li onClick={this.goAnotherPage.bind(this)}>QnA</li> <br />
-              </NavLink>
-            </ul>
-
+                  <NavLink to={"/mechelin/newsfeed/" + this.state.userId}>
+                    <li
+                      onClick={this.goAnotherPage.bind(this)}
+                      style={{
+                        fontSize:
+                          this.state.mypage || this.state.cc ? "4vw" : "6vw",
+                        marginBottom:
+                          this.state.mypage || this.state.cc ? "-5vh" : "-2vh",
+                        marginTop:
+                          this.state.cc || this.state.mypage ? "2vh" : "0",
+                      }}
+                    >
+                      뉴스 피드
+                    </li>{" "}
+                    <br />
+                  </NavLink>
+                  <NavLink to={"/mechelin/timeline/" + this.state.userId}>
+                    <li
+                      onClick={this.goAnotherPage.bind(this)}
+                      style={{
+                        fontSize:
+                          this.state.mypage || this.state.cc ? "4vw" : "6vw",
+                        marginBottom:
+                          this.state.mypage || this.state.cc ? "-5vh" : "-2vh",
+                        marginTop:
+                          this.state.cc || this.state.mypage ? "2vh" : "0",
+                      }}
+                    >
+                      타임라인
+                    </li>{" "}
+                    <br />
+                  </NavLink>
+                  <li
+                    id="mypage"
+                    onClick={this.showMypage.bind(this)}
+                    style={{
+                      fontSize: this.state.cc ? "4vw" : "6vw",
+                      marginBottom: this.state.cc
+                        ? "-5vh"
+                        : this.state.mypage
+                        ? "15vh"
+                        : "-2vh",
+                      cursor: "pointer",
+                      marginTop:
+                        this.state.cc || this.state.mypage ? "2vh" : "0",
+                      color: this.state.mypage ? "rgba(245, 145, 45)" : "black",
+                    }}
+                  >
+                    마이 페이지
+                  </li>{" "}
+                  <br />
+                  <li
+                    id="cc"
+                    onClick={this.showCC.bind(this)}
+                    style={{
+                      cursor: "pointer",
+                      fontSize: this.state.mypage ? "4vw" : "6vw",
+                      marginBottom: this.state.mypage
+                        ? "-5vh"
+                        : this.state.cc
+                        ? "10vh"
+                        : "-2vh",
+                      marginTop: this.state.cc ? "2vh" : "0",
+                      color: this.state.cc ? "rgba(245, 145, 45)" : "black",
+                    }}
+                  >
+                    고객 센터
+                  </li>{" "}
+                  <br />
+                </ul>
+                {/*마이페이지 하위 메뉴 */}
+                <ul
+                  className="mypage"
+                  style={{
+                    position: "fixed",
+                    top: "51.5%",
+                    right: "50%",
+                    transform: "translate(50%)",
+                    opacity: this.state.mypage ? "1" : "0",
+                    pointerEvents: this.state.mypage ? "all" : "none",
+                    transition: "all 1s",
+                    textAlign: "center",
+                  }}
+                >
+                  <NavLink to={"/mechelin/wishlist/" + this.state.userId}>
+                    <li onClick={this.goAnotherPage.bind(this)}>위시 리스트</li>{" "}
+                    <br /> <br />
+                  </NavLink>
+                  <NavLink to={"/mechelin/mypage/" + this.state.userId}>
+                    <li onClick={this.goAnotherPage.bind(this)}>
+                      회원 정보 수정
+                    </li>{" "}
+                    <br />
+                  </NavLink>
+                </ul>
+                {/*고객센터 하위 메뉴 */}
+                <ul
+                  className="cc"
+                  style={{
+                    position: "fixed",
+                    bottom: "25.5%",
+                    right: "50%",
+                    transform: "translate(50%)",
+                    opacity: this.state.cc ? "1" : "0",
+                    pointerEvents: this.state.cc ? "all" : "none",
+                    transition: "all 1s",
+                  }}
+                >
+                  <NavLink to={"/mechelin/faq/" + this.state.userId}>
+                    <li onClick={this.goAnotherPage.bind(this)}>FAQ</li>
+                    <br />
+                    <br />
+                  </NavLink>
+                  <NavLink to={"/mechelin/qna/" + this.state.userId}>
+                    <li onClick={this.goAnotherPage.bind(this)}>QnA</li> <br />
+                  </NavLink>
+                </ul>
+              </span>
+            )}
             {/*아래 링크 */}
             <div
               className="bottomMenu"
@@ -604,7 +698,6 @@ class View extends React.Component {
                 </span>
               </NavLink>{" "}
             </div>
-
             {/* 로그아웃 */}
             <NavLink to="/">
               <div
@@ -613,10 +706,7 @@ class View extends React.Component {
                     ? "xi-lock-o xi-2x lock"
                     : "xi-unlock-o xi-2x unlock"
                 }
-                onClick={() => {
-                  sessionStorage.clear();
-                  localStorage.clear();
-                }}
+                onClick={this.onClickLogout.bind(this)}
                 style={{
                   position: "fixed",
                   right: "-25vw",

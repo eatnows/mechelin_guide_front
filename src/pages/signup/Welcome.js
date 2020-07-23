@@ -1,5 +1,6 @@
 import React from "react";
 import { NavLink } from "react-router-dom";
+import logo from "images/logo2.png";
 import "css/allStyle.css";
 
 class Welcome extends React.Component {
@@ -16,11 +17,19 @@ class Welcome extends React.Component {
             margin: "0 auto",
             width: "100px",
             height: "100px",
-            border: "1px solid #999",
+            border: "0px solid #999",
             marginTop: "20vh",
           }}
         >
-          logo
+          <img
+            src={logo}
+            alt=""
+            style={{
+              width: "auto",
+              height: "100px",
+              marginLeft: "-21px",
+            }}
+          />
         </div>
         <h2 style={{ fontFamily: "BBTreeGL", marginTop: "10vh" }}>
           <span

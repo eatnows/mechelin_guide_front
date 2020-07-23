@@ -1,5 +1,5 @@
 import React from "react";
-import { Switch, Checkbox, Input, Select, Button } from "antd";
+import { Switch, Checkbox, Input, Button } from "antd";
 import ReactQuill, { Quill } from "react-quill";
 import { ImageUpload } from "quill-image-upload";
 import "react-quill/dist/quill.snow.css";
@@ -10,8 +10,12 @@ import filter from "images/filter2.png";
 import friend from "images/friend2.png";
 import list from "images/list.png";
 import review from "images/review2.png";
+import plane from "images/plane.PNG";
+import friends from "images/friends.png";
 import MainMap from "components/map/MainMap";
-import MyListComponent from "../../components/mypage/MyList";
+import MyListComponent from "components/mypage/MyList";
+import MyFriends from "components/mypage/MyFriends";
+import TextArea from "antd/lib/input/TextArea";
 
 Quill.register("modules/imageUpload", ImageUpload);
 
@@ -26,6 +30,9 @@ const categoryOptions = [
 let categoryFilter = ["한식", "양식", "중식", "일식"];
 let blacklist = false;
 let render = 0;
+let socket = null;
+let page = 10;
+
 class FullMap extends React.Component {
   constructor(props) {
     super();
@@ -60,10 +67,18 @@ class FullMap extends React.Component {
     blacklist: false,
     myListModal: false,
     frinedsModal: false,
+    messageModal: false,
+    dm: false,
     friendEmail: "",
     render: 0,
+    dmUserId: "",
+    dmNickname: "",
+    dmIntroduce: "",
+    chatRoomId: "",
+    sendMessage: "",
+    // socket: "",
+    dmContent: [{}],
   };
-
   modules = {
     toolbar: {
       container: [
@@ -87,7 +102,7 @@ class FullMap extends React.Component {
     },
     imageUpload: {
       url:
-        "http://localhost:9000/image/add?id=" +
+        "http://localhost:9000/mechelin/image/add?id=" +
         sessionStorage.getItem("userId"), // server url
       method: "POST", // change query method, default 'POST'
       name: "images", // 아래 설정으로 image upload form의 key 값을 변경할 수 있다.
@@ -111,7 +126,6 @@ class FullMap extends React.Component {
       // optional
       // add callback when a image have been chosen
       checkBeforeSend: (file, next) => {
-        console.log("ceckbeforesend");
         console.log(file);
         next(file); // go back to component and send to the server
       },
@@ -140,6 +154,11 @@ class FullMap extends React.Component {
     "image",
     "video",
   ];
+
+  componentDidMount() {
+    this.socketConnect();
+  }
+
   /*
    * 내용을 기입했을때 실행
    */
@@ -213,6 +232,8 @@ class FullMap extends React.Component {
       reviewModal: true,
       filterModal: false,
       myListModal: false,
+      friendModal: false,
+      messageModal: false,
     });
   };
 
@@ -227,6 +248,7 @@ class FullMap extends React.Component {
         filterModal: true,
         myListModal: false,
         friendModal: false,
+        messageModal: false,
       });
     }
   };
@@ -242,13 +264,30 @@ class FullMap extends React.Component {
         myListModal: true,
         filterModal: false,
         friendModal: false,
+        messageModal: false,
+      });
+    }
+  };
+  /*DM 창 보이게 */
+  showMessageForm = () => {
+    if (this.state.messageModal) {
+      this.setState({
+        messageModal: false,
+      });
+    } else {
+      this.setState({
+        messageModal: true,
+        myListModal: false,
+        filterModal: false,
+        friendModal: false,
+        dm: false,
       });
     }
   };
 
   /*친구 추가 모달창 보이게 */
   showfriendForm = () => {
-    if (this.state.myListModal) {
+    if (this.state.friendModal) {
       this.setState({
         friendModal: false,
       });
@@ -257,6 +296,7 @@ class FullMap extends React.Component {
         friendModal: true,
         filterModal: false,
         myListModal: false,
+        messageModal: false,
       });
     }
   };
@@ -372,6 +412,154 @@ class FullMap extends React.Component {
     });
   };
 
+  /*친구추가 DM 보이게 */
+  changeDm = (e, data, chatLog) => {
+    page = 10;
+    const chatLogReverse = chatLog.reverse();
+    this.setState({
+      dm: e,
+      dmUserId: data.user_id,
+      dmNickname: data.nickname,
+      dmIntroduce: data.introduce,
+      dmContent: chatLogReverse,
+      chatRoomId: data.chatRoomId,
+    });
+    this.div.scrollTop = this.div.scrollHeight;
+  };
+
+  /*
+   * 메세지 전송
+   */
+  onClickMessageSend = (e) => {
+    if (this.state.sendMessage === "") return;
+
+    let socketMsg = `chat,${sessionStorage.getItem("userId")},${
+      this.state.dmUserId
+    },${this.state.sendMessage},${this.state.chatRoomId}`;
+    socket.send(socketMsg);
+    this.setState({
+      dmContent: this.state.dmContent.concat({
+        ...this.state.dmContent,
+        user_id: sessionStorage.getItem("userId"),
+        content: this.state.sendMessage,
+      }),
+      sendMessage: "",
+    });
+    setTimeout(() => {
+      this.div.scrollTop = this.div.scrollHeight;
+    }, 100);
+    this.TextArea.focus();
+  };
+
+  /*
+   * 소켓 연결
+   */
+  socketConnect = () => {
+    const ws = new WebSocket(
+      `ws://localhost:9000/mechelin/chat?userId=${sessionStorage.getItem(
+        "userId"
+      )}`
+    );
+    socket = ws;
+    ws.onopen = () => {
+      console.log("Info : connection opened");
+    };
+
+    ws.onmessage = (event) => {
+      let message = event.data.split(",");
+      if (message[1] === this.state.chatRoomId) {
+        this.setState({
+          dmContent: this.state.dmContent.concat({
+            ...this.state.dmContent,
+            user_id: message[2],
+            content: message[0],
+          }),
+        });
+      }
+      this.div.scrollTop = this.div.scrollHeight;
+    };
+
+    ws.onclose = (event) => {
+      console.log("Info: connection closed.");
+      setTimeout(() => {
+        this.socketConnect();
+      }, 1000);
+    };
+    ws.onerror = (err) => {
+      console.log("Error : ", err);
+    };
+  };
+
+  /*
+   * 입력한 메시지
+   */
+  onChangeMessage = (e) => {
+    this.setState({
+      sendMessage: e.target.value,
+    });
+  };
+
+  /*
+   * 친구요청 버튼을 눌렀을 시
+   */
+  onClickFriendRequest = () => {
+    const url = `/friends/confirmfriend`;
+    Axios.post(url, {
+      request_user_id: sessionStorage.getItem("userId"),
+      email: this.state.friendEmail,
+    })
+      .then((res) => {
+        console.log(res.data);
+        if (res.data === 1) {
+          alert("내 친구에겐 친구 신청을 할 수 없습니다.");
+        } else {
+          const url = `/friends/addfriend`;
+          Axios.post(url, {
+            request_user_id: sessionStorage.getItem("userId"),
+            email: this.state.friendEmail,
+          })
+            .then((response) => {
+              alert("친구신청 메일이 발송되었습니다.");
+            })
+            .catch((err) => {
+              console.log(err);
+            });
+        }
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
+
+  onScrollInfinity = () => {
+    let scrollHeight = Math.max(
+      this.div.scrollHeight,
+      document.body.scrollHeight
+    );
+    let scrollTop = Math.max(this.div.scrollTop, document.body.scrollTop);
+    let clientHeight = this.div.clientHeight;
+    let scrollBot = scrollHeight - (scrollTop + clientHeight);
+    if (scrollBot + clientHeight === scrollHeight) {
+      page += 10;
+      const url = `/chat/log?chatroom_id=${this.state.chatRoomId}&page=${page}`;
+      Axios.get(url)
+        .then((res) => {
+          setTimeout(() => {
+            if (res.data.length !== this.state.dmContent.length) {
+              this.setState({
+                dmContent: res.data.reverse(),
+              });
+              // 스크롤 바 중간쯤으로 이동
+              this.div.scrollTop = 280;
+            }
+          }, 200);
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    }
+  };
+
   render() {
     return (
       <div>
@@ -402,7 +590,7 @@ class FullMap extends React.Component {
                   onClick={this.showFilterForm.bind(this)}
                   style={{
                     bottom: this.state.bottomMenu ? "1.5%" : "-20%",
-                    left: this.state.bottomMenu ? "37%" : "50%",
+                    left: this.state.bottomMenu ? "35%" : "50%",
                   }}
                 >
                   <img src={filter} width="30px" height="20px" alt="" />
@@ -411,8 +599,8 @@ class FullMap extends React.Component {
                   className="review"
                   onClick={this.showReviewForm.bind(this)}
                   style={{
-                    bottom: this.state.bottomMenu ? "12.5%" : "-20%",
-                    left: this.state.bottomMenu ? "43.1%" : "50%",
+                    bottom: this.state.bottomMenu ? "13.5%" : "-20%",
+                    left: this.state.bottomMenu ? "40%" : "50%",
                   }}
                 >
                   <img
@@ -422,13 +610,13 @@ class FullMap extends React.Component {
                     height="32px"
                     alt=""
                   />
-                </div>
+                </div>{" "}
                 <div
                   className="list"
                   onClick={this.showMyListForm.bind(this)}
                   style={{
-                    bottom: this.state.bottomMenu ? "12.5%" : "-20%",
-                    right: this.state.bottomMenu ? "43.1%" : "50%",
+                    bottom: this.state.bottomMenu ? "19%" : "-20%",
+                    right: this.state.bottomMenu ? "47.5%" : "50%",
                   }}
                 >
                   <img
@@ -440,11 +628,27 @@ class FullMap extends React.Component {
                   />
                 </div>
                 <div
+                  className="message"
+                  onClick={this.showMessageForm.bind(this)}
+                  style={{
+                    bottom: this.state.bottomMenu ? "13.5%" : "-20%",
+                    right: this.state.bottomMenu ? "40%" : "50%",
+                  }}
+                >
+                  <img
+                    style={{ marginLeft: "1px" }}
+                    src={friends}
+                    width="40px"
+                    height="30px"
+                    alt=""
+                  />
+                </div>
+                <div
                   className="friend"
                   onClick={this.showfriendForm.bind(this)}
                   style={{
                     bottom: this.state.bottomMenu ? "1.5%" : "-20%",
-                    right: this.state.bottomMenu ? "37%" : "50%",
+                    right: this.state.bottomMenu ? "35%" : "50%",
                   }}
                 >
                   <img
@@ -788,7 +992,7 @@ class FullMap extends React.Component {
               position: "absolute",
               zIndex: "9999",
               left: "3%",
-              bottom: "5%",
+              bottom: "6.5%",
             }}
           >
             <div
@@ -836,6 +1040,221 @@ class FullMap extends React.Component {
           </div>
         </section>
 
+        {/*DM 모달창*/}
+        <section>
+          <div
+            className="DM"
+            style={{
+              display:
+                this.state.messageModal && !this.props.bar ? "block" : "none",
+              clear: "both",
+              background: "white",
+              border: "1px solid rgba(0,0,0,.2)",
+              borderRadius: "10px",
+              width: this.state.dm === true ? "30vw" : "15vw",
+              height: "72vh",
+              boxShadow: "5px 5px 5px rgba(0,0,0,.1)",
+              position: "absolute",
+              zIndex: "1",
+              left: "3%",
+              bottom: "6.5%",
+              transition: "all 1s",
+            }}
+          >
+            <div
+              style={{
+                fontSize: "2.5vh",
+                margin:
+                  this.state.dm === true
+                    ? "2vh 0 1.5vh 3vh"
+                    : "2vh 0 1.5vh 1.5vh",
+                textAlign: "left",
+                transition: "all 1s",
+              }}
+            >
+              친구 목록{" "}
+            </div>
+            <div
+              className="closeFilter xi-close"
+              onClick={() => {
+                this.setState({ messageModal: false });
+              }}
+              style={{
+                position: "absolute",
+                right: "3%",
+                top: "3%",
+                fontSize: "3vh",
+                color: "rgba(245,145,45)",
+                cursor: "pointer",
+                zIndex: "1",
+              }}
+            ></div>
+            <hr
+              style={{
+                borderColor: "rgba(0,0,0,.2)",
+                margin: "1vh 0",
+              }}
+            />
+            <div
+              style={{
+                width: this.state.dm === true ? "11vw" : "14vw",
+                height: "59vh",
+                marginLeft: ".5vw",
+                marginRight: this.state.dm === true ? "0" : ".5vw",
+                float: "left",
+              }}
+            >
+              <MyFriends
+                changeDm={this.changeDm.bind(this)}
+                history={this.props.history}
+                dm={this.state.dm}
+              />
+            </div>{" "}
+            <div
+              className={this.state.dm === true ? "showDm" : "hideDm"}
+              style={{
+                pointerEvents: this.state.dm === true ? "auto" : "none",
+                width: this.state.dm === true ? "17vw" : "0",
+                height: "59vh",
+                margin: ".8vw .4vw",
+                borderRadius: "10px",
+                float: "left",
+                border: "1px solid rgba(0,0,0,.2)",
+              }}
+            >
+              <div
+                className="header"
+                style={{
+                  backgroundColor: "rgba(156,197,87,.7)",
+                  height: "8vh",
+                  width: "100%",
+                  borderRadius: "10px 10px 0 0",
+                }}
+              >
+                <div
+                  style={{
+                    color: "white",
+                    fontSize: "1vw",
+                    float: "left",
+                    margin: "0.6vw 0.8vw 0.2vw",
+                  }}
+                >
+                  {this.state.dmNickname}
+                </div>
+                <span
+                  className="xi-reply"
+                  onClick={() => {
+                    this.setState({ dm: false });
+                  }}
+                  style={{
+                    color: "white",
+                    fontSize: "2vw",
+                    float: "right",
+                    margin: "0.6vw",
+                    cursor: "pointer",
+                  }}
+                ></span>
+                <br />
+                <div
+                  style={{
+                    color: "white",
+                    fontSize: ".7vw",
+                    float: "left",
+                    clear: "both",
+                    margin: "-1vw 1vw 0.8vw",
+                  }}
+                >
+                  {this.state.dmIntroduce}
+                </div>
+              </div>
+              <div
+                className="dialog"
+                style={{
+                  width: "100%",
+                  height: "42.5vh",
+                  overflowY: "auto",
+                  overflowX: "hidden",
+                }}
+                ref={(ref) => (this.div = ref)}
+                onScroll={this.onScrollInfinity.bind(this)}
+              >
+                {[...this.state.dmContent].map((contact, i) => {
+                  return (
+                    <div>
+                      {contact.user_id == sessionStorage.getItem("userId") ? (
+                        <div
+                          style={{
+                            borderRadius: "10px",
+                            backgroundColor: "rgba(245,145,45,.7)",
+                            float: "right",
+                            clear: "both",
+                            padding: ".1vw .5vw",
+                            margin: ".3vw .5vw",
+                            maxWidth: "60%",
+                            wordBreak: "break-all",
+                            color: "white",
+                          }}
+                        >
+                          {contact.content}
+                        </div>
+                      ) : (
+                        <div
+                          style={{
+                            borderRadius: "10px",
+                            backgroundColor: "white",
+                            border: "1px solid rgba(245,145,45,.5)",
+                            float: "left",
+                            clear: "both",
+                            padding: ".3vw .5vw",
+                            margin: ".3vw .5vw",
+                            wordBreak: "break-all",
+                            maxWidth: "60%",
+                            color: "rgba(245,145,45,.9)",
+                          }}
+                        >
+                          {contact.content}
+                        </div>
+                      )}
+                    </div>
+                  );
+                })}
+              </div>
+              <TextArea
+                ref={(ref) => (this.TextArea = ref)}
+                style={{
+                  width: "100%",
+                  border: "none",
+                  borderTop: "1px solid rgba(0,0,0,.2)",
+                  borderRadius: "0 0 10px 10px",
+                  resize: "none",
+                  overflow: "hidden",
+                }}
+                onChange={this.onChangeMessage.bind(this)}
+                value={this.state.sendMessage}
+              />{" "}
+              <span
+                style={{
+                  position: "absolute",
+                  right: "1.6vw",
+                  bottom: "2.2vw",
+                }}
+              >
+                <img
+                  src={plane}
+                  style={{
+                    opacity: ".4",
+                    width: "1vw",
+                    height: "1vw",
+                    cursor: "pointer",
+                  }}
+                  alt=""
+                  onClick={this.onClickMessageSend.bind(this)}
+                />
+              </span>
+            </div>
+          </div>
+        </section>
+
         {/*친구 추가 모달창 */}
         <section>
           <div
@@ -875,7 +1294,7 @@ class FullMap extends React.Component {
               id="content"
               style={{
                 width: "20vw",
-                height: "20vh",
+                height: "21.5vh",
                 position: "absolute",
                 left: "50%",
                 top: "50%",
@@ -900,7 +1319,7 @@ class FullMap extends React.Component {
               <Input
                 name="friendEmail"
                 onChange={this.changeState.bind(this)}
-                placeholder="상대방의 이메일 입력하세요."
+                placeholder="상대방의 이메일을 입력하세요."
                 style={{
                   width: "15vw",
                   margin: "0 2.5vw",
@@ -918,6 +1337,7 @@ class FullMap extends React.Component {
                   border: "none",
                   backgroundColor: "rgba(245,145,45)",
                 }}
+                onClick={this.onClickFriendRequest.bind(this)}
               >
                 친구 요청
               </button>
