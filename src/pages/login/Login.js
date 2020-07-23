@@ -54,7 +54,14 @@ class Login extends Component {
   //이메일, 비밀번호 체크 후 로그인
   userLogin = (e) => {
     e.preventDefault();
-
+    if (this.state.email === "") {
+      alert("이메일을 입력해주세요.");
+      return;
+    }
+    if (this.state.password === "") {
+      alert("비밀번호를 입력해주세요.");
+      return;
+    }
     const url = "/login";
     Axios.post(url, {
       email: this.state.email,
@@ -103,10 +110,17 @@ class Login extends Component {
     const url = "/select/id?email=" + email;
     Axios.get(url)
       .then((res) => {
+        if (res.data.authority === "ROLE_BAN") {
+          alert(
+            "제재된 유저는 내슐랭 가이드를 이용할 수 없습니다.\r 회원 탈퇴를 원하시면 고객센터에 연락 부탁드립니다."
+          );
+          return;
+        }
         this.setState({
-          userId: res.data,
+          userId: res.data.id,
         });
         sessionStorage.setItem("userId", this.state.userId);
+        sessionStorage.setItem("authority", res.data.authority);
         if (this.state.checked) {
           localStorage.setItem("userId", this.state.userId);
         }

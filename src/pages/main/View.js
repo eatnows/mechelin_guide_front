@@ -190,11 +190,11 @@ class View extends React.Component {
     var auth2 = window.gapi.auth2.getAuthInstance();
     auth2.signOut().then(function () {
       console.log("User signed out.");
-      window.location.reload();
     });
 
     sessionStorage.clear();
     localStorage.clear();
+    window.location.reload();
   };
 
   render() {
@@ -483,7 +483,7 @@ class View extends React.Component {
               </NavLink>
             </div>{" "}
             {/*각 페이지 이동 버튼 */}
-            {sessionStorage.getItem("userId") === "10" ? (
+            {sessionStorage.getItem("authority") === "ROLE_ADMIN" ? (
               <span>
                 <ul
                   className="menu"
